@@ -1,3 +1,7 @@
 Lottery plugin:
 
+The config.yml will be created inside plugins/Lottery when you run the plugin for the first time.
+
+Default values are 5 coins and every 24 hours.
+
 Idea: http://forums.bukkit.org/threads/weekly-lotory-gambling.7431/
