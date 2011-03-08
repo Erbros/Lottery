@@ -13,6 +13,9 @@ import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.util.config.Configuration;
+
+import com.bukkit.erbros.Lottery.Misc;
 
 
 public class Lottery extends JavaPlugin{
@@ -30,7 +33,9 @@ public class Lottery extends JavaPlugin{
 	}
 	@Override
 	public void onDisable() {
-		System.out.println("Lottery disabled successfully.");
+		PluginDescriptionFile pdfFile = this.getDescription();
+		System.out.println( pdfFile.getName() + " version " + pdfFile.getVersion() + " has been unloaded." );
+		//log.info(getDescription().getName() + ": has been disabled.");
 	}
 
 	@Override
@@ -43,50 +48,38 @@ public class Lottery extends JavaPlugin{
 		// Start Registration. Thanks TheYeti.
 		getDataFolder().mkdirs();
 		
-		// Does config file exist? Thanks cyklo :)
-		File yml = new File(getDataFolder(), "config.yml");
-
-		if (!yml.exists())
-		{
-			try {
-				yml.createNewFile();
-				getConfiguration().setProperty("lottery", null);
-				getConfiguration().save();
-			} catch (IOException ex){
-				log.warning(getDescription().getName() + ": could not generate config.yml. Are the file permissions OK?");
-			}
-		}
+		// Does config exist? If not, make it.
 		
-		// Load in the values from the configuration file
-
-		List <String> keys = getConfiguration().getKeys("config.yml");
-
-		if(keys == null || !keys.contains("lottery")) {
-			log.warning(getDescription().getName() + ": configuration file is corrupt. Please delete it and start over.");
-			return;
-		}
-
-		if(keys.contains("cost")) {
-			cost = getConfiguration().getInt("cost",5);
-		} else {
-			getConfiguration().setProperty("cost", 5);
-			getConfiguration().save();
-		}
-
-		if(keys.contains("cost")) {
-			cost = getConfiguration().getInt("cost", 5);
-		} else {
-			getConfiguration().setProperty("cost", 5);
-			getConfiguration().save();
-		}
-
-		if(keys.contains("hours")) {
-			hours = getConfiguration().getInt("hours", 5);
-		} else {
-			getConfiguration().setProperty("hours", 5);
-			getConfiguration().save();
-		}
+		Configuration c = getConfiguration();
+		
+		if(c.getProperty("cost") == null || c.getProperty("hours") == null) {
+			
+			c.setProperty("cost", 5);
+			c.setProperty("hours", 24);
+			
+	        if (!getConfiguration().save())
+	        {
+	            getServer().getLogger().warning("Unable to persist configuration files, changes will not be saved.");
+	        }
+		} 
+		
+		String convert = c.getProperty("cost").toString();
+		cost = Integer.parseInt(convert);
+		convert = c.getProperty("hours").toString();
+		hours = Integer.parseInt(convert);
 				
 	}
+	
+	protected void buildConfiguration()
+    {
+        Configuration c = getConfiguration();
+        c.setProperty("cost", 5);
+        c.setProperty("hours", 24);
 
+        if (!getConfiguration().save())
+        {
+            getServer().getLogger().warning("Unable to persist configuration files, changes will not be saved.");
+        }
+    }
+	
 }
