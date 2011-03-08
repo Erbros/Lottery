@@ -15,8 +15,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.util.config.Configuration;
 
-import com.bukkit.erbros.Lottery.Misc;
-
 
 public class Lottery extends JavaPlugin{
 
