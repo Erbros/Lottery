@@ -65,19 +65,5 @@ public class Lottery extends JavaPlugin{
 		cost = Integer.parseInt(convert);
 		convert = c.getProperty("hours").toString();
 		hours = Integer.parseInt(convert);
-				
-	}
-	
-	protected void buildConfiguration()
-    {
-        Configuration c = getConfiguration();
-        c.setProperty("cost", 5);
-        c.setProperty("hours", 24);
-
-        if (!getConfiguration().save())
-        {
-            getServer().getLogger().warning("Unable to persist configuration files, changes will not be saved.");
-        }
-    }
-	
+	}	
 }
