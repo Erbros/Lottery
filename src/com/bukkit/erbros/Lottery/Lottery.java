@@ -18,17 +18,20 @@ import org.bukkit.util.config.Configuration;
 
 public class Lottery extends JavaPlugin{
 
-	// Doing some logging. Thanks cyklo 
-	protected final Logger log;
+	protected HashMap<String, Boolean> status;
+	protected LotteryPlayerListener playerListener;
 	protected Integer cost;
 	protected Integer hours;
+	
+	// Doing some logging. Thanks cyklo 
+	protected final Logger log;
 	
 	public Lottery() {
 		log = Logger.getLogger("Minecraft");
 		cost = 5;
 		hours = 24;
-		
 	}
+	
 	@Override
 	public void onDisable() {
 		PluginDescriptionFile pdfFile = this.getDescription();
@@ -65,5 +68,5 @@ public class Lottery extends JavaPlugin{
 		cost = Integer.parseInt(convert);
 		convert = c.getProperty("hours").toString();
 		hours = Integer.parseInt(convert);
-	}	
+	}
 }
