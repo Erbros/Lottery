@@ -61,7 +61,7 @@ public class Lottery extends JavaPlugin{
 
 		List <String> keys = getConfiguration().getKeys("config.yml");
 
-		if(keys == null || !keys.contains("quickbelt")) {
+		if(keys == null || !keys.contains("lottery")) {
 			log.warning(getDescription().getName() + ": configuration file is corrupt. Please delete it and start over.");
 			return;
 		}
