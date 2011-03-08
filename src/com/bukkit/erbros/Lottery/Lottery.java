@@ -38,7 +38,7 @@ public class Lottery extends JavaPlugin{
 		
 		// Gets version number and writes out starting line to console.
 		PluginDescriptionFile pdfFile = this.getDescription();
-		System.out.println( pdfFile.getName() + "version " + pdfFile.getVersion() + "is enabled" );
+		System.out.println( pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled" );
 		
 		// Start Registration. Thanks TheYeti.
 		getDataFolder().mkdirs();
