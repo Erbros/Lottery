@@ -26,7 +26,7 @@ public class Lottery extends JavaPlugin{
 	protected LotteryPlayerListener playerListener;
 	protected Integer cost;
 	protected Integer hours;
-	protected Integer nextexec;
+	protected Long nextexec;
 	
 	// Doing some logging. Thanks cyklo 
 	protected final Logger log;
@@ -83,8 +83,7 @@ public class Lottery extends JavaPlugin{
 		if(c.getProperty("nextexec") == null) {
 			
 			// Set first time to be config hours later? Millisecs, * 1000.
-			String getTime = Calendar.getInstance().getTime().toString();
-			nextexec = Integer.parseInt(getTime);
+			nextexec = (System.currentTimeMillis());
 			nextexec += hours * 60 * 60 * 1000;
 			c.setProperty("nextexec", nextexec);
 			
@@ -93,14 +92,18 @@ public class Lottery extends JavaPlugin{
 	            getServer().getLogger().warning("Unable to persist configuration files, changes will not be saved.");
 	        }
 		} else {
-			nextexec = Integer.parseInt(c.getProperty("nextexec").toString());
+			nextexec = Long.parseLong(c.getProperty("nextexec").toString());
 		}
 		System.out.println("The next exec: " + nextexec);
 		
 		
 		// Make clock that waits 24 hours?
 		
-		// || Calendar.getInstance().getTime().after(nextexec)
+		// Have the time we are waiting for come? 
+		// Calendar.getInstance().getTime().after(nextexec)
+		
+		// This shows the date in a human friendly way. 
+		// String getTime = Calendar.getInstance().getTime().toString();
 		
 	}
 }
