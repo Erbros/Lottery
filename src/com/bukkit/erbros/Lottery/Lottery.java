@@ -121,7 +121,7 @@ public class Lottery extends JavaPlugin{
 	private long ExtendTime() {
 		Configuration c = getConfiguration();
 		hours = Integer.parseInt(c.getProperty("hours").toString());
-		Long extendTime = Long.parseLong(hours.toString()) * 5 * 1000;
+		Long extendTime = Long.parseLong(hours.toString()) * 2 * 1000;
 		return extendTime;
 	}
 
@@ -144,7 +144,7 @@ public class Lottery extends JavaPlugin{
 		        }
 			}
 			// Call a new timer.
-			//StartTimerSchedule();
+			StartTimerSchedule();
 		}
 	}
 
