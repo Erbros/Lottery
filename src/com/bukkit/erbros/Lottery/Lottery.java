@@ -29,6 +29,9 @@ public class Lottery extends JavaPlugin{
 	protected Integer cost;
 	protected Integer hours;
 	protected Long nextexec;
+	protected Boolean timerStarted;
+	// Starting timer we are going to use for scheduling.
+	Timer timer;
 	
 	// Doing some logging. Thanks cyklo 
 	protected final Logger log;
@@ -37,6 +40,7 @@ public class Lottery extends JavaPlugin{
 		log = Logger.getLogger("Minecraft");
 		cost = 5;
 		hours = 24;
+		timerStarted = false;
 	}
 	
 	@Override
@@ -85,8 +89,7 @@ public class Lottery extends JavaPlugin{
 		if(c.getProperty("nextexec") == null) {
 			
 			// Set first time to be config hours later? Millisecs, * 1000.
-			nextexec = System.currentTimeMillis();
-			nextexec += hours * 60 * 60 * 1000;
+			nextexec = System.currentTimeMillis() + ExtendTime();
 			c.setProperty("nextexec", nextexec);
 			
 	        if (!getConfiguration().save())
@@ -97,11 +100,11 @@ public class Lottery extends JavaPlugin{
 			nextexec = Long.parseLong(c.getProperty("nextexec").toString());
 		}
 		
+		// Start the timer for the first time.
+		StartTimerSchedule();
+		
 		// This could, and should, probably be fixed nicer, but for now it'll have to do.
 		// Adding timer that waits the time between nextexec and time now.
-		
-		Timer timer = new Timer();
-		timer.schedule(LotteryDraw(), nextexec);
 		
 		
 		// Make clock that waits 24 hours?
@@ -115,10 +118,48 @@ public class Lottery extends JavaPlugin{
 		
 	}
 
-	private TimerTask LotteryDraw() {
-		if(nextexec > 0 && System.currentTimeMillis() > nextexec) {
-			// Did anyone buy tickets?
-		}
-		return null;
+	private long ExtendTime() {
+		Configuration c = getConfiguration();
+		hours = Integer.parseInt(c.getProperty("hours").toString());
+		Long extendTime = Long.parseLong(hours.toString()) * 5 * 1000;
+		return extendTime;
 	}
+
+	class LotteryDraw extends TimerTask {
+		public void run() {
+			// Cancel timer.
+			// Get new config.
+			Configuration c = getConfiguration();
+			nextexec = Long.parseLong(c.getProperty("nextexec").toString());
+			
+			if(nextexec > 0 && System.currentTimeMillis() > nextexec) {
+				// Did anyone buy tickets?
+				System.out.println("LOTTERY TIME!");
+				nextexec = System.currentTimeMillis() + ExtendTime();
+	
+				c.setProperty("nextexec",nextexec);
+				if (!getConfiguration().save())
+		        {
+		            getServer().getLogger().warning("Unable to persist configuration files, changes will not be saved.");
+		        }
+			}
+			// Call a new timer.
+			StartTimerSchedule();
+		}
+	}
+		
+	private void StartTimerSchedule() {
+		
+		//Cancel any existing timers.
+		if(timerStarted == true) {
+			timer.cancel();
+			timer.purge();
+		}
+		// Start new timer.
+		timer.schedule(new LotteryDraw(), 500000);
+		// Timer is now started, let it know.
+		timerStarted = true;
+			
+	}
+	
 }
