@@ -26,6 +26,7 @@ public class Lottery extends JavaPlugin{
 	protected LotteryPlayerListener playerListener;
 	protected Integer cost;
 	protected Integer hours;
+	protected Integer nextexec;
 	
 	// Doing some logging. Thanks cyklo 
 	protected final Logger log;
@@ -78,11 +79,12 @@ public class Lottery extends JavaPlugin{
 		
 		pm.registerEvent(Event.Type.PLAYER_COMMAND_PREPROCESS, playerListener, Priority.Normal, this);
 		
+		// Is the date we are going to draw the lottery set? If not, we should do it.
 		if(c.getProperty("nextexec") == null) {
 			
 			// Set first time to be config hours later? Millisecs, * 1000.
-			Date getTime = Calendar.getInstance().getTime();
-			String nextexec = getTime.toString();
+			String getTime = Calendar.getInstance().getTime().toString();
+			nextexec = Integer.parseInt(getTime);
 			nextexec += hours * 60 * 60 * 1000;
 			c.setProperty("nextexec", nextexec);
 			
@@ -90,8 +92,10 @@ public class Lottery extends JavaPlugin{
 	        {
 	            getServer().getLogger().warning("Unable to persist configuration files, changes will not be saved.");
 	        }
+		} else {
+			nextexec = Integer.parseInt(c.getProperty("nextexec").toString());
 		}
-		
+		System.out.println("The next exec: " + nextexec);
 		
 		
 		// Make clock that waits 24 hours?
