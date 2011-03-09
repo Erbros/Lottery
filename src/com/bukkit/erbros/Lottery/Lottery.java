@@ -7,6 +7,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Logger;
 
 import org.bukkit.block.Block;
@@ -83,7 +85,7 @@ public class Lottery extends JavaPlugin{
 		if(c.getProperty("nextexec") == null) {
 			
 			// Set first time to be config hours later? Millisecs, * 1000.
-			nextexec = (System.currentTimeMillis());
+			nextexec = System.currentTimeMillis();
 			nextexec += hours * 60 * 60 * 1000;
 			c.setProperty("nextexec", nextexec);
 			
@@ -94,7 +96,12 @@ public class Lottery extends JavaPlugin{
 		} else {
 			nextexec = Long.parseLong(c.getProperty("nextexec").toString());
 		}
-		System.out.println("The next exec: " + nextexec);
+		
+		// This could, and should, probably be fixed nicer, but for now it'll have to do.
+		// Adding timer that waits the time between nextexec and time now.
+		
+		Timer timer = new Timer();
+		timer.schedule(LotteryDraw(), nextexec);
 		
 		
 		// Make clock that waits 24 hours?
@@ -103,7 +110,15 @@ public class Lottery extends JavaPlugin{
 		// Calendar.getInstance().getTime().after(nextexec)
 		
 		// This shows the date in a human friendly way. 
-		// String getTime = Calendar.getInstance().getTime().toString();
+		// Date humandate = new Date(nextexec);
 		
+		
+	}
+
+	private TimerTask LotteryDraw() {
+		if(nextexec > 0 && System.currentTimeMillis() > nextexec) {
+			// Did anyone buy tickets?
+		}
+		return null;
 	}
 }
