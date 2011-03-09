@@ -162,5 +162,11 @@ public class Lottery extends JavaPlugin{
 		timerStarted = true;
 			
 	}
+	public boolean AddPlayer(Player player) {
+		//Let us find the folder.
+		getDataFolder().mkdirs();
+
+		return false;
+	}
 	
 }

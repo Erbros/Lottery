@@ -5,6 +5,7 @@ import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerChatEvent;
 
 
+
 public class LotteryPlayerListener extends PlayerListener {
 
 	public static Lottery plugin;
@@ -22,8 +23,14 @@ public class LotteryPlayerListener extends PlayerListener {
 			} else {
 				if(split[1].equalsIgnoreCase("buy")) {
 					// Give the player a lottery ticket, and take some money from him/her.
+					if(plugin.AddPlayer(player) == true) {
+						// You got your ticket.
+					} else {
+						// You can't buy more than one ticket.
+					}
 				}
 			}
 		}
 	}
+	
 }
