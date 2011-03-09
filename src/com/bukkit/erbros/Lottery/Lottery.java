@@ -3,6 +3,8 @@ package com.bukkit.erbros.Lottery;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
@@ -10,10 +12,12 @@ import java.util.logging.Logger;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.event.Event.Priority;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.util.config.Configuration;
+
 
 
 public class Lottery extends JavaPlugin{
@@ -62,11 +66,37 @@ public class Lottery extends JavaPlugin{
 	        {
 	            getServer().getLogger().warning("Unable to persist configuration files, changes will not be saved.");
 	        }
-		} 
+		}
 		
 		String convert = c.getProperty("cost").toString();
 		cost = Integer.parseInt(convert);
 		convert = c.getProperty("hours").toString();
 		hours = Integer.parseInt(convert);
+		
+		// Listen for some player interaction perhaps? Thanks to cyklo :)
+		PluginManager pm = getServer().getPluginManager();
+		
+		pm.registerEvent(Event.Type.PLAYER_COMMAND_PREPROCESS, playerListener, Priority.Normal, this);
+		
+		if(c.getProperty("nextexec") == null) {
+			
+			// Set first time to be config hours later? Millisecs, * 1000.
+			Date getTime = Calendar.getInstance().getTime();
+			String nextexec = getTime.toString();
+			nextexec += hours * 60 * 60 * 1000;
+			c.setProperty("nextexec", nextexec);
+			
+	        if (!getConfiguration().save())
+	        {
+	            getServer().getLogger().warning("Unable to persist configuration files, changes will not be saved.");
+	        }
+		}
+		
+		
+		
+		// Make clock that waits 24 hours?
+		
+		// || Calendar.getInstance().getTime().after(nextexec)
+		
 	}
 }
