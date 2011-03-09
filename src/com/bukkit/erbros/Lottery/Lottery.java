@@ -144,10 +144,10 @@ public class Lottery extends JavaPlugin{
 		        }
 			}
 			// Call a new timer.
-			StartTimerSchedule();
+			//StartTimerSchedule();
 		}
 	}
-		
+
 	private void StartTimerSchedule() {
 		
 		//Cancel any existing timers.
@@ -156,7 +156,8 @@ public class Lottery extends JavaPlugin{
 			timer.purge();
 		}
 		// Start new timer.
-		timer.schedule(new LotteryDraw(), 500000);
+		timer = new Timer();
+		timer.schedule(new LotteryDraw(), ExtendTime());
 		// Timer is now started, let it know.
 		timerStarted = true;
 			
