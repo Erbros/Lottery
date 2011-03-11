@@ -37,7 +37,7 @@ public class Lottery extends JavaPlugin{
 	protected Integer hours;
 	protected Long nextexec;
 	protected Boolean timerStarted;
-	protected Configuration c = getConfiguration();
+	protected Configuration c;
 	// Starting timer we are going to use for scheduling.
 	Timer timer;
 	
@@ -144,7 +144,7 @@ public class Lottery extends JavaPlugin{
 		public void run() {
 			// Cancel timer.
 			// Get new config.
-			Configuration c = getConfiguration();
+			c = getConfiguration();
 			nextexec = Long.parseLong(c.getProperty("nextexec").toString());
 			
 			if(nextexec > 0 && System.currentTimeMillis() > nextexec) {
@@ -208,16 +208,20 @@ public class Lottery extends JavaPlugin{
 	}
 	
 	public void makeConfig() {
-
-		if(c.getProperty("cost") == null || c.getProperty("hours") == null) {
-			
-			c.setProperty("cost", cost = 5);
-			c.setProperty("hours", hours = 24);
-			
-		    if (!getConfiguration().save())
-		    {
-		        log.warning("Unable to persist configuration files, changes will not be saved.");
-		    }
+		c = getConfiguration();
+		if(c != null) {
+			if(c.getProperty("cost") == null) {
+				
+				c.setProperty("cost", "5");
+				c.setProperty("hours", "24");
+				
+			    if (!getConfiguration().save())
+			    {
+			        log.warning("Unable to persist configuration files, changes will not be saved.");
+			    }
+			}
+		} else {
+			log.warning("c == null");
 		}
 
 	}
