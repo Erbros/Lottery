@@ -11,6 +11,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Logger;
@@ -93,15 +94,18 @@ public class Lottery extends JavaPlugin{
 				// If its just /lottery, and no args.
 				if(args.length == 0) {
 					sender.sendMessage("[LOTTERY] " + timeUntil(nextexec));
+					sender.sendMessage("[LOTTERY] You can buy a ticket for " + cost + " coins with /lottery buy");
 					log.info("TimeUntil()");
 				} else {
-					if(args[1].equals("buy")) {
-						if(addPlayer(null) == true) {
+					if(args[0].equals("buy")) {
+						Player player = (Player) sender;
+						
+						if(addPlayer(player) == true) {
 							// You got your ticket. Change coins to iconomy config later.
-							sender.sendMessage("You got your lottery ticket for " + cost + "coins");
+							sender.sendMessage("[LOTTERY] You got your lottery ticket for " + cost + " coins");
 						} else {
 							// You can't buy more than one ticket.
-							sender.sendMessage("You already had a ticket. Wait until next round to buy another.");
+							sender.sendMessage("[LOTTERY] You already had a ticket. Wait until next round to buy another.");
 						}
 					}
 				}
@@ -209,6 +213,7 @@ public class Lottery extends JavaPlugin{
 		    BufferedReader in = new BufferedReader(new FileReader(getDataFolder() + "\\lotteryPlayers.txt"));
 		    String str;
 		    while ((str = in.readLine()) != null) {
+		    	
 		        if(str.equalsIgnoreCase(player.getName())) {
 		        	// Player have bought earlier. Will send false signal to tell.
 		        	in.close();
@@ -220,7 +225,7 @@ public class Lottery extends JavaPlugin{
 		}
 		
 		try {
-		    BufferedWriter out = new BufferedWriter(new FileWriter(getDataFolder() + "\\lotteryPlayers.txt"));
+		    BufferedWriter out = new BufferedWriter(new FileWriter(getDataFolder() + "\\lotteryPlayers.txt",true));
 		    out.write(player.getName());
 		    out.newLine();
 		    out.close();
@@ -297,5 +302,25 @@ public class Lottery extends JavaPlugin{
 		return stringTimeLeft;
 	}
 	
+	public boolean getWinner() {
+		String[] players = null;
+		try {
+		    BufferedReader in = new BufferedReader(new FileReader(getDataFolder() + "\\lotteryPlayers.txt"));
+		    String str;
+		    int i = 0;
+		    while ((str = in.readLine()) != null) {
+		    	// add players to array.
+		    	players[i] = str.toString();
+		    }
+		    in.close();
+		} catch (IOException e) {
+		}
+		if(players.length <= 0) {
+			return false;
+		} else {
+			int rand = new Random().nextInt(players.length);
+		}
+		return true;
+	}
 	
 }
