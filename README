@@ -5,3 +5,19 @@ The config.yml will be created inside plugins/Lottery when you run the plugin fo
 Default values are 5 coins and every 24 hours.
 
 Idea: http://forums.bukkit.org/threads/weekly-lotory-gambling.7431/
+
+
+Progress:
+
+Starting to get close to the first alpha release, and when I get there I will start with 0.0.2
+
+I've fixed /lottery and /lottery buy. Names of buyers are added to file.
+
+Todo:
+ - Random pull of Array.
+ - Change from String[]-type array to ArrayList in readLine() from File.
+ - Remove names from file after lottery. Could it be as easy as to just do a out.newLine(); on a FileWriter("file.txt",false)? false will force it to write a clean file, and not just append to it?
+ - Records of the last winner? 3 last winners? Including money.
+ - Get iConomy support for both buying and winning. I haven't seen the api for iconomy, but something tells me it's probably easy.
+
+ Alpha tomorrow? :)
