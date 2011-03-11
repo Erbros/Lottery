@@ -4,7 +4,7 @@ version: 0.0.1
 author: Erbros
 website: www.erbros.net
 commands:
-  permissions:
+  lottery:
     description: Provides access to Permissions commands and information.
     usage: |
            /<command>

@@ -16,6 +16,9 @@ import java.util.TimerTask;
 import java.util.logging.Logger;
 
 import org.bukkit.block.Block;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
@@ -34,6 +37,7 @@ public class Lottery extends JavaPlugin{
 	protected Integer hours;
 	protected Long nextexec;
 	protected Boolean timerStarted;
+	protected Configuration c = getConfiguration();
 	// Starting timer we are going to use for scheduling.
 	Timer timer;
 	
@@ -66,18 +70,7 @@ public class Lottery extends JavaPlugin{
 		
 		// Does config exist? If not, make it.
 		
-		Configuration c = getConfiguration();
-		
-		if(c.getProperty("cost") == null || c.getProperty("hours") == null) {
-			
-			c.setProperty("cost", 5);
-			c.setProperty("hours", 24);
-			
-	        if (!getConfiguration().save())
-	        {
-	            getServer().getLogger().warning("Unable to persist configuration files, changes will not be saved.");
-	        }
-		}
+		makeConfig();
 		
 		String convert = c.getProperty("cost").toString();
 		cost = Integer.parseInt(convert);
@@ -85,10 +78,28 @@ public class Lottery extends JavaPlugin{
 		hours = Integer.parseInt(convert);
 		
 		// Listen for some player interaction perhaps? Thanks to cyklo :)
+		
+		getCommand("lottery").setExecutor(new CommandExecutor() {
+			@Override
+			public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+				log.info("sender: " + sender.toString());
+				log.info("command: " + command.getName());
+				log.info("label: " + label);
+				
+				for(int i = 0; i < args.length; i++) {
+					log.info("args[" + i + "]: " + args[i]);
+				}
+
+				return true;
+			}
+        });
+
+		/*
+		
 		PluginManager pm = getServer().getPluginManager();
-		
+
 		pm.registerEvent(Event.Type.PLAYER_CHAT, playerListener, Priority.Normal, this);
-		
+		*/	
 		// Is the date we are going to draw the lottery set? If not, we should do it.
 		if(c.getProperty("nextexec") == null) {
 			
@@ -167,7 +178,7 @@ public class Lottery extends JavaPlugin{
 		timerStarted = true;
 			
 	}
-	public boolean AddPlayer(Player player) {
+	public boolean addPlayer(Player player) {
 
 		// Is the player already listed, and thus already have a ticket?
 		try {
@@ -176,6 +187,7 @@ public class Lottery extends JavaPlugin{
 		    while ((str = in.readLine()) != null) {
 		        if(str.equalsIgnoreCase(player.getName())) {
 		        	// Player have bought earlier. Will send false signal to tell.
+		        	in.close();
 		        	return false;
 		        }
 		    }
@@ -195,4 +207,18 @@ public class Lottery extends JavaPlugin{
 		return true;
 	}
 	
+	public void makeConfig() {
+
+		if(c.getProperty("cost") == null || c.getProperty("hours") == null) {
+			
+			c.setProperty("cost", cost = 5);
+			c.setProperty("hours", hours = 24);
+			
+		    if (!getConfiguration().save())
+		    {
+		        log.warning("Unable to persist configuration files, changes will not be saved.");
+		    }
+		}
+
+	}
 }
