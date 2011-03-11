@@ -89,6 +89,23 @@ public class Lottery extends JavaPlugin{
 				for(int i = 0; i < args.length; i++) {
 					log.info("args[" + i + "]: " + args[i]);
 				}
+				
+				// If its just /lottery, and no args.
+				if(args.length == 0) {
+					sender.sendMessage("[LOTTERY] " + timeUntil(nextexec));
+					log.info("TimeUntil()");
+				} else {
+					if(args[1].equals("buy")) {
+						if(addPlayer(null) == true) {
+							// You got your ticket. Change coins to iconomy config later.
+							sender.sendMessage("You got your lottery ticket for " + cost + "coins");
+						} else {
+							// You can't buy more than one ticket.
+							sender.sendMessage("You already had a ticket. Wait until next round to buy another.");
+						}
+					}
+				}
+				
 
 				return true;
 			}
@@ -133,7 +150,7 @@ public class Lottery extends JavaPlugin{
 		
 	}
 
-	private long ExtendTime() {
+	public long ExtendTime() {
 		Configuration c = getConfiguration();
 		hours = Integer.parseInt(c.getProperty("hours").toString());
 		Long extendTime = Long.parseLong(hours.toString()) * 2 * 1000;
@@ -171,9 +188,16 @@ public class Lottery extends JavaPlugin{
 			timer.cancel();
 			timer.purge();
 		}
+		// Get time until lottery drawing.
+		long extendtime = ExtendTime();
+		// If the time is passed (perhaps the server was offline?), draw lottery at once.
+		
+		if(nextexec - System.currentTimeMillis() <= 0) {
+			extendtime = 10000;
+		}
 		// Start new timer.
 		timer = new Timer();
-		timer.schedule(new LotteryDraw(), ExtendTime());
+		timer.schedule(new LotteryDraw(), extendtime);
 		// Timer is now started, let it know.
 		timerStarted = true;
 			
@@ -223,6 +247,55 @@ public class Lottery extends JavaPlugin{
 		} else {
 			log.warning("c == null");
 		}
-
 	}
+	
+	public String timeUntil(long time) {
+
+		double timeLeft = Double.parseDouble(Long.toString(((time - System.currentTimeMillis()) / 1000)));
+		// How many days left?
+		String stringTimeLeft = "Pulling winner in ";
+		if(timeLeft >= 60 * 60 * 24) {
+			int days = (int) Math.floor(timeLeft / (60 * 60 * 24));
+			timeLeft -= 60 * 60 * 24 * days;
+			if(days == 1) {
+				stringTimeLeft += Integer.toString(days) + " day, ";
+			} else {
+				stringTimeLeft += Integer.toString(days) + " days, ";
+			}
+		}
+		if(timeLeft >= 60 * 60) {
+			int hours = (int) Math.floor(timeLeft / (60 * 60));
+			timeLeft -= 60 * 60 * hours;
+			if(hours == 1) {
+				stringTimeLeft += Integer.toString(hours) + " hour, ";
+			} else {
+				stringTimeLeft += Integer.toString(hours) + " hours, ";
+			}
+		}
+		if(timeLeft >= 60) {
+			int minutes = (int) Math.floor(timeLeft / (60));
+			timeLeft -= 60 * minutes;
+			if(minutes == 1) {
+				stringTimeLeft += Integer.toString(minutes) + " minute ";
+			} else {
+				stringTimeLeft += Integer.toString(minutes) + " minutes ";
+			}
+		} else {
+			// Lets remove the last comma, since it will look bad with 2 days, 3 hours, and 14 seconds.
+			stringTimeLeft.substring(0, stringTimeLeft.length()-1);
+		}
+		int secs = (int) timeLeft;
+		if(!stringTimeLeft.equalsIgnoreCase("Pulling winner in ")) {
+			stringTimeLeft += "and ";
+		}
+		if(secs == 1) {
+			stringTimeLeft += secs + " second.";
+		} else {
+			stringTimeLeft += secs + " seconds.";
+		}
+		
+		return stringTimeLeft;
+	}
+	
+	
 }
