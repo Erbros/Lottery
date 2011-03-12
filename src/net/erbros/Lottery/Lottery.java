@@ -303,22 +303,22 @@ public class Lottery extends JavaPlugin{
 	}
 	
 	public boolean getWinner() {
-		String[] players = null;
+		ArrayList<String> players = new ArrayList<String>();
 		try {
 		    BufferedReader in = new BufferedReader(new FileReader(getDataFolder() + "\\lotteryPlayers.txt"));
 		    String str;
 		    int i = 0;
 		    while ((str = in.readLine()) != null) {
 		    	// add players to array.
-		    	players[i] = str.toString();
+		    	players.add(str.toString());
 		    }
 		    in.close();
 		} catch (IOException e) {
 		}
-		if(players.length <= 0) {
+		if(players.isEmpty() == true) {
 			return false;
 		} else {
-			int rand = new Random().nextInt(players.length);
+			int rand = new Random().nextInt(players.size());
 		}
 		return true;
 	}
