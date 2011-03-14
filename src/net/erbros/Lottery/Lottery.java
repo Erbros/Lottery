@@ -72,7 +72,7 @@ public class Lottery extends JavaPlugin{
 		getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_ENABLE, PluginListener, Priority.Monitor, this);
 		
 		// Gets version number and writes out starting line to console.
-        PluginDescriptionFile pdfFile = this.getDescription();
+		PluginDescriptionFile pdfFile = this.getDescription();
 		System.out.println( pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled" );
 		
 		// Start Registration. Thanks TheYeti.
