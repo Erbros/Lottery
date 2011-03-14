@@ -179,10 +179,10 @@ public class Lottery extends JavaPlugin{
 		if(timerStarted == true) {
 			timer.cancel();
 			timer.purge();
-			extendtime = nextexec - System.currentTimeMillis();
+			extendtime = extendTime();
 		} else {
 			// Get time until lottery drawing.
-			extendtime = extendTime();
+			extendtime = nextexec - System.currentTimeMillis();
 		}
 		// If the time is passed (perhaps the server was offline?), draw lottery at once.
 		
