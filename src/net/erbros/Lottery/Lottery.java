@@ -39,9 +39,9 @@ public class Lottery extends JavaPlugin{
 	// Starting timer we are going to use for scheduling.
 	Timer timer;
 	// The iConomy variables.
-    private static PluginListener PluginListener = null;
-    private static iConomy iConomy = null;
-    private static org.bukkit.Server Server = null;
+	private static PluginListener PluginListener = null;
+	private static iConomy iConomy = null;
+	private static org.bukkit.Server Server = null;
 
 	
 	// Doing some logging. Thanks cyklo 
@@ -68,11 +68,11 @@ public class Lottery extends JavaPlugin{
 		Server = getServer();
 		PluginListener = new PluginListener();
 
-        // Event Registration
-        getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_ENABLE, PluginListener, Priority.Monitor, this);
+		// Event Registration
+		getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_ENABLE, PluginListener, Priority.Monitor, this);
 		
 		// Gets version number and writes out starting line to console.
-		PluginDescriptionFile pdfFile = this.getDescription();
+        PluginDescriptionFile pdfFile = this.getDescription();
 		System.out.println( pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled" );
 		
 		// Start Registration. Thanks TheYeti.
