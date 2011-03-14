@@ -338,6 +338,7 @@ public class Lottery extends JavaPlugin{
 		} catch (IOException e) {
 		}
 		if(players.isEmpty() == true) {
+			Server.broadcastMessage("[LOTTERY] No tickets sold this round. Thats a shame.");
 			return false;
 		} else {
 			int rand = new Random().nextInt(players.size());
