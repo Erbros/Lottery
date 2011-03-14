@@ -28,12 +28,17 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.util.config.Configuration;
 
+import com.nijiko.coelho.iConomy.iConomy;
+import com.nijiko.coelho.iConomy.system.Account;
+
+import net.erbros.Lottery.*;
+
+
 
 
 public class Lottery extends JavaPlugin{
 
 	protected HashMap<String, Boolean> status;
-	protected LotteryPlayerListener playerListener;
 	protected Integer cost;
 	protected Integer hours;
 	protected Long nextexec;
@@ -41,6 +46,11 @@ public class Lottery extends JavaPlugin{
 	protected Configuration c;
 	// Starting timer we are going to use for scheduling.
 	Timer timer;
+	// The iConomy variables.
+    private static PluginListener PluginListener = null;
+    private static iConomy iConomy = null;
+    private static org.bukkit.Server Server = null;
+
 	
 	// Doing some logging. Thanks cyklo 
 	protected final Logger log;
@@ -61,6 +71,14 @@ public class Lottery extends JavaPlugin{
 
 	@Override
 	public void onEnable() {
+		
+		// Check if we got iConomy support. If not, no need in starting plugin.
+		Server = getServer();
+
+		PluginListener = new PluginListener();
+
+        // Event Registration
+        getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_ENABLE, PluginListener, Priority.Monitor, this);
 		
 		// Gets version number and writes out starting line to console.
 		PluginDescriptionFile pdfFile = this.getDescription();
@@ -94,15 +112,15 @@ public class Lottery extends JavaPlugin{
 				// If its just /lottery, and no args.
 				if(args.length == 0) {
 					sender.sendMessage("[LOTTERY] " + timeUntil(nextexec));
-					sender.sendMessage("[LOTTERY] You can buy a ticket for " + cost + " coins with /lottery buy");
+					sender.sendMessage("[LOTTERY] You can buy a ticket for " +  iConomy.getBank().format(cost) + " with /lottery buy");
 					log.info("TimeUntil()");
 				} else {
 					if(args[0].equals("buy")) {
 						Player player = (Player) sender;
 						
 						if(addPlayer(player) == true) {
-							// You got your ticket. Change coins to iconomy config later.
-							sender.sendMessage("[LOTTERY] You got your lottery ticket for " + cost + " coins");
+							// You got your ticket. 
+							sender.sendMessage("[LOTTERY] You got your lottery ticket for " + iConomy.getBank().format(cost));
 						} else {
 							// You can't buy more than one ticket.
 							sender.sendMessage("[LOTTERY] You already had a ticket. Wait until next round to buy another.");
@@ -115,17 +133,13 @@ public class Lottery extends JavaPlugin{
 			}
         });
 
-		/*
 		
-		PluginManager pm = getServer().getPluginManager();
-
-		pm.registerEvent(Event.Type.PLAYER_CHAT, playerListener, Priority.Normal, this);
-		*/	
+		
 		// Is the date we are going to draw the lottery set? If not, we should do it.
 		if(c.getProperty("nextexec") == null) {
 			
 			// Set first time to be config hours later? Millisecs, * 1000.
-			nextexec = System.currentTimeMillis() + ExtendTime();
+			nextexec = System.currentTimeMillis() + extendTime();
 			c.setProperty("nextexec", nextexec);
 			
 	        if (!getConfiguration().save())
@@ -151,10 +165,9 @@ public class Lottery extends JavaPlugin{
 		// This shows the date in a human friendly way. 
 		// Date humandate = new Date(nextexec);
 		
-		
 	}
 
-	public long ExtendTime() {
+	public long extendTime() {
 		Configuration c = getConfiguration();
 		hours = Integer.parseInt(c.getProperty("hours").toString());
 		Long extendTime = Long.parseLong(hours.toString()) * 2 * 1000;
@@ -169,10 +182,11 @@ public class Lottery extends JavaPlugin{
 			nextexec = Long.parseLong(c.getProperty("nextexec").toString());
 			
 			if(nextexec > 0 && System.currentTimeMillis() > nextexec) {
-				// Did anyone buy tickets?
+				// Get the winner, if any. And remove file so we are ready for new round.
+				getWinner();
 				System.out.println("LOTTERY TIME!");
 				System.out.println(getDataFolder() + "\\lotteryPlayers.txt");
-				nextexec = System.currentTimeMillis() + ExtendTime();
+				nextexec = System.currentTimeMillis() + extendTime();
 	
 				c.setProperty("nextexec",nextexec);
 				if (!getConfiguration().save())
@@ -187,17 +201,20 @@ public class Lottery extends JavaPlugin{
 
 	private void StartTimerSchedule() {
 		
+		long extendtime = 0;
 		//Cancel any existing timers.
 		if(timerStarted == true) {
 			timer.cancel();
 			timer.purge();
+			extendtime = nextexec - System.currentTimeMillis();
+		} else {
+			// Get time until lottery drawing.
+			extendtime = extendTime();
 		}
-		// Get time until lottery drawing.
-		long extendtime = ExtendTime();
 		// If the time is passed (perhaps the server was offline?), draw lottery at once.
 		
-		if(nextexec - System.currentTimeMillis() <= 0) {
-			extendtime = 10000;
+		if(extendtime <= 0) {
+			extendtime = 3000;
 		}
 		// Start new timer.
 		timer = new Timer();
@@ -230,6 +247,10 @@ public class Lottery extends JavaPlugin{
 		    out.newLine();
 		    out.close();
 		    
+		    // Removing coins from players account.
+		    Account account = iConomy.getBank().getAccount(player.getName());
+		    account.subtract(cost);
+		    
 		} catch (IOException e) {
 		}
 
@@ -258,7 +279,7 @@ public class Lottery extends JavaPlugin{
 
 		double timeLeft = Double.parseDouble(Long.toString(((time - System.currentTimeMillis()) / 1000)));
 		// How many days left?
-		String stringTimeLeft = "Pulling winner in ";
+		String stringTimeLeft = "Pulling winner in";
 		if(timeLeft >= 60 * 60 * 24) {
 			int days = (int) Math.floor(timeLeft / (60 * 60 * 24));
 			timeLeft -= 60 * 60 * 24 * days;
@@ -287,10 +308,12 @@ public class Lottery extends JavaPlugin{
 			}
 		} else {
 			// Lets remove the last comma, since it will look bad with 2 days, 3 hours, and 14 seconds.
-			stringTimeLeft.substring(0, stringTimeLeft.length()-1);
+			if(!stringTimeLeft.equalsIgnoreCase("Pulling winner in")) {
+				stringTimeLeft = stringTimeLeft.substring(0, stringTimeLeft.length()-1);
+			}
 		}
 		int secs = (int) timeLeft;
-		if(!stringTimeLeft.equalsIgnoreCase("Pulling winner in ")) {
+		if(stringTimeLeft.equalsIgnoreCase("Pulling winner in")) {
 			stringTimeLeft += "and ";
 		}
 		if(secs == 1) {
@@ -307,7 +330,6 @@ public class Lottery extends JavaPlugin{
 		try {
 		    BufferedReader in = new BufferedReader(new FileReader(getDataFolder() + "\\lotteryPlayers.txt"));
 		    String str;
-		    int i = 0;
 		    while ((str = in.readLine()) != null) {
 		    	// add players to array.
 		    	players.add(str.toString());
@@ -319,8 +341,42 @@ public class Lottery extends JavaPlugin{
 			return false;
 		} else {
 			int rand = new Random().nextInt(players.size());
+			int amount = players.size()*cost;
+			Account account = iConomy.getBank().getAccount(players.get(rand));
+			account.add(amount);
+			log.info("Rand.player: " + players.get(rand));
+			// Announce the winner:
+			Server.broadcastMessage("[LOTTERY] Congratulations to " + players.get(rand) + " for winning " + iConomy.getBank().format(amount));
+			Server.broadcastMessage("[LOTTERY] There was in total " + players.size() + " players with a lottery ticket.");
+			
+			// Clear file.
+			try {
+			    BufferedWriter out = new BufferedWriter(new FileWriter(getDataFolder() + "\\lotteryPlayers.txt",false));
+			    out.write("");
+			    out.close();
+			    
+			} catch (IOException e) {
+			}
 		}
 		return true;
 	}
+	
+    public static org.bukkit.Server getBukkitServer() {
+        return Server;
+    }
+
+    public static iConomy getiConomy() {
+        return iConomy;
+    }
+    
+    public static boolean setiConomy(iConomy plugin) {
+        if (iConomy == null) {
+            iConomy = plugin;
+        } else {
+            return false;
+        }
+        return true;
+    }
+
 	
 }
