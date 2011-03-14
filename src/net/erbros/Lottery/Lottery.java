@@ -92,13 +92,6 @@ public class Lottery extends JavaPlugin{
 		getCommand("lottery").setExecutor(new CommandExecutor() {
 			@Override
 			public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-				log.info("sender: " + sender.toString());
-				log.info("command: " + command.getName());
-				log.info("label: " + label);
-				
-				for(int i = 0; i < args.length; i++) {
-					log.info("args[" + i + "]: " + args[i]);
-				}
 				
 				// If its just /lottery, and no args.
 				if(args.length == 0) {
@@ -115,10 +108,11 @@ public class Lottery extends JavaPlugin{
 							// You can't buy more than one ticket.
 							sender.sendMessage("[LOTTERY] You already had a ticket. Wait until next round to buy another.");
 						}
+					} else {
+						sender.sendMessage("[LOTTERY] Hoy, I don't recognize that command!");
 					}
 				}
 				
-
 				return true;
 			}
         });
