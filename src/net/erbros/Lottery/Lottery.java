@@ -2,21 +2,15 @@ package net.erbros.Lottery;
 //All the imports
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Logger;
 
-import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -25,20 +19,18 @@ import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.util.config.Configuration;
 
 import com.nijiko.coelho.iConomy.iConomy;
 import com.nijiko.coelho.iConomy.system.Account;
 
-import net.erbros.Lottery.*;
+import net.erbros.Lottery.PluginListener;
 
 
 
 
 public class Lottery extends JavaPlugin{
 
-	protected HashMap<String, Boolean> status;
 	protected Integer cost;
 	protected Integer hours;
 	protected Long nextexec;
@@ -74,7 +66,6 @@ public class Lottery extends JavaPlugin{
 		
 		// Check if we got iConomy support. If not, no need in starting plugin.
 		Server = getServer();
-
 		PluginListener = new PluginListener();
 
         // Event Registration
@@ -113,7 +104,6 @@ public class Lottery extends JavaPlugin{
 				if(args.length == 0) {
 					sender.sendMessage("[LOTTERY] " + timeUntil(nextexec));
 					sender.sendMessage("[LOTTERY] You can buy a ticket for " +  iConomy.getBank().format(cost) + " with /lottery buy");
-					log.info("TimeUntil()");
 				} else {
 					if(args[0].equals("buy")) {
 						Player player = (Player) sender;
@@ -156,15 +146,6 @@ public class Lottery extends JavaPlugin{
 		// This could, and should, probably be fixed nicer, but for now it'll have to do.
 		// Adding timer that waits the time between nextexec and time now.
 		
-		
-		// Make clock that waits 24 hours?
-		
-		// Have the time we are waiting for come? 
-		// Calendar.getInstance().getTime().after(nextexec)
-		
-		// This shows the date in a human friendly way. 
-		// Date humandate = new Date(nextexec);
-		
 	}
 
 	public long extendTime() {
@@ -184,8 +165,6 @@ public class Lottery extends JavaPlugin{
 			if(nextexec > 0 && System.currentTimeMillis() > nextexec) {
 				// Get the winner, if any. And remove file so we are ready for new round.
 				getWinner();
-				System.out.println("LOTTERY TIME!");
-				System.out.println(getDataFolder() + "\\lotteryPlayers.txt");
 				nextexec = System.currentTimeMillis() + extendTime();
 	
 				c.setProperty("nextexec",nextexec);
@@ -259,20 +238,18 @@ public class Lottery extends JavaPlugin{
 	
 	public void makeConfig() {
 		c = getConfiguration();
-		if(c != null) {
-			if(c.getProperty("cost") == null) {
-				
-				c.setProperty("cost", "5");
-				c.setProperty("hours", "24");
-				
-			    if (!getConfiguration().save())
-			    {
-			        log.warning("Unable to persist configuration files, changes will not be saved.");
-			    }
-			}
-		} else {
-			log.warning("c == null");
+	
+		if(c.getProperty("cost") == null) {
+			
+			c.setProperty("cost", "5");
+			c.setProperty("hours", "24");
+			
+		    if (!getConfiguration().save())
+		    {
+		        log.warning("Unable to persist configuration files, changes will not be saved.");
+		    }
 		}
+		
 	}
 	
 	public String timeUntil(long time) {
@@ -308,12 +285,12 @@ public class Lottery extends JavaPlugin{
 			}
 		} else {
 			// Lets remove the last comma, since it will look bad with 2 days, 3 hours, and 14 seconds.
-			if(!stringTimeLeft.equalsIgnoreCase("Pulling winner in")) {
+			if(stringTimeLeft.equalsIgnoreCase("Pulling winner in") == false) {
 				stringTimeLeft = stringTimeLeft.substring(0, stringTimeLeft.length()-1);
 			}
 		}
 		int secs = (int) timeLeft;
-		if(stringTimeLeft.equalsIgnoreCase("Pulling winner in")) {
+		if(stringTimeLeft.equalsIgnoreCase("Pulling winner in") == false) {
 			stringTimeLeft += "and ";
 		}
 		if(secs == 1) {
@@ -345,7 +322,6 @@ public class Lottery extends JavaPlugin{
 			int amount = players.size()*cost;
 			Account account = iConomy.getBank().getAccount(players.get(rand));
 			account.add(amount);
-			log.info("Rand.player: " + players.get(rand));
 			// Announce the winner:
 			Server.broadcastMessage("[LOTTERY] Congratulations to " + players.get(rand) + " for winning " + iConomy.getBank().format(amount));
 			Server.broadcastMessage("[LOTTERY] There was in total " + players.size() + " players with a lottery ticket.");
