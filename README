@@ -12,3 +12,5 @@ Version 0.1
 
 Todo:
  - Records of the last winner? 3 last winners? Including money.
+ - A set number of tickets available, user gets to choose which one. If nobody selected right ticket, add money to jackpot for next round.
+ - Use regular gold ingot instead of iConomy money. Perhaps even selectable material.
