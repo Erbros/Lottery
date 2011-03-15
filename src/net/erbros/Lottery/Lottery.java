@@ -122,7 +122,7 @@ public class Lottery extends JavaPlugin{
 					} 
 					
 				} else {
-					if(args[0].equals("buy")) {
+					if(args[0].equalsIgnoreCase("buy")) {
 						Player player = (Player) sender;
 						
 						if(addPlayer(player) == true) {
@@ -133,11 +133,7 @@ public class Lottery extends JavaPlugin{
 							sender.sendMessage("[LOTTERY] Either you can't afford a ticket, or you got one already.");
 						}
 					} else if(args[0].equalsIgnoreCase("claim")) {
-						// Check the file for claims.
-						
-						// Perhaps add 1 item at a time?
-						Player player = (Player) sender;
-						//player.getInventory().getItem(material).setAmount(player.getInventory().getItem(material).getAmount() + amount);
+						removeFromClaimList((Player) sender);
 					} else {
 						sender.sendMessage("[LOTTERY] Hey, I don't recognize that command!");
 					}
@@ -417,7 +413,7 @@ public class Lottery extends JavaPlugin{
 		}
 		// Then first add new winner, and after that the old winners.
 		try {
-		    BufferedWriter out = new BufferedWriter(new FileWriter(getDataFolder() + "\\lotteryWinners.txt",true));
+		    BufferedWriter out = new BufferedWriter(new FileWriter(getDataFolder() + "\\lotteryWinners.txt"));
 		    out.write(playerName + ":" + winningAmount + ":" + winningMaterial);
 		    out.newLine();
 		    //How long is the array? We just want the top 9. Removing index 9 since its starting at 0.
@@ -445,6 +441,56 @@ public class Lottery extends JavaPlugin{
 		    out.write(playerName + ":" + winningAmount + ":" + winningMaterial);
 		    out.newLine();
 			out.close();
+		} catch (IOException e) {
+		}
+		return true;
+	}
+	
+	public boolean removeFromClaimList(Player player) {
+		// Do the player have something to claim?
+		ArrayList<String> otherPlayersClaims = new ArrayList<String>();
+		ArrayList<String> claimArray = new ArrayList<String>();
+		try {
+		    BufferedReader in = new BufferedReader(new FileReader(getDataFolder() + "\\lotteryClaim.txt"));
+		    String str;
+		    while ((str = in.readLine()) != null) {
+		    	String[] split = str.split(":");
+		        if(split[0].equals(player.getName())) {
+		        	// Adding this to player claim.
+		        	claimArray.add(str);
+		        } else {
+		        	otherPlayersClaims.add(str);
+		        }
+		    }
+		    in.close();
+		} catch (IOException e) {
+		}
+		
+		// Did the user have any claims?
+		if(claimArray.size() == 0) {
+			return false;
+		}
+		// Do a bit payout.
+		for(int i = 0; i < claimArray.size()-1; i++) {
+			String[] split = claimArray.get(i).split(":");
+			int claimAmount = Integer.parseInt(split[1]);
+			int claimMaterial = Integer.parseInt(split[2]);
+			player.getInventory().getItem(claimMaterial).setAmount(player.getInventory().getItem(claimMaterial).getAmount() + claimAmount);
+			player.sendMessage("You just claimed " + claimAmount + " " + claimMaterial + ".");
+		}
+		
+		
+	    // Add the other players claims to the file again.
+		try {
+		    BufferedWriter out = new BufferedWriter(new FileWriter(getDataFolder() + "\\lotteryClaim.txt"));
+		    for(int i = 0; i < otherPlayersClaims.size() - 1; i++) {
+		    	out.write(otherPlayersClaims.get(i));
+		    	out.newLine();
+		    }
+		    
+		    out.close();
+		    
+		    
 		} catch (IOException e) {
 		}
 		return true;
