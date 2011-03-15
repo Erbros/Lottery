@@ -97,6 +97,10 @@ public class Lottery extends JavaPlugin{
 				if(args.length == 0) {
 					sender.sendMessage("[LOTTERY] " + timeUntil(nextexec));
 					sender.sendMessage("[LOTTERY] You can buy a ticket for " +  iConomy.getBank().format(cost) + " with /lottery buy");
+					// Does lastwinner exist and != null? Show.
+					if(c.getProperty("lastwinner") != null) {
+						sender.sendMessage("[LOTTERY] Last winner: " + c.getProperty("lastwinner") + "(" + iConomy.getBank().format(c.getProperty("lastwinneramount")));
+					}
 				} else {
 					if(args[0].equals("buy")) {
 						Player player = (Player) sender;
@@ -319,6 +323,11 @@ public class Lottery extends JavaPlugin{
 			// Announce the winner:
 			Server.broadcastMessage("[LOTTERY] Congratulations to " + players.get(rand) + " for winning " + iConomy.getBank().format(amount));
 			Server.broadcastMessage("[LOTTERY] There was in total " + players.size() + " players with a lottery ticket.");
+			
+			// Add last winner to config.
+			c = getConfiguration();
+			c.setProperty("lastwinner", players.get(rand));
+			c.setProperty("lastwinneramount", amount);
 			
 			// Clear file.
 			try {
