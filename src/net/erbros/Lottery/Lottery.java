@@ -11,6 +11,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Logger;
 
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -35,6 +36,8 @@ public class Lottery extends JavaPlugin{
 	protected Integer hours;
 	protected Long nextexec;
 	protected Boolean timerStarted;
+	protected Boolean useiConomy;
+	protected Integer material;
 	protected Configuration c;
 	// Starting timer we are going to use for scheduling.
 	Timer timer;
@@ -64,13 +67,15 @@ public class Lottery extends JavaPlugin{
 	@Override
 	public void onEnable() {
 		
-		// Check if we got iConomy support. If not, no need in starting plugin.
-		Server = getServer();
-		PluginListener = new PluginListener();
-
-		// Event Registration
-		getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_ENABLE, PluginListener, Priority.Monitor, this);
+		// Do we need iConomy?
+		if(useiConomy == true) {
+			// Check if we got iConomy support. If not, no need in starting plugin.
+			Server = getServer();
+			PluginListener = new PluginListener();
 		
+			// Event Registration
+			getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_ENABLE, PluginListener, Priority.Monitor, this);
+		}
 		// Gets version number and writes out starting line to console.
 		PluginDescriptionFile pdfFile = this.getDescription();
 		System.out.println( pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled" );
@@ -82,25 +87,40 @@ public class Lottery extends JavaPlugin{
 		
 		makeConfig();
 		
-		String convert = c.getProperty("cost").toString();
-		cost = Integer.parseInt(convert);
-		convert = c.getProperty("hours").toString();
-		hours = Integer.parseInt(convert);
+		cost = Integer.parseInt(c.getProperty("cost").toString());
+		hours = Integer.parseInt(c.getProperty("hours").toString());
+		useiConomy = Boolean.parseBoolean(c.getProperty("useiConomy").toString());
+		material = Integer.parseInt(c.getProperty("material").toString());
+		
 		
 		// Listen for some player interaction perhaps? Thanks to cyklo :)
 		
 		getCommand("lottery").setExecutor(new CommandExecutor() {
 			@Override
 			public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-				
+				c = getConfiguration();
 				// If its just /lottery, and no args.
 				if(args.length == 0) {
 					sender.sendMessage("[LOTTERY] " + timeUntil(nextexec));
 					sender.sendMessage("[LOTTERY] You can buy a ticket for " +  iConomy.getBank().format(cost) + " with /lottery buy");
 					// Does lastwinner exist and != null? Show.
-					if(c.getProperty("lastwinner") != null) {
-						sender.sendMessage("[LOTTERY] Last winner: " + c.getProperty("lastwinner") + "(" + iConomy.getBank().format(c.getProperty("lastwinneramount").toString()));
+					// Show different things if we are using iConomy over material.
+					if(useiConomy == true) {
+						if(c.getProperty("lastwinner") != null) {
+							sender.sendMessage("[LOTTERY] Last winner: " + c.getProperty("lastwinner") + "(" + iConomy.getBank().format(c.getProperty("lastwinneramount").toString()) + ")");
+						} 
+						
+					} else {
+						if(c.getProperty("lastwinner") != null) {
+							sender.sendMessage("[LOTTERY] Last winner: " + c.getProperty("lastwinner") + "(" + c.getProperty("lastwinneramount").toString() + " " + Material.getMaterial(material) + ")");
+						} 
 					}
+					
+					// if not iConomy, make players check for claims.
+					if(useiConomy == false) {
+						sender.sendMessage("[LOTTERY] Check if you have won with /lottery claim");
+					} 
+					
 				} else {
 					if(args[0].equals("buy")) {
 						Player player = (Player) sender;
@@ -110,10 +130,16 @@ public class Lottery extends JavaPlugin{
 							sender.sendMessage("[LOTTERY] You got your lottery ticket for " + iConomy.getBank().format(cost));
 						} else {
 							// You can't buy more than one ticket.
-							sender.sendMessage("[LOTTERY] You already had a ticket. Wait until next round to buy another.");
+							sender.sendMessage("[LOTTERY] Either you can't afford a ticket, or you got one already.");
 						}
+					} else if(args[0].equalsIgnoreCase("claim")) {
+						// Check the file for claims.
+						
+						// Perhaps add 1 item at a time?
+						Player player = (Player) sender;
+						//player.getInventory().getItem(material).setAmount(player.getInventory().getItem(material).getAmount() + amount);
 					} else {
-						sender.sendMessage("[LOTTERY] Hoy, I don't recognize that command!");
+						sender.sendMessage("[LOTTERY] Hey, I don't recognize that command!");
 					}
 				}
 				
@@ -218,15 +244,33 @@ public class Lottery extends JavaPlugin{
 		} catch (IOException e) {
 		}
 		
+		// Do the ticket cost money or item?
+	    if(useiConomy == false) {
+	    	// Do the user have the item?
+	    	if(player.getInventory().contains(material, cost)) {
+	    		// Remove items.
+	    		player.getInventory().getItem(material).setAmount(player.getInventory().getItem(material).getAmount() - cost);
+	    	} else {
+	    		return false;
+	    	}
+	    } else {
+	    	// Do the player have money?
+	    	Account account = iConomy.getBank().getAccount(player.getName());
+	    	if(account.hasOver(4)) {
+	    		// Removing coins from players account.
+	    		account.subtract(cost);
+	    	} else {
+	    		return false;
+	    	}
+	    	
+	    }
+	    // If the user paid, continue. Else we would already have sent 
 		try {
 		    BufferedWriter out = new BufferedWriter(new FileWriter(getDataFolder() + "\\lotteryPlayers.txt",true));
 		    out.write(player.getName());
 		    out.newLine();
 		    out.close();
 		    
-		    // Removing coins from players account.
-		    Account account = iConomy.getBank().getAccount(player.getName());
-		    account.subtract(cost);
 		    
 		} catch (IOException e) {
 		}
@@ -328,10 +372,18 @@ public class Lottery extends JavaPlugin{
 		} else {
 			int rand = new Random().nextInt(players.size());
 			int amount = players.size()*cost;
-			Account account = iConomy.getBank().getAccount(players.get(rand));
-			account.add(amount);
-			// Announce the winner:
-			Server.broadcastMessage("[LOTTERY] Congratulations to " + players.get(rand) + " for winning " + iConomy.getBank().format(amount));
+			if(useiConomy == true) {
+				Account account = iConomy.getBank().getAccount(players.get(rand));
+				account.add(amount);
+				// Announce the winner:
+				Server.broadcastMessage("[LOTTERY] Congratulations to " + players.get(rand) + " for winning " + iConomy.getBank().format(amount));
+				addToWinnerList(players.get(rand), amount, 0);
+			} else {
+				Server.broadcastMessage("[LOTTERY] Congratulations to " + players.get(rand) + " for winning " + amount + " " + Material.getMaterial(material));
+				Server.broadcastMessage("[LOTTERY] The winner can use /lottery claim to claim the winnings.");
+				addToWinnerList(players.get(rand), amount, material);
+				addToClaimList(players.get(rand), amount, material.intValue());
+				}
 			Server.broadcastMessage("[LOTTERY] There was in total " + players.size() + " players with a lottery ticket.");
 			
 			// Add last winner to config.
@@ -347,6 +399,53 @@ public class Lottery extends JavaPlugin{
 			    
 			} catch (IOException e) {
 			}
+		}
+		return true;
+	}
+	
+	public boolean addToWinnerList(String playerName, int winningAmount, int winningMaterial) {
+		// This list should be 10 players long. 
+		ArrayList<String> winnerArray = new ArrayList<String>();
+		try {
+		    BufferedReader in = new BufferedReader(new FileReader(getDataFolder() + "\\lotteryWinners.txt"));
+		    String str;
+		    while ((str = in.readLine()) != null) {
+		    	winnerArray.add(str);
+		    }
+		    in.close();
+		} catch (IOException e) {
+		}
+		// Then first add new winner, and after that the old winners.
+		try {
+		    BufferedWriter out = new BufferedWriter(new FileWriter(getDataFolder() + "\\lotteryWinners.txt",true));
+		    out.write(playerName + ":" + winningAmount + ":" + winningMaterial);
+		    out.newLine();
+		    //How long is the array? We just want the top 9. Removing index 9 since its starting at 0.
+		    if(winnerArray.size() > 9) {
+				winnerArray.remove(9);
+		    }
+		    // Go trough list and output lines.
+			for (int i = 1; i < 9; i++) {
+				out.write(winnerArray.get(i));
+				out.newLine();
+			}
+			
+			out.close();
+		    
+		    
+		} catch (IOException e) {
+		}
+		return true;
+	}
+	
+	public boolean addToClaimList(String playerName, int winningAmount, int winningMaterial) {
+		// Then first add new winner, and after that the old winners.
+		try {
+		    BufferedWriter out = new BufferedWriter(new FileWriter(getDataFolder() + "\\lotteryClaim.txt",true));
+		    out.write(playerName + ":" + winningAmount + ":" + winningMaterial);
+		    out.newLine();
+			out.close();
+		} catch (IOException e) {
 		}
 		return true;
 	}
