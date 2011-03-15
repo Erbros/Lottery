@@ -237,10 +237,20 @@ public class Lottery extends JavaPlugin{
 	public void makeConfig() {
 		c = getConfiguration();
 	
-		if(c.getProperty("cost") == null) {
+		if(c.getProperty("cost") == null || c.getProperty("hours") == null || c.getProperty("material") == null  || c.getProperty("useiConomy") == null ) {
 			
-			c.setProperty("cost", "5");
-			c.setProperty("hours", "24");
+			if(c.getProperty("cost") == null) {
+				c.setProperty("cost", "5");
+			}
+			if(c.getProperty("hours") == null) {
+				c.setProperty("hours", "24");
+			}
+			if(c.getProperty("material") == null) {
+				c.setProperty("material", "266");
+			}
+			if(c.getProperty("useiConomy") == null) {
+				c.setProperty("useiConomy", "true");
+			}
 			
 		    if (!getConfiguration().save())
 		    {
