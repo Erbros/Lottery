@@ -99,7 +99,7 @@ public class Lottery extends JavaPlugin{
 					sender.sendMessage("[LOTTERY] You can buy a ticket for " +  iConomy.getBank().format(cost) + " with /lottery buy");
 					// Does lastwinner exist and != null? Show.
 					if(c.getProperty("lastwinner") != null) {
-						sender.sendMessage("[LOTTERY] Last winner: " + c.getProperty("lastwinner") + "(" + iConomy.getBank().format(c.getProperty("lastwinneramount")));
+						sender.sendMessage("[LOTTERY] Last winner: " + c.getProperty("lastwinner") + "(" + iConomy.getBank().format(c.getProperty("lastwinneramount").toString()));
 					}
 				} else {
 					if(args[0].equals("buy")) {
@@ -254,7 +254,7 @@ public class Lottery extends JavaPlugin{
 
 		double timeLeft = Double.parseDouble(Long.toString(((time - System.currentTimeMillis()) / 1000)));
 		// How many days left?
-		String stringTimeLeft = "Pulling winner in";
+		String stringTimeLeft = "Pulling winner in ";
 		if(timeLeft >= 60 * 60 * 24) {
 			int days = (int) Math.floor(timeLeft / (60 * 60 * 24));
 			timeLeft -= 60 * 60 * 24 * days;
@@ -283,12 +283,12 @@ public class Lottery extends JavaPlugin{
 			}
 		} else {
 			// Lets remove the last comma, since it will look bad with 2 days, 3 hours, and 14 seconds.
-			if(stringTimeLeft.equalsIgnoreCase("Pulling winner in") == false) {
+			if(stringTimeLeft.equalsIgnoreCase("Pulling winner in ") == false) {
 				stringTimeLeft = stringTimeLeft.substring(0, stringTimeLeft.length()-1);
 			}
 		}
 		int secs = (int) timeLeft;
-		if(stringTimeLeft.equalsIgnoreCase("Pulling winner in") == false) {
+		if(stringTimeLeft.equalsIgnoreCase("Pulling winner in ") == false) {
 			stringTimeLeft += "and ";
 		}
 		if(secs == 1) {
