@@ -14,3 +14,4 @@ Todo:
  - A set number of tickets available, user gets to choose which one. If nobody selected right ticket, add money to jackpot for next round.
  - Use regular gold ingot instead of iConomy money. Perhaps even selectable material.
  - Make reading of config into variables more fullproof to user mistakes.
+ - Make better return from addUser(). Do not use boolean.
