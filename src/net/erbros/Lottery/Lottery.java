@@ -526,7 +526,7 @@ public class Lottery extends JavaPlugin{
 	    // Add the other players claims to the file again.
 		try {
 		    BufferedWriter out = new BufferedWriter(new FileWriter(getDataFolder() + "\\lotteryClaim.txt"));
-		    for(int i = 0; i < otherPlayersClaims.size() - 1; i++) {
+		    for(int i = 0; i < otherPlayersClaims.size(); i++) {
 		    	out.write(otherPlayersClaims.get(i));
 		    	out.newLine();
 		    }
