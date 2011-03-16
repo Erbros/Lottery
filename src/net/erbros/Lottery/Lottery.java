@@ -107,7 +107,7 @@ public class Lottery extends JavaPlugin{
 				if(args.length == 0) {
 					sender.sendMessage("[LOTTERY] " + timeUntil(nextexec));
 					if(useiConomy == false) {
-						sender.sendMessage("[LOTTERY] You can buy a ticket for " +  cost + " " + Material.getMaterial(material) + " with /lottery buy");
+						sender.sendMessage("[LOTTERY] You can buy a ticket for " +  cost + " " + formatMaterialName(material) + " with /lottery buy");
 					} else {
 						sender.sendMessage("[LOTTERY] You can buy a ticket for " +  iConomy.getBank().format(cost) + " with /lottery buy");
 					}
@@ -121,7 +121,7 @@ public class Lottery extends JavaPlugin{
 						
 					} else {
 						if(c.getProperty("lastwinner") != null) {
-							sender.sendMessage("[LOTTERY] Last winner: " + c.getProperty("lastwinner") + " (" + c.getProperty("lastwinneramount").toString() + " " + Material.getMaterial(material) + ")");
+							sender.sendMessage("[LOTTERY] Last winner: " + c.getProperty("lastwinner") + " (" + c.getProperty("lastwinneramount").toString() + " " + formatMaterialName(material) + ")");
 						} 
 					}
 					
@@ -137,7 +137,7 @@ public class Lottery extends JavaPlugin{
 						if(addPlayer(player) == true) {
 							// You got your ticket. 
 							if(useiConomy == false) {
-								sender.sendMessage("[LOTTERY] You got your lottery ticket for " +  cost + " " + Material.getMaterial(material));
+								sender.sendMessage("[LOTTERY] You got your lottery ticket for " +  cost + " " + formatMaterialName(material));
 							} else {
 								sender.sendMessage("[LOTTERY] You got your lottery ticket for " + iConomy.getBank().format(cost));
 							}
@@ -181,7 +181,7 @@ public class Lottery extends JavaPlugin{
 							if(split[2].equalsIgnoreCase("0")) {
 								winListPrice = iConomy.getBank().format(Double.parseDouble(split[1]));
 							} else {
-								winListPrice = split[1] + " " + Material.getMaterial(Integer.parseInt(split[2]));
+								winListPrice = split[1] + " " + formatMaterialName(Integer.parseInt(split[2])).toString();
 							}
 							sender.sendMessage((i + 1) + ". " + split[0] + " " + winListPrice);
 						}
@@ -446,7 +446,7 @@ public class Lottery extends JavaPlugin{
 				Server.broadcastMessage("[LOTTERY] Congratulations to " + players.get(rand) + " for winning " + iConomy.getBank().format(amount));
 				addToWinnerList(players.get(rand), amount, 0);
 			} else {
-				Server.broadcastMessage("[LOTTERY] Congratulations to " + players.get(rand) + " for winning " + amount + " " + Material.getMaterial(material));
+				Server.broadcastMessage("[LOTTERY] Congratulations to " + players.get(rand) + " for winning " + amount + " " + formatMaterialName(material));
 				Server.broadcastMessage("[LOTTERY] The winner can use /lottery claim to claim the winnings.");
 				addToWinnerList(players.get(rand), amount, material);
 				addToClaimList(players.get(rand), amount, material.intValue());
@@ -549,7 +549,7 @@ public class Lottery extends JavaPlugin{
 			int claimAmount = Integer.parseInt(split[1]);
 			int claimMaterial = Integer.parseInt(split[2]);
 			player.getInventory().addItem( new ItemStack(claimMaterial, claimAmount));
-			player.sendMessage("You just claimed " + claimAmount + " " + Material.getMaterial(claimMaterial) + ".");
+			player.sendMessage("You just claimed " + claimAmount + " " + formatMaterialName(claimMaterial) + ".");
 		}
 		
 		
@@ -567,6 +567,15 @@ public class Lottery extends JavaPlugin{
 		} catch (IOException e) {
 		}
 		return true;
+	}
+	
+	public String formatMaterialName(int materialId) {
+		String returnMaterialName = "";
+		String rawMaterialName = Material.getMaterial(materialId).toString();
+		rawMaterialName = rawMaterialName.toLowerCase();
+		returnMaterialName = rawMaterialName.replace("_", " ");
+		
+		return returnMaterialName;
 	}
 	
     public static org.bukkit.Server getBukkitServer() {
