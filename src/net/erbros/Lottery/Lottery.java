@@ -84,10 +84,12 @@ public class Lottery extends JavaPlugin{
 		useiConomy = Boolean.parseBoolean(c.getProperty("useiConomy").toString());
 		material = Integer.parseInt(c.getProperty("material").toString());
 		
+		
+		Server = getServer();
 		// Do we need iConomy?
 		if(useiConomy == true) {
 			// Check if we got iConomy support. If not, no need in starting plugin.
-			Server = getServer();
+			
 			PluginListener = new PluginListener();
 		
 			// Event Registration
@@ -276,7 +278,7 @@ public class Lottery extends JavaPlugin{
 	    	// Do the user have the item?
 	    	if(player.getInventory().contains(material, cost)) {
 	    		// Remove items.
-	    		player.getInventory().remove( new ItemStack(material, cost));
+	    		player.getInventory().removeItem( new ItemStack(material, cost));
 	    	} else {
 	    		return false;
 	    	}
@@ -397,7 +399,15 @@ public class Lottery extends JavaPlugin{
 			Server.broadcastMessage("[LOTTERY] No tickets sold this round. Thats a shame.");
 			return false;
 		} else {
-			int rand = new Random().nextInt(players.size());
+			// Find rand. Do minus 1 since its a zero based array.
+			int rand = 0;
+			if(players.size() == 1) {
+				rand = 0;
+			} else {
+				rand = new Random().nextInt(players.size());
+			}
+			
+			log.info("Rand: " + Integer.toString(rand));
 			int amount = players.size()*cost;
 			if(useiConomy == true) {
 				Account account = iConomy.getBank().getAccount(players.get(rand));
@@ -410,7 +420,7 @@ public class Lottery extends JavaPlugin{
 				Server.broadcastMessage("[LOTTERY] The winner can use /lottery claim to claim the winnings.");
 				addToWinnerList(players.get(rand), amount, material);
 				addToClaimList(players.get(rand), amount, material.intValue());
-				}
+			}
 			Server.broadcastMessage("[LOTTERY] There was in total " + players.size() + " players with a lottery ticket.");
 			
 			// Add last winner to config.
@@ -453,7 +463,7 @@ public class Lottery extends JavaPlugin{
 					winnerArray.remove(9);
 			    }
 			    // Go trough list and output lines.
-				for (int i = 1; i < 9; i++) {
+				for (int i = 0; i < winnerArray.size(); i++) {
 					out.write(winnerArray.get(i));
 					out.newLine();
 				}
@@ -504,12 +514,12 @@ public class Lottery extends JavaPlugin{
 			return false;
 		}
 		// Do a bit payout.
-		for(int i = 0; i < claimArray.size()-1; i++) {
+		for(int i = 0; i < claimArray.size(); i++) {
 			String[] split = claimArray.get(i).split(":");
 			int claimAmount = Integer.parseInt(split[1]);
 			int claimMaterial = Integer.parseInt(split[2]);
 			player.getInventory().addItem( new ItemStack(claimMaterial, claimAmount));
-			player.sendMessage("You just claimed " + claimAmount + " " + claimMaterial + ".");
+			player.sendMessage("You just claimed " + claimAmount + " " + Material.getMaterial(claimMaterial) + ".");
 		}
 		
 		
