@@ -2,6 +2,7 @@ package net.erbros.Lottery;
 //All the imports
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -115,7 +116,7 @@ public class Lottery extends JavaPlugin{
 					// Show different things if we are using iConomy over material.
 					if(useiConomy == true) {
 						if(c.getProperty("lastwinner") != null) {
-							sender.sendMessage("[LOTTERY] Last winner: " + c.getProperty("lastwinner") + " (" + iConomy.getBank().format(c.getProperty("lastwinneramount").toString()) + ")");
+							sender.sendMessage("[LOTTERY] Last winner: " + c.getProperty("lastwinner") + " (" + iConomy.getBank().format(Integer.parseInt(c.getProperty("lastwinneramount").toString())) + ")");
 						} 
 						
 					} else {
@@ -165,7 +166,7 @@ public class Lottery extends JavaPlugin{
 						// Get the winners.
 						ArrayList<String> winnerArray = new ArrayList<String>();
 						try {
-						    BufferedReader in = new BufferedReader(new FileReader(getDataFolder() + "\\lotteryWinners.txt"));
+						    BufferedReader in = new BufferedReader(new FileReader(getDataFolder() + File.separator + "lotteryWinners.txt"));
 						    String str;
 						    while ((str = in.readLine()) != null) {
 						    	winnerArray.add(str);
@@ -288,7 +289,7 @@ public class Lottery extends JavaPlugin{
 
 		// Is the player already listed, and thus already have a ticket?
 		try {
-		    BufferedReader in = new BufferedReader(new FileReader(getDataFolder() + "\\lotteryPlayers.txt"));
+		    BufferedReader in = new BufferedReader(new FileReader(getDataFolder() + File.separator + "lotteryPlayers.txt"));
 		    String str;
 		    while ((str = in.readLine()) != null) {
 		    	
@@ -314,7 +315,7 @@ public class Lottery extends JavaPlugin{
 	    } else {
 	    	// Do the player have money?
 	    	Account account = iConomy.getBank().getAccount(player.getName());
-	    	if(account.hasOver(4)) {
+	    	if(account.hasOver(cost-1)) {
 	    		// Removing coins from players account.
 	    		account.subtract(cost);
 	    	} else {
@@ -324,7 +325,7 @@ public class Lottery extends JavaPlugin{
 	    }
 	    // If the user paid, continue. Else we would already have sent 
 		try {
-		    BufferedWriter out = new BufferedWriter(new FileWriter(getDataFolder() + "\\lotteryPlayers.txt",true));
+		    BufferedWriter out = new BufferedWriter(new FileWriter(getDataFolder() + File.separator + "lotteryPlayers.txt",true));
 		    out.write(player.getName());
 		    out.newLine();
 		    out.close();
@@ -415,7 +416,7 @@ public class Lottery extends JavaPlugin{
 	public boolean getWinner() {
 		ArrayList<String> players = new ArrayList<String>();
 		try {
-		    BufferedReader in = new BufferedReader(new FileReader(getDataFolder() + "\\lotteryPlayers.txt"));
+		    BufferedReader in = new BufferedReader(new FileReader(getDataFolder() + File.separator + "lotteryPlayers.txt"));
 		    String str;
 		    while ((str = in.readLine()) != null) {
 		    	// add players to array.
@@ -459,7 +460,7 @@ public class Lottery extends JavaPlugin{
 			
 			// Clear file.
 			try {
-			    BufferedWriter out = new BufferedWriter(new FileWriter(getDataFolder() + "\\lotteryPlayers.txt",false));
+			    BufferedWriter out = new BufferedWriter(new FileWriter(getDataFolder() + File.separator + "lotteryPlayers.txt",false));
 			    out.write("");
 			    out.close();
 			    
@@ -473,7 +474,7 @@ public class Lottery extends JavaPlugin{
 		// This list should be 10 players long. 
 		ArrayList<String> winnerArray = new ArrayList<String>();
 		try {
-		    BufferedReader in = new BufferedReader(new FileReader(getDataFolder() + "\\lotteryWinners.txt"));
+		    BufferedReader in = new BufferedReader(new FileReader(getDataFolder() + File.separator + "lotteryWinners.txt"));
 		    String str;
 		    while ((str = in.readLine()) != null) {
 		    	winnerArray.add(str);
@@ -483,7 +484,7 @@ public class Lottery extends JavaPlugin{
 		}
 		// Then first add new winner, and after that the old winners.
 		try {
-		    BufferedWriter out = new BufferedWriter(new FileWriter(getDataFolder() + "\\lotteryWinners.txt"));
+		    BufferedWriter out = new BufferedWriter(new FileWriter(getDataFolder() + File.separator + "lotteryWinners.txt"));
 		    out.write(playerName + ":" + winningAmount + ":" + winningMaterial);
 		    out.newLine();
 		    //How long is the array? We just want the top 9. Removing index 9 since its starting at 0.
@@ -508,7 +509,7 @@ public class Lottery extends JavaPlugin{
 	public boolean addToClaimList(String playerName, int winningAmount, int winningMaterial) {
 		// Then first add new winner, and after that the old winners.
 		try {
-		    BufferedWriter out = new BufferedWriter(new FileWriter(getDataFolder() + "\\lotteryClaim.txt",true));
+		    BufferedWriter out = new BufferedWriter(new FileWriter(getDataFolder() + File.separator + "lotteryClaim.txt",true));
 		    out.write(playerName + ":" + winningAmount + ":" + winningMaterial);
 		    out.newLine();
 			out.close();
@@ -522,7 +523,7 @@ public class Lottery extends JavaPlugin{
 		ArrayList<String> otherPlayersClaims = new ArrayList<String>();
 		ArrayList<String> claimArray = new ArrayList<String>();
 		try {
-		    BufferedReader in = new BufferedReader(new FileReader(getDataFolder() + "\\lotteryClaim.txt"));
+		    BufferedReader in = new BufferedReader(new FileReader(getDataFolder() + File.separator + "lotteryClaim.txt"));
 		    String str;
 		    while ((str = in.readLine()) != null) {
 		    	String[] split = str.split(":");
@@ -554,7 +555,7 @@ public class Lottery extends JavaPlugin{
 		
 	    // Add the other players claims to the file again.
 		try {
-		    BufferedWriter out = new BufferedWriter(new FileWriter(getDataFolder() + "\\lotteryClaim.txt"));
+		    BufferedWriter out = new BufferedWriter(new FileWriter(getDataFolder() + File.separator + "lotteryClaim.txt"));
 		    for(int i = 0; i < otherPlayersClaims.size(); i++) {
 		    	out.write(otherPlayersClaims.get(i));
 		    	out.newLine();

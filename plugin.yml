@@ -1,6 +1,6 @@
 name: Lottery
 main: net.erbros.Lottery.Lottery
-version: 0.1
+version: 0.2
 author: Erbros
 website: www.erbros.net
 commands:
