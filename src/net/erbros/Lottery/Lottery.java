@@ -573,6 +573,9 @@ public class Lottery extends JavaPlugin{
 		String returnMaterialName = "";
 		String rawMaterialName = Material.getMaterial(materialId).toString();
 		rawMaterialName = rawMaterialName.toLowerCase();
+		// Large first letter.
+		String firstLetterCapital = rawMaterialName.substring(0,1).toUpperCase();
+		rawMaterialName = firstLetterCapital + rawMaterialName.substring(1,rawMaterialName.length());
 		returnMaterialName = rawMaterialName.replace("_", " ");
 		
 		return returnMaterialName;
