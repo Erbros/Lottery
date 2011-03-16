@@ -110,7 +110,7 @@ public class Lottery extends JavaPlugin{
 					} else {
 						sender.sendMessage("[LOTTERY] You can buy a ticket for " +  iConomy.getBank().format(cost) + " with /lottery buy");
 					}
-					
+					sender.sendMessage("[LOTTERY] /lottery help : other commands");
 					// Does lastwinner exist and != null? Show.
 					// Show different things if we are using iConomy over material.
 					if(useiConomy == true) {
