@@ -18,6 +18,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
@@ -67,15 +68,6 @@ public class Lottery extends JavaPlugin{
 	@Override
 	public void onEnable() {
 		
-		// Do we need iConomy?
-		if(useiConomy == true) {
-			// Check if we got iConomy support. If not, no need in starting plugin.
-			Server = getServer();
-			PluginListener = new PluginListener();
-		
-			// Event Registration
-			getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_ENABLE, PluginListener, Priority.Monitor, this);
-		}
 		// Gets version number and writes out starting line to console.
 		PluginDescriptionFile pdfFile = this.getDescription();
 		System.out.println( pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled" );
@@ -92,6 +84,15 @@ public class Lottery extends JavaPlugin{
 		useiConomy = Boolean.parseBoolean(c.getProperty("useiConomy").toString());
 		material = Integer.parseInt(c.getProperty("material").toString());
 		
+		// Do we need iConomy?
+		if(useiConomy == true) {
+			// Check if we got iConomy support. If not, no need in starting plugin.
+			Server = getServer();
+			PluginListener = new PluginListener();
+		
+			// Event Registration
+			getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_ENABLE, PluginListener, Priority.Monitor, this);
+		}
 		
 		// Listen for some player interaction perhaps? Thanks to cyklo :)
 		
@@ -102,17 +103,22 @@ public class Lottery extends JavaPlugin{
 				// If its just /lottery, and no args.
 				if(args.length == 0) {
 					sender.sendMessage("[LOTTERY] " + timeUntil(nextexec));
-					sender.sendMessage("[LOTTERY] You can buy a ticket for " +  iConomy.getBank().format(cost) + " with /lottery buy");
+					if(useiConomy == false) {
+						sender.sendMessage("[LOTTERY] You can buy a ticket for " +  cost + " " + Material.getMaterial(material) + " with /lottery buy");
+					} else {
+						sender.sendMessage("[LOTTERY] You can buy a ticket for " +  iConomy.getBank().format(cost) + " with /lottery buy");
+					}
+					
 					// Does lastwinner exist and != null? Show.
 					// Show different things if we are using iConomy over material.
 					if(useiConomy == true) {
 						if(c.getProperty("lastwinner") != null) {
-							sender.sendMessage("[LOTTERY] Last winner: " + c.getProperty("lastwinner") + "(" + iConomy.getBank().format(c.getProperty("lastwinneramount").toString()) + ")");
+							sender.sendMessage("[LOTTERY] Last winner: " + c.getProperty("lastwinner") + " (" + iConomy.getBank().format(c.getProperty("lastwinneramount").toString()) + ")");
 						} 
 						
 					} else {
 						if(c.getProperty("lastwinner") != null) {
-							sender.sendMessage("[LOTTERY] Last winner: " + c.getProperty("lastwinner") + "(" + c.getProperty("lastwinneramount").toString() + " " + Material.getMaterial(material) + ")");
+							sender.sendMessage("[LOTTERY] Last winner: " + c.getProperty("lastwinner") + " (" + c.getProperty("lastwinneramount").toString() + " " + Material.getMaterial(material) + ")");
 						} 
 					}
 					
@@ -127,13 +133,26 @@ public class Lottery extends JavaPlugin{
 						
 						if(addPlayer(player) == true) {
 							// You got your ticket. 
-							sender.sendMessage("[LOTTERY] You got your lottery ticket for " + iConomy.getBank().format(cost));
+							if(useiConomy == false) {
+								sender.sendMessage("[LOTTERY] You got your lottery ticket for " +  cost + " " + Material.getMaterial(material));
+							} else {
+								sender.sendMessage("[LOTTERY] You got your lottery ticket for " + iConomy.getBank().format(cost));
+							}
+							
 						} else {
 							// You can't buy more than one ticket.
 							sender.sendMessage("[LOTTERY] Either you can't afford a ticket, or you got one already.");
 						}
 					} else if(args[0].equalsIgnoreCase("claim")) {
 						removeFromClaimList((Player) sender);
+					} else if(args[0].equalsIgnoreCase("draw")) {
+						// Later add permissions. As of now, is the player op?
+						if(sender.isOp()) {
+							// Start a timer that ends in 3 secs.
+							sender.sendMessage("[LOTTERY] Lottery will be drawn at once.");
+							StartTimerSchedule(true);
+						}
+						
 					} else {
 						sender.sendMessage("[LOTTERY] Hey, I don't recognize that command!");
 					}
@@ -161,7 +180,7 @@ public class Lottery extends JavaPlugin{
 		}
 		
 		// Start the timer for the first time.
-		StartTimerSchedule();
+		StartTimerSchedule(false);
 		
 		// This could, and should, probably be fixed nicer, but for now it'll have to do.
 		// Adding timer that waits the time between nextexec and time now.
@@ -194,11 +213,12 @@ public class Lottery extends JavaPlugin{
 		        }
 			}
 			// Call a new timer.
-			StartTimerSchedule();
+			StartTimerSchedule(false);
 		}
 	}
 
-	private void StartTimerSchedule() {
+	private void StartTimerSchedule(boolean drawAtOnce) {
+		
 		
 		long extendtime = 0;
 		//Cancel any existing timers.
@@ -215,6 +235,17 @@ public class Lottery extends JavaPlugin{
 		if(extendtime <= 0) {
 			extendtime = 3000;
 		}
+		
+		// Is the drawAtOnce boolean set to true? In that case, do drawing in a few secs.
+		if(drawAtOnce) {
+			extendtime = 1000;
+			c = getConfiguration();
+			c.setProperty("nextexec", System.currentTimeMillis()+1000);
+			nextexec = System.currentTimeMillis()+1000;
+			log.info("DRAW NOW");
+		}
+		
+		
 		// Start new timer.
 		timer = new Timer();
 		timer.schedule(new LotteryDraw(), extendtime);
@@ -245,7 +276,7 @@ public class Lottery extends JavaPlugin{
 	    	// Do the user have the item?
 	    	if(player.getInventory().contains(material, cost)) {
 	    		// Remove items.
-	    		player.getInventory().getItem(material).setAmount(player.getInventory().getItem(material).getAmount() - cost);
+	    		player.getInventory().remove( new ItemStack(material, cost));
 	    	} else {
 	    		return false;
 	    	}
@@ -417,15 +448,16 @@ public class Lottery extends JavaPlugin{
 		    out.write(playerName + ":" + winningAmount + ":" + winningMaterial);
 		    out.newLine();
 		    //How long is the array? We just want the top 9. Removing index 9 since its starting at 0.
-		    if(winnerArray.size() > 9) {
-				winnerArray.remove(9);
+		    if(winnerArray.size() > 0) {
+			    if(winnerArray.size() > 9) {
+					winnerArray.remove(9);
+			    }
+			    // Go trough list and output lines.
+				for (int i = 1; i < 9; i++) {
+					out.write(winnerArray.get(i));
+					out.newLine();
+				}
 		    }
-		    // Go trough list and output lines.
-			for (int i = 1; i < 9; i++) {
-				out.write(winnerArray.get(i));
-				out.newLine();
-			}
-			
 			out.close();
 		    
 		    
@@ -468,6 +500,7 @@ public class Lottery extends JavaPlugin{
 		
 		// Did the user have any claims?
 		if(claimArray.size() == 0) {
+			player.sendMessage("[LOTTERY] You did not have anything unclaimed.");
 			return false;
 		}
 		// Do a bit payout.
@@ -475,7 +508,7 @@ public class Lottery extends JavaPlugin{
 			String[] split = claimArray.get(i).split(":");
 			int claimAmount = Integer.parseInt(split[1]);
 			int claimMaterial = Integer.parseInt(split[2]);
-			player.getInventory().getItem(claimMaterial).setAmount(player.getInventory().getItem(claimMaterial).getAmount() + claimAmount);
+			player.getInventory().addItem( new ItemStack(claimMaterial, claimAmount));
 			player.sendMessage("You just claimed " + claimAmount + " " + claimMaterial + ".");
 		}
 		
