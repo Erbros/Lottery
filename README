@@ -6,12 +6,27 @@ Default values are 5 coins and every 24 hours.
 
 Idea: http://forums.bukkit.org/threads/weekly-lotory-gambling.7431/
 
+Commands:
+/lottery : Basic information
+/lottery buy : Buy a ticket
+/lottery help : Help pages
+/lottery winners : List over 10 last winners
+/lottery draw : Force the drawing to happen. Op only.
+
+
 Changelog:
+Version 0.2.1:
+- Formatting material names. GOLD_INGOT -> Gold ingot
+Version 0.2
+- Added commands: /lottery (help, winners, claim, draw)
+- Added material support.
+- List over 10 last winners with /lottery winners
 Version 0.1
- - Lottery plugin is released.
+- Lottery plugin is released.
+
 
 Todo:
- - A set number of tickets available, user gets to choose which one. If nobody selected right ticket, add money to jackpot for next round.
- - Use regular gold ingot instead of iConomy money. Perhaps even selectable material.
- - Make reading of config into variables more fullproof to user mistakes.
- - Make better return from addUser(). Do not use boolean.
+- A set number of tickets available, and let the user choose which one to buy. If nobody had the right ticket, add money to jackpot for next drawing.
+- Realshop support (is it even possible? low priority).
+- Permission support.
+- Add reload config command.
