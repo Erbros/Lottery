@@ -155,6 +155,35 @@ public class Lottery extends JavaPlugin{
 							StartTimerSchedule(true);
 						}
 						
+					} else if(args[0].equalsIgnoreCase("help")) {
+						sender.sendMessage("[LOTTERY] Help commands");
+						sender.sendMessage("/lottery : Basic lottery info.");
+						sender.sendMessage("/lottery buy : Buy a ticket.");
+						sender.sendMessage("/lottery claim : Claim outstandig wins.");
+						sender.sendMessage("/lottery winners : Check last winners.");
+					} else if(args[0].equalsIgnoreCase("winners")) {
+						// Get the winners.
+						ArrayList<String> winnerArray = new ArrayList<String>();
+						try {
+						    BufferedReader in = new BufferedReader(new FileReader(getDataFolder() + "\\lotteryWinners.txt"));
+						    String str;
+						    while ((str = in.readLine()) != null) {
+						    	winnerArray.add(str);
+						    }
+						    in.close();
+						} catch (IOException e) {
+						}
+						String[] split;
+						String winListPrice;
+						for (int i = 0; i < winnerArray.size(); i++) {
+							split = winnerArray.get(i).split(":");
+							if(split[2].equalsIgnoreCase("0")) {
+								winListPrice = iConomy.getBank().format(Double.parseDouble(split[1]));
+							} else {
+								winListPrice = split[1] + " " + Material.getMaterial(Integer.parseInt(split[2]));
+							}
+							sender.sendMessage((i + 1) + ". " + split[0] + " " + winListPrice);
+						}
 					} else {
 						sender.sendMessage("[LOTTERY] Hey, I don't recognize that command!");
 					}
