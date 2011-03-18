@@ -12,6 +12,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Logger;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -40,6 +41,7 @@ public class Lottery extends JavaPlugin{
 	protected Boolean timerStarted;
 	protected Boolean useiConomy;
 	protected Integer material;
+	protected Boolean broadcastBuying;
 	protected Configuration c;
 	// Starting timer we are going to use for scheduling.
 	Timer timer;
@@ -84,6 +86,7 @@ public class Lottery extends JavaPlugin{
 		hours = Integer.parseInt(c.getProperty("hours").toString());
 		useiConomy = Boolean.parseBoolean(c.getProperty("useiConomy").toString());
 		material = Integer.parseInt(c.getProperty("material").toString());
+		broadcastBuying = Boolean.parseBoolean(c.getProperty("broadcastBuying").toString());
 		
 		
 		Server = getServer();
@@ -105,29 +108,29 @@ public class Lottery extends JavaPlugin{
 				c = getConfiguration();
 				// If its just /lottery, and no args.
 				if(args.length == 0) {
-					sender.sendMessage("[LOTTERY] " + timeUntil(nextexec));
+					sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Draw in: " + ChatColor.RED + timeUntil(nextexec));
 					if(useiConomy == false) {
-						sender.sendMessage("[LOTTERY] You can buy a ticket for " +  cost + " " + formatMaterialName(material) + " with /lottery buy");
+						sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Buy a ticket for " + ChatColor.RED +  cost + " " + formatMaterialName(material) + ChatColor.WHITE + " with " + ChatColor.RED + "/lottery buy");
 					} else {
-						sender.sendMessage("[LOTTERY] You can buy a ticket for " +  iConomy.getBank().format(cost) + " with /lottery buy");
+						sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Buy a ticket for " + ChatColor.RED + iConomy.getBank().format(cost) + ChatColor.WHITE + " with " + ChatColor.RED + "/lottery buy");
 					}
-					sender.sendMessage("[LOTTERY] /lottery help : other commands");
+					sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.RED + "/lottery help" + ChatColor.WHITE + " for other commands");
 					// Does lastwinner exist and != null? Show.
 					// Show different things if we are using iConomy over material.
 					if(useiConomy == true) {
 						if(c.getProperty("lastwinner") != null) {
-							sender.sendMessage("[LOTTERY] Last winner: " + c.getProperty("lastwinner") + " (" + iConomy.getBank().format(Integer.parseInt(c.getProperty("lastwinneramount").toString())) + ")");
+							sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Last winner: " + c.getProperty("lastwinner") + " (" + iConomy.getBank().format(Integer.parseInt(c.getProperty("lastwinneramount").toString())) + ")");
 						} 
 						
 					} else {
 						if(c.getProperty("lastwinner") != null) {
-							sender.sendMessage("[LOTTERY] Last winner: " + c.getProperty("lastwinner") + " (" + c.getProperty("lastwinneramount").toString() + " " + formatMaterialName(material) + ")");
+							sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Last winner: " + c.getProperty("lastwinner") + " (" + c.getProperty("lastwinneramount").toString() + " " + formatMaterialName(material) + ")");
 						} 
 					}
 					
 					// if not iConomy, make players check for claims.
 					if(useiConomy == false) {
-						sender.sendMessage("[LOTTERY] Check if you have won with /lottery claim");
+						sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Check if you have won with " + ChatColor.RED + "/lottery claim");
 					} 
 					
 				} else {
@@ -137,14 +140,17 @@ public class Lottery extends JavaPlugin{
 						if(addPlayer(player) == true) {
 							// You got your ticket. 
 							if(useiConomy == false) {
-								sender.sendMessage("[LOTTERY] You got your lottery ticket for " +  cost + " " + formatMaterialName(material));
+								sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "You got your lottery ticket for " + ChatColor.RED +  cost + " " + formatMaterialName(material));
 							} else {
-								sender.sendMessage("[LOTTERY] You got your lottery ticket for " + iConomy.getBank().format(cost));
+								sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "You got your lottery ticket for " + ChatColor.RED + iConomy.getBank().format(cost));
+							}
+							if(broadcastBuying == true) {
+								Server.broadcastMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + player.getDisplayName() + " just bought a ticket.");
 							}
 							
 						} else {
 							// You can't buy more than one ticket.
-							sender.sendMessage("[LOTTERY] Either you can't afford a ticket, or you got one already.");
+							sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Either you can't afford a ticket, or you got one already.");
 						}
 					} else if(args[0].equalsIgnoreCase("claim")) {
 						removeFromClaimList((Player) sender);
@@ -152,16 +158,16 @@ public class Lottery extends JavaPlugin{
 						// Later add permissions. As of now, is the player op?
 						if(sender.isOp()) {
 							// Start a timer that ends in 3 secs.
-							sender.sendMessage("[LOTTERY] Lottery will be drawn at once.");
+							sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Lottery will be drawn at once.");
 							StartTimerSchedule(true);
 						}
 						
 					} else if(args[0].equalsIgnoreCase("help")) {
-						sender.sendMessage("[LOTTERY] Help commands");
-						sender.sendMessage("/lottery : Basic lottery info.");
-						sender.sendMessage("/lottery buy : Buy a ticket.");
-						sender.sendMessage("/lottery claim : Claim outstandig wins.");
-						sender.sendMessage("/lottery winners : Check last winners.");
+						sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Help commands");
+						sender.sendMessage(ChatColor.RED + "/lottery" + ChatColor.WHITE + " : Basic lottery info.");
+						sender.sendMessage(ChatColor.RED + "/lottery buy" + ChatColor.WHITE + " : Buy a ticket.");
+						sender.sendMessage(ChatColor.RED + "/lottery claim" + ChatColor.WHITE + " : Claim outstandig wins.");
+						sender.sendMessage(ChatColor.RED + "/lottery winners" + ChatColor.WHITE + " : Check last winners.");
 					} else if(args[0].equalsIgnoreCase("winners")) {
 						// Get the winners.
 						ArrayList<String> winnerArray = new ArrayList<String>();
@@ -186,7 +192,7 @@ public class Lottery extends JavaPlugin{
 							sender.sendMessage((i + 1) + ". " + split[0] + " " + winListPrice);
 						}
 					} else {
-						sender.sendMessage("[LOTTERY] Hey, I don't recognize that command!");
+						sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Hey, I don't recognize that command!");
 					}
 				}
 				
@@ -340,7 +346,7 @@ public class Lottery extends JavaPlugin{
 	public void makeConfig() {
 		c = getConfiguration();
 	
-		if(c.getProperty("cost") == null || c.getProperty("hours") == null || c.getProperty("material") == null  || c.getProperty("useiConomy") == null ) {
+		if(c.getProperty("broadcastBuying") == null || c.getProperty("cost") == null || c.getProperty("hours") == null || c.getProperty("material") == null  || c.getProperty("useiConomy") == null ) {
 			
 			if(c.getProperty("cost") == null) {
 				c.setProperty("cost", "5");
@@ -355,6 +361,10 @@ public class Lottery extends JavaPlugin{
 				c.setProperty("useiConomy", "true");
 			}
 			
+			if(c.getProperty("broadcastBuying") == null) {
+				c.setProperty("broadcastBuying", "true");
+			}
+			
 		    if (!getConfiguration().save())
 		    {
 		        log.warning("Unable to persist configuration files, changes will not be saved.");
@@ -367,7 +377,7 @@ public class Lottery extends JavaPlugin{
 
 		double timeLeft = Double.parseDouble(Long.toString(((time - System.currentTimeMillis()) / 1000)));
 		// How many days left?
-		String stringTimeLeft = "Pulling winner in ";
+		String stringTimeLeft = "";
 		if(timeLeft >= 60 * 60 * 24) {
 			int days = (int) Math.floor(timeLeft / (60 * 60 * 24));
 			timeLeft -= 60 * 60 * 24 * days;
@@ -396,12 +406,12 @@ public class Lottery extends JavaPlugin{
 			}
 		} else {
 			// Lets remove the last comma, since it will look bad with 2 days, 3 hours, and 14 seconds.
-			if(stringTimeLeft.equalsIgnoreCase("Pulling winner in ") == false) {
+			if(stringTimeLeft.equalsIgnoreCase("") == false) {
 				stringTimeLeft = stringTimeLeft.substring(0, stringTimeLeft.length()-1);
 			}
 		}
 		int secs = (int) timeLeft;
-		if(stringTimeLeft.equalsIgnoreCase("Pulling winner in ") == false) {
+		if(stringTimeLeft.equalsIgnoreCase("") == false) {
 			stringTimeLeft += "and ";
 		}
 		if(secs == 1) {
@@ -426,7 +436,7 @@ public class Lottery extends JavaPlugin{
 		} catch (IOException e) {
 		}
 		if(players.isEmpty() == true) {
-			Server.broadcastMessage("[LOTTERY] No tickets sold this round. Thats a shame.");
+			Server.broadcastMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "No tickets sold this round. Thats a shame.");
 			return false;
 		} else {
 			// Find rand. Do minus 1 since its a zero based array.
@@ -443,15 +453,15 @@ public class Lottery extends JavaPlugin{
 				Account account = iConomy.getBank().getAccount(players.get(rand));
 				account.add(amount);
 				// Announce the winner:
-				Server.broadcastMessage("[LOTTERY] Congratulations to " + players.get(rand) + " for winning " + iConomy.getBank().format(amount));
+				Server.broadcastMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Congratulations to " + players.get(rand) + " for winning " + ChatColor.RED + iConomy.getBank().format(amount) + ".");
 				addToWinnerList(players.get(rand), amount, 0);
 			} else {
-				Server.broadcastMessage("[LOTTERY] Congratulations to " + players.get(rand) + " for winning " + amount + " " + formatMaterialName(material));
-				Server.broadcastMessage("[LOTTERY] The winner can use /lottery claim to claim the winnings.");
+				Server.broadcastMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Congratulations to " + players.get(rand) + " for winning " + ChatColor.RED + amount + " " + formatMaterialName(material) + ".");
+				Server.broadcastMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Use " + ChatColor.RED + "/lottery claim" + ChatColor.WHITE + " to claim the winnings.");
 				addToWinnerList(players.get(rand), amount, material);
 				addToClaimList(players.get(rand), amount, material.intValue());
 			}
-			Server.broadcastMessage("[LOTTERY] There was in total " + players.size() + " players with a lottery ticket.");
+			Server.broadcastMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "There was in total " + players.size() + " players with a lottery ticket.");
 			
 			// Add last winner to config.
 			c = getConfiguration();
@@ -540,7 +550,7 @@ public class Lottery extends JavaPlugin{
 		
 		// Did the user have any claims?
 		if(claimArray.size() == 0) {
-			player.sendMessage("[LOTTERY] You did not have anything unclaimed.");
+			player.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "You did not have anything unclaimed.");
 			return false;
 		}
 		// Do a bit payout.
