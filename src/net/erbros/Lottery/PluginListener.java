@@ -12,8 +12,7 @@ import org.bukkit.plugin.Plugin;
 public class PluginListener extends ServerListener {
     public PluginListener() { }
 
-    @Override
-    public void onPluginEnabled(PluginEvent event) {
+    public void PluginEnableEvent(PluginEvent event) {
         if(Lottery.getiConomy() == null) {
             Plugin iConomy = Lottery.getBukkitServer().getPluginManager().getPlugin("iConomy");
 
