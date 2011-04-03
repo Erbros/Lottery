@@ -15,6 +15,11 @@ Commands:
 
 
 Changelog:
+Version 0.2.3:
+ - Changed from onPluginEnable to PluginEnableEvent.
+Version 0.2.2:
+ - Option to broadcast public to the whole server when somebody buys a ticket.
+ - Added colors to the lottery chat messages.
 Version 0.2.1:
 - Formatting material names. GOLD_INGOT -> Gold ingot
 Version 0.2
