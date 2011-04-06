@@ -427,17 +427,9 @@ public class Lottery extends JavaPlugin{
 	}
 	
 	public boolean getWinner() {
-		ArrayList<String> players = new ArrayList<String>();
-		try {
-		    BufferedReader in = new BufferedReader(new FileReader(getDataFolder() + File.separator + "lotteryPlayers.txt"));
-		    String str;
-		    while ((str = in.readLine()) != null) {
-		    	// add players to array.
-		    	players.add(str.toString());
-		    }
-		    in.close();
-		} catch (IOException e) {
-		}
+
+		ArrayList<String> players = playersInFile("lotteryPlayers.txt");
+		
 		if(players.isEmpty() == true) {
 			Server.broadcastMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "No tickets sold this round. Thats a shame.");
 			return false;
@@ -609,5 +601,20 @@ public class Lottery extends JavaPlugin{
             return false;
         }
         return true;
-    }    
+    }
+    
+    public ArrayList<String> playersInFile(String file) {
+    	ArrayList<String> players = new ArrayList<String>();
+		try {
+		    BufferedReader in = new BufferedReader(new FileReader(getDataFolder() + File.separator + file));
+		    String str;
+		    while ((str = in.readLine()) != null) {
+		    	// add players to array.
+		    	players.add(str.toString());
+		    }
+		    in.close();
+		} catch (IOException e) {
+		}
+		return players;
+    }
 }
