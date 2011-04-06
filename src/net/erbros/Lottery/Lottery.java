@@ -37,16 +37,18 @@ public class Lottery extends JavaPlugin{
 
 	protected Integer cost;
 	protected Integer hours;
-	protected Long nextexec;
+	protected static Long nextexec;
 	protected Boolean timerStarted;
 	protected Boolean useiConomy;
 	protected Integer material;
 	protected Boolean broadcastBuying;
+	protected Boolean welcomeMessage;
 	protected Configuration c;
 	// Starting timer we are going to use for scheduling.
 	Timer timer;
 	// The iConomy variables.
 	private static PluginListener PluginListener = null;
+	private static PlayerJoinListener PlayerListener = null;
 	private static iConomy iConomy = null;
 	private static org.bukkit.Server Server = null;
 
@@ -87,18 +89,20 @@ public class Lottery extends JavaPlugin{
 		useiConomy = Boolean.parseBoolean(c.getProperty("useiConomy").toString());
 		material = Integer.parseInt(c.getProperty("material").toString());
 		broadcastBuying = Boolean.parseBoolean(c.getProperty("broadcastBuying").toString());
+		welcomeMessage = Boolean.parseBoolean(c.getProperty("welcomeMessage").toString());
 		
 		
 		Server = getServer();
 		// Do we need iConomy?
 		if(useiConomy == true) {
 			// Check if we got iConomy support. If not, no need in starting plugin.
-			
 			PluginListener = new PluginListener();
-		
 			// Event Registration
 			getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_ENABLE, PluginListener, Priority.Monitor, this);
-			
+		}
+		if(welcomeMessage == true) {
+			PlayerListener = new PlayerJoinListener();
+			getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN, PlayerListener, Priority.Monitor, this);
 		}
 		
 		// Listen for some player interaction perhaps? Thanks to cyklo :)
@@ -354,7 +358,7 @@ public class Lottery extends JavaPlugin{
 	public void makeConfig() {
 		c = getConfiguration();
 	
-		if(c.getProperty("broadcastBuying") == null || c.getProperty("cost") == null || c.getProperty("hours") == null || c.getProperty("material") == null  || c.getProperty("useiConomy") == null ) {
+		if(c.getProperty("broadcastBuying") == null || c.getProperty("cost") == null || c.getProperty("hours") == null || c.getProperty("material") == null  || c.getProperty("useiConomy") == null || c.getProperty("welcomeMessage") == null) {
 			
 			if(c.getProperty("cost") == null) {
 				c.setProperty("cost", "5");
@@ -372,6 +376,9 @@ public class Lottery extends JavaPlugin{
 			if(c.getProperty("broadcastBuying") == null) {
 				c.setProperty("broadcastBuying", "true");
 			}
+			if(c.getProperty("welcomeMesasge") == null) {
+				c.setProperty("welcomeMessage", true);
+			}
 			
 		    if (!getConfiguration().save())
 		    {
@@ -381,7 +388,7 @@ public class Lottery extends JavaPlugin{
 		
 	}
 	
-	public String timeUntil(long time) {
+	public static String timeUntil(long time) {
 
 		double timeLeft = Double.parseDouble(Long.toString(((time - System.currentTimeMillis()) / 1000)));
 		// How many days left?
