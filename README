@@ -15,6 +15,9 @@ Commands:
 
 
 Changelog:
+Version 0.3:
+ - Info about pot size in /lottery
+ - Choose if you want players to get time until draw message on join.
 Version 0.2.4:
  - Same as last release, just did it properly this time.
 Version 0.2.3:
@@ -30,10 +33,3 @@ Version 0.2
 - List over 10 last winners with /lottery winners
 Version 0.1
 - Lottery plugin is released.
-
-
-Todo:
-- A set number of tickets available, and let the user choose which one to buy. If nobody had the right ticket, add money to jackpot for next drawing.
-- Realshop support (is it even possible? low priority).
-- Permission support.
-- Add reload config command.
