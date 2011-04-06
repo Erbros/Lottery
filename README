@@ -15,6 +15,8 @@ Commands:
 
 
 Changelog:
+Version 0.2.4:
+ - Same as last release, just did it properly this time.
 Version 0.2.3:
  - Changed from onPluginEnable to PluginEnableEvent.
 Version 0.2.2:

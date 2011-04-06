@@ -98,12 +98,14 @@ public class Lottery extends JavaPlugin{
 		
 			// Event Registration
 			getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_ENABLE, PluginListener, Priority.Monitor, this);
+			
 		}
 		
 		// Listen for some player interaction perhaps? Thanks to cyklo :)
 		
 		getCommand("lottery").setExecutor(new CommandExecutor() {
 			@Override
+			
 			public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 				c = getConfiguration();
 				// If its just /lottery, and no args.
@@ -224,6 +226,7 @@ public class Lottery extends JavaPlugin{
 		// Adding timer that waits the time between nextexec and time now.
 		
 	}
+
 
 	public long extendTime() {
 		Configuration c = getConfiguration();
@@ -606,7 +609,5 @@ public class Lottery extends JavaPlugin{
             return false;
         }
         return true;
-    }
-
-	
+    }    
 }
