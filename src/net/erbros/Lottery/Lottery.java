@@ -119,7 +119,7 @@ public class Lottery extends JavaPlugin{
 						sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "There is currently " + ChatColor.GREEN +  amount + " " + formatMaterialName(material) + ChatColor.WHITE + " in the pot.");
 					} else {
 						sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Buy a ticket for " + ChatColor.RED + iConomy.getBank().format(cost) + ChatColor.WHITE + " with " + ChatColor.RED + "/lottery buy");
-						sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "There is currently " + ChatColor.GREEN +  iConomy.getBank().format(amount) + " " + formatMaterialName(material) + ChatColor.WHITE + " in the pot.");
+						sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "There is currently " + ChatColor.GREEN +  iConomy.getBank().format(amount) + ChatColor.WHITE + " in the pot.");
 					}
 					sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.RED + "/lottery help" + ChatColor.WHITE + " for other commands");
 					// Does lastwinner exist and != null? Show.
