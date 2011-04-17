@@ -25,8 +25,13 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 
+
 import com.nijiko.coelho.iConomy.iConomy;
 import com.nijiko.coelho.iConomy.system.Account;
+
+import com.nijiko.permissions.PermissionHandler;
+import com.nijikokun.bukkit.Permissions.Permissions;
+import org.bukkit.plugin.Plugin;
 
 import net.erbros.Lottery.PluginListener;
 
@@ -41,6 +46,7 @@ public class Lottery extends JavaPlugin{
 	public Boolean timerStarted = false;
 	protected static Boolean useiConomy;
 	protected static Integer material;
+	protected Integer extraInPot;
 	protected Boolean broadcastBuying;
 	protected Boolean welcomeMessage;
 	protected Configuration c;
@@ -52,6 +58,8 @@ public class Lottery extends JavaPlugin{
 	private static PlayerJoinListener PlayerListener = null;
 	protected static iConomy iConomy = null;
 	protected static org.bukkit.Server server = null;
+	// Permission variables
+	public static PermissionHandler Permissions;
 	
 
 	
@@ -86,11 +94,17 @@ public class Lottery extends JavaPlugin{
 			getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN, PlayerListener, Priority.Monitor, this);
 		}
 		
+		
 		// Listen for some player interaction perhaps? Thanks to cyklo :)
 		
 		getCommand("lottery").setExecutor(new CommandExecutor() {
 			@Override
 			public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+				// Can the player access the plugin?
+				if(!hasPermission(sender, "lottery.buy", false)) {
+					sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "You don't have access to that command!");
+					return true;
+				}
 				// If its just /lottery, and no args.
 				if(args.length == 0) {
 					// Check if we got any money/items in the pot.
@@ -126,7 +140,7 @@ public class Lottery extends JavaPlugin{
 				} else {
 					if(args[0].equalsIgnoreCase("buy")) {
 						Player player = (Player) sender;
-						
+	
 						if(addPlayer(player) == true) {
 							// You got your ticket. 
 							if(useiConomy == false) {
@@ -145,11 +159,13 @@ public class Lottery extends JavaPlugin{
 					} else if(args[0].equalsIgnoreCase("claim")) {
 						removeFromClaimList((Player) sender);
 					} else if(args[0].equalsIgnoreCase("draw")) {
-						// Later add permissions. As of now, is the player op?
-						if(sender.isOp()) {
+						
+						if(hasPermission(sender, "lottery.admin.draw", true)) {
 							// Start a timer that ends in 3 secs.
 							sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Lottery will be drawn at once.");
 							StartTimerSchedule(true);
+						} else {
+							sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "You don't have access to that command.");
 						}
 						
 					} else if(args[0].equalsIgnoreCase("help")) {
@@ -158,6 +174,12 @@ public class Lottery extends JavaPlugin{
 						sender.sendMessage(ChatColor.RED + "/lottery buy" + ChatColor.WHITE + " : Buy a ticket.");
 						sender.sendMessage(ChatColor.RED + "/lottery claim" + ChatColor.WHITE + " : Claim outstandig wins.");
 						sender.sendMessage(ChatColor.RED + "/lottery winners" + ChatColor.WHITE + " : Check last winners.");
+						// Are we dealing with admins?
+						if(hasPermission(sender, "lottery.admin.draw", true))
+							sender.sendMessage(ChatColor.BLUE + "/lottery draw" + ChatColor.WHITE + " : Draw lottery.");
+						if(hasPermission(sender, "lottery.admin.addtopot", true))
+							sender.sendMessage(ChatColor.BLUE + "/lottery addtopot" + ChatColor.WHITE + " : Add number to pot.");
+
 					} else if(args[0].equalsIgnoreCase("winners")) {
 						// Get the winners.
 						ArrayList<String> winnerArray = new ArrayList<String>();
@@ -180,6 +202,24 @@ public class Lottery extends JavaPlugin{
 								winListPrice = split[1] + " " + formatMaterialName(Integer.parseInt(split[2])).toString();
 							}
 							sender.sendMessage((i + 1) + ". " + split[0] + " " + winListPrice);
+						}
+					}  else if(args[0].equalsIgnoreCase("addtopot")) {
+						// Do we trust this person?
+						if(hasPermission(sender, "lottery.admin.addtopot", true)) {
+							int addToPot = 0;
+							// Is it a number?
+							try {
+								addToPot = Integer.parseInt(args[1]);
+							}
+							catch(NumberFormatException nFE) {
+								sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Not a number.");
+								return true;
+							}
+							extraInPot += addToPot;
+							c.setProperty("extraInPot", extraInPot);
+							sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Added " + ChatColor.GREEN + addToPot + ChatColor.WHITE + " to pot. Extra total is " + ChatColor.GREEN + extraInPot);
+						} else {
+							sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "You don't have access to that command.");
 						}
 					} else {
 						sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Hey, I don't recognize that command!");
@@ -230,6 +270,7 @@ public class Lottery extends JavaPlugin{
 		material = Integer.parseInt(c.getProperty("material").toString());
 		broadcastBuying = Boolean.parseBoolean(c.getProperty("broadcastBuying").toString());
 		welcomeMessage = Boolean.parseBoolean(c.getProperty("welcomeMessage").toString());
+		extraInPot = Integer.parseInt(c.getProperty("extraInPot").toString());
 		
 		// Gets version number and writes out starting line to console.
 		PluginDescriptionFile pdfFile = this.getDescription();
@@ -294,6 +335,8 @@ public class Lottery extends JavaPlugin{
 			c.setProperty("lastwinner", players.get(rand));
 			c.setProperty("lastwinneramount", amount);
 			
+			// extra money in pot added by admins and mods?
+			c.setProperty("extraInPot", 0);
 			// Clear file.
 			try {
 			    BufferedWriter out = new BufferedWriter(new FileWriter(getDataFolder() + File.separator + "lotteryPlayers.txt",false));
@@ -371,7 +414,7 @@ public class Lottery extends JavaPlugin{
 	public void makeConfig() {
 		c = getConfiguration();
 	
-		if(c.getProperty("broadcastBuying") == null || c.getProperty("cost") == null || c.getProperty("hours") == null || c.getProperty("material") == null  || c.getProperty("useiConomy") == null || c.getProperty("welcomeMessage") == null) {
+		if(c.getProperty("broadcastBuying") == null || c.getProperty("cost") == null || c.getProperty("hours") == null || c.getProperty("material") == null  || c.getProperty("useiConomy") == null || c.getProperty("welcomeMessage") == null || c.getProperty("extraInPot") == null) {
 			
 			if(c.getProperty("cost") == null) {
 				c.setProperty("cost", "5");
@@ -391,6 +434,9 @@ public class Lottery extends JavaPlugin{
 			}
 			if(c.getProperty("welcomeMesasge") == null) {
 				c.setProperty("welcomeMessage", true);
+			}
+			if(c.getProperty("extraInPot") == null) {
+				c.setProperty("extraInPot", 0);
 			}
 			
 		    getConfiguration().save();
@@ -481,6 +527,8 @@ public class Lottery extends JavaPlugin{
     	int amount = 0;
     	ArrayList<String> players = playersInFile("lotteryPlayers.txt");
     	amount = players.size() * Lottery.cost;
+    	// Add extra money added by admins and mods?
+    	amount += extraInPot;
     	return amount;
     }
     
@@ -649,5 +697,23 @@ public class Lottery extends JavaPlugin{
 		return stringTimeLeft;
 	}
 	
+	// Stolen from ltguide! Thank you so much :)
+	public Boolean hasPermission(CommandSender sender, String node, Boolean needOp) {
+		if (!(sender instanceof Player)) return true;
+
+		Player player = (Player) sender;
+		if (Permissions != null) return Permissions.has(player, node);
+		else {
+			Plugin test = getServer().getPluginManager().getPlugin("Permissions");
+			if (test != null) {
+				Permissions = ((Permissions) test).getHandler();
+				return Permissions.has(player, node);
+			}
+		}
+		if(needOp) {
+			return player.isOp();
+		}
+		return true;
+	}
 	
 }
