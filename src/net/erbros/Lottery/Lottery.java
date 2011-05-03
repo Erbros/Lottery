@@ -471,15 +471,14 @@ public class Lottery extends JavaPlugin{
 	void checkWhatMethodToUse(long extendtime) {
 		// Is this very long until? On servers with lag and long between restarts there might be a very long time between when server
 		// should have drawn winner and when it will draw. Perhaps help the server a bit by only scheduling for half the lengt at a time?
-		// But only if its more than 30 minutes left.
-		if(extendtime < 60 * 30 * 20) {
+		// But only if its more than 10 minutes left.
+		if(extendtime < 60 * 10 * 20) {
 			Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask((Plugin) this, new LotteryDraw(), extendtime);
 		} else {
-			extendtime = extendtime / 15;
+			extendtime = extendtime / 4;
 			Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask((Plugin) this, new extendLotteryDraw(), extendtime);
 		}
 		// For bugtesting:
-		getServer().broadcastMessage("New scheduler launched: " + extendtime);
 	}
 
 	public void makeConfig() {
