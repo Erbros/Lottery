@@ -365,7 +365,12 @@ public class Lottery extends JavaPlugin{
 		long extendtime = 0;
 		//Cancel any existing timers.
 		if(timerStarted == true) {
-			Bukkit.getServer().getScheduler().cancelTasks(this);
+			// Let's try and stop any running threads.
+			try {
+				Bukkit.getServer().getScheduler().cancelTasks((Plugin) this);
+			}
+			catch (ClassCastException exception) {};
+			
 			extendtime = extendTime();
 		} else {
 			// Get time until lottery drawing.
@@ -373,7 +378,6 @@ public class Lottery extends JavaPlugin{
 		}
 		// What if the admin changed the config to a shorter time? lets check, and if
 		// that is the case, lets use the new time.
-		log.info(nextexec.toString());
 		if(System.currentTimeMillis() + extendTime() < nextexec) {
 			nextexec = System.currentTimeMillis() + extendTime();
 			
@@ -401,15 +405,7 @@ public class Lottery extends JavaPlugin{
 		// Delay in server ticks. 20 ticks = 1 second.
 		extendtime = extendtime / 1000 * 20;
 		
-		// Is this very long until? On servers with lag and long between restarts there might be a very long time between when server
-		// should have drawn winner and when it will draw. Perhaps help the server a bit by only scheduling for half the lengt at a time?
-		// But only if its more than 30 minutes left.
-		if(extendtime < 60 * 30 * 20) {
-			Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask(this, new LotteryDraw(), extendtime);
-		} else {
-			extendtime = extendtime / 2;
-			Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask(this, new extendLotteryDraw(), extendtime);
-		}
+		checkWhatMethodToUse(extendtime);
 		
 		// Timer is now started, let it know.
 		timerStarted = true;
@@ -443,7 +439,13 @@ public class Lottery extends JavaPlugin{
 	class extendLotteryDraw extends TimerTask {
 		public void run() {
 			// Cancel timer.
-			Bukkit.getServer().getScheduler().cancelTasks((Plugin) this);
+			try {
+				Bukkit.getServer().getScheduler().cancelTasks((Plugin) this);
+			}
+			catch (ClassCastException exception) {};
+			
+			
+			
 			// Get new config.
 			c = getConfiguration();
 			nextexec = Long.parseLong(c.getProperty("nextexec").toString());
@@ -459,18 +461,25 @@ public class Lottery extends JavaPlugin{
 			// Delay in server ticks. 20 ticks = 1 second.
 			extendtime = extendtime / 1000 * 20;
 			
-			// Is this very long until? On servers with lag and long between restarts there might be a very long time between when server
-			// should have drawn winner and when it will draw. Perhaps help the server a bit by only scheduling for half the lengt at a time?
-			// But only if its more than 30 minutes left.
-			if(extendtime < 60 * 30 * 20) {
-				Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask((Plugin) this, new LotteryDraw(), extendtime);
-			} else {
-				extendtime = extendtime / 2;
-				Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask((Plugin) this, new extendLotteryDraw(), extendtime);
-			}
-			// For bugtesting:
-			getServer().broadcastMessage("New scheduler launched: " + extendtime);
+			
+			checkWhatMethodToUse(extendtime);
+
+
 		}
+	}
+	
+	void checkWhatMethodToUse(long extendtime) {
+		// Is this very long until? On servers with lag and long between restarts there might be a very long time between when server
+		// should have drawn winner and when it will draw. Perhaps help the server a bit by only scheduling for half the lengt at a time?
+		// But only if its more than 30 minutes left.
+		if(extendtime < 60 * 30 * 20) {
+			Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask((Plugin) this, new LotteryDraw(), extendtime);
+		} else {
+			extendtime = extendtime / 15;
+			Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask((Plugin) this, new extendLotteryDraw(), extendtime);
+		}
+		// For bugtesting:
+		getServer().broadcastMessage("New scheduler launched: " + extendtime);
 	}
 
 	public void makeConfig() {
@@ -719,8 +728,10 @@ public class Lottery extends JavaPlugin{
 
 		double timeLeft = Double.parseDouble(Long.toString(((time - System.currentTimeMillis()) / 1000)));
 		// If negative number, just tell them its DRAW TIME!
-		if(timeLeft < 0) 
+		if(timeLeft < 0) {
 			return "Draw will occur soon!";
+			
+		}
 		
 		// How many days left?
 		String stringTimeLeft = "";
