@@ -26,8 +26,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 
 
-import com.nijiko.coelho.iConomy.iConomy;
-import com.nijiko.coelho.iConomy.system.Account;
+import com.iConomy.*;
+import com.iConomy.system.Account;
+import com.iConomy.system.Holdings;
 
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
@@ -85,9 +86,10 @@ public class Lottery extends JavaPlugin{
 		// Do we need iConomy?
 		if(useiConomy == true) {
 			// Check if we got iConomy support. If not, no need in starting 
-			PluginListener = new PluginListener();
+			PluginListener = new PluginListener(this);
 			// Event Registration
 			getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_ENABLE, PluginListener, Priority.Monitor, this);
+			getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_DISABLE, PluginListener, Priority.Monitor, this);
 		}
 		if(welcomeMessage == true) {
 			PlayerListener = new PlayerJoinListener();
@@ -115,15 +117,15 @@ public class Lottery extends JavaPlugin{
 						sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Buy a ticket for " + ChatColor.RED +  Lottery.cost + " " + formatMaterialName(material) + ChatColor.WHITE + " with " + ChatColor.RED + "/lottery buy");
 						sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "There is currently " + ChatColor.GREEN +  amount + " " + formatMaterialName(material) + ChatColor.WHITE + " in the pot.");
 					} else {
-						sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Buy a ticket for " + ChatColor.RED + com.nijiko.coelho.iConomy.iConomy.getBank().format(Lottery.cost) + ChatColor.WHITE + " with " + ChatColor.RED + "/lottery buy");
-						sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "There is currently " + ChatColor.GREEN +  com.nijiko.coelho.iConomy.iConomy.getBank().format(amount) + ChatColor.WHITE + " in the pot.");
+						sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Buy a ticket for " + ChatColor.RED + iConomy.format(Lottery.cost) + ChatColor.WHITE + " with " + ChatColor.RED + "/lottery buy");
+						sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "There is currently " + ChatColor.GREEN +  iConomy.format(amount) + ChatColor.WHITE + " in the pot.");
 					}
 					sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.RED + "/lottery help" + ChatColor.WHITE + " for other commands");
 					// Does lastwinner exist and != null? Show.
 					// Show different things if we are using iConomy over material.
 					if(useiConomy == true) {
 						if(c.getProperty("lastwinner") != null) {
-							sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Last winner: " + c.getProperty("lastwinner") + " (" + com.nijiko.coelho.iConomy.iConomy.getBank().format(Integer.parseInt(c.getProperty("lastwinneramount").toString())) + ")");
+							sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Last winner: " + c.getProperty("lastwinner") + " (" + iConomy.format(Integer.parseInt(c.getProperty("lastwinneramount").toString())) + ")");
 						} 
 						
 					} else {
@@ -146,7 +148,7 @@ public class Lottery extends JavaPlugin{
 							if(useiConomy == false) {
 								sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "You got your lottery ticket for " + ChatColor.RED +  Lottery.cost + " " + formatMaterialName(material));
 							} else {
-								sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "You got your lottery ticket for " + ChatColor.RED + com.nijiko.coelho.iConomy.iConomy.getBank().format(Lottery.cost));
+								sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "You got your lottery ticket for " + ChatColor.RED + iConomy.format(Lottery.cost));
 							}
 							if(broadcastBuying == true) {
 								Lottery.server.broadcastMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + player.getDisplayName() + " just bought a ticket.");
@@ -197,7 +199,7 @@ public class Lottery extends JavaPlugin{
 						for (int i = 0; i < winnerArray.size(); i++) {
 							split = winnerArray.get(i).split(":");
 							if(split[2].equalsIgnoreCase("0")) {
-								winListPrice = com.nijiko.coelho.iConomy.iConomy.getBank().format(Double.parseDouble(split[1]));
+								winListPrice = iConomy.format(Double.parseDouble(split[1]));
 							} else {
 								winListPrice = split[1] + " " + formatMaterialName(Integer.parseInt(split[2])).toString();
 							}
@@ -217,6 +219,8 @@ public class Lottery extends JavaPlugin{
 							}
 							extraInPot += addToPot;
 							c.setProperty("extraInPot", extraInPot);
+							getConfiguration().save();
+							
 							sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Added " + ChatColor.GREEN + addToPot + ChatColor.WHITE + " to pot. Extra total is " + ChatColor.GREEN + extraInPot);
 						} else {
 							sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "You don't have access to that command.");
@@ -317,10 +321,15 @@ public class Lottery extends JavaPlugin{
 			log.info("Rand: " + Integer.toString(rand));
 			int amount = winningAmount();
 			if(useiConomy == true) {
-				Account account = iConomy.getBank().getAccount(players.get(rand));
-				account.add(amount);
+				if(!iConomy.hasAccount(players.get(rand))) {
+					Account account = iConomy.getAccount(players.get(rand));
+			    }
+				Holdings balance = iConomy.getAccount(players.get(rand)).getHoldings();
+				// Just make sure the account exists, or make it with default value.
+				// Add money to account.
+				balance.add(amount);
 				// Announce the winner:
-				Lottery.server.broadcastMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Congratulations to " + players.get(rand) + " for winning " + ChatColor.RED + iConomy.getBank().format(amount) + ".");
+				Lottery.server.broadcastMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Congratulations to " + players.get(rand) + " for winning " + ChatColor.RED + iConomy.format(amount) + ".");
 				addToWinnerList(players.get(rand), amount, 0);
 			} else {
 				Lottery.server.broadcastMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Congratulations to " + players.get(rand) + " for winning " + ChatColor.RED + amount + " " + formatMaterialName(material) + ".");
@@ -337,6 +346,7 @@ public class Lottery extends JavaPlugin{
 			
 			// extra money in pot added by admins and mods?
 			c.setProperty("extraInPot", 0);
+			extraInPot = 0;
 			// Clear file.
 			try {
 			    BufferedWriter out = new BufferedWriter(new FileWriter(getDataFolder() + File.separator + "lotteryPlayers.txt",false));
@@ -359,10 +369,22 @@ public class Lottery extends JavaPlugin{
 			extendtime = extendTime();
 		} else {
 			// Get time until lottery drawing.
-			extendtime = Lottery.nextexec - System.currentTimeMillis();
+			extendtime = nextexec - System.currentTimeMillis();
 		}
-		// If the time is passed (perhaps the server was offline?), draw lottery at once.
+		// What if the admin changed the config to a shorter time? lets check, and if
+		// that is the case, lets use the new time.
+		log.info(nextexec.toString());
+		if(System.currentTimeMillis() + extendTime() < nextexec) {
+			nextexec = System.currentTimeMillis() + extendTime();
+			
+			c.setProperty("nextexec",Lottery.nextexec);
+			if (!getConfiguration().save())
+	        {
+				getServer().getLogger().warning("Unable to persist configuration files, changes will not be saved.");
+	        }
+		}
 		
+		// If the time is passed (perhaps the server was offline?), draw lottery at once.
 		if(extendtime <= 0) {
 			extendtime = 3000;
 		}
@@ -372,15 +394,23 @@ public class Lottery extends JavaPlugin{
 			extendtime = 1000;
 			c = getConfiguration();
 			c.setProperty("nextexec", System.currentTimeMillis()+1000);
-			Lottery.nextexec = System.currentTimeMillis()+1000;
+			nextexec = System.currentTimeMillis()+1000;
 			log.info("DRAW NOW");
 		}
 		
 		// Delay in server ticks. 20 ticks = 1 second.
 		extendtime = extendtime / 1000 * 20;
 		
-		// Start new timer.
-		Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask(this, new LotteryDraw(), extendtime);
+		// Is this very long until? On servers with lag and long between restarts there might be a very long time between when server
+		// should have drawn winner and when it will draw. Perhaps help the server a bit by only scheduling for half the lengt at a time?
+		// But only if its more than 30 minutes left.
+		if(extendtime < 60 * 30 * 20) {
+			Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask(this, new LotteryDraw(), extendtime);
+		} else {
+			extendtime = extendtime / 2;
+			Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask(this, new extendLotteryDraw(), extendtime);
+		}
+		
 		// Timer is now started, let it know.
 		timerStarted = true;
 	}
@@ -410,6 +440,38 @@ public class Lottery extends JavaPlugin{
 		}
 	}
 	
+	class extendLotteryDraw extends TimerTask {
+		public void run() {
+			// Cancel timer.
+			Bukkit.getServer().getScheduler().cancelTasks((Plugin) this);
+			// Get new config.
+			c = getConfiguration();
+			nextexec = Long.parseLong(c.getProperty("nextexec").toString());
+			
+			long extendtime = 0;
+			
+			// How much time left? Below 0?
+			if(nextexec < System.currentTimeMillis()) {
+				extendtime = 3000;
+			} else {
+				extendtime = nextexec - System.currentTimeMillis();
+			}
+			// Delay in server ticks. 20 ticks = 1 second.
+			extendtime = extendtime / 1000 * 20;
+			
+			// Is this very long until? On servers with lag and long between restarts there might be a very long time between when server
+			// should have drawn winner and when it will draw. Perhaps help the server a bit by only scheduling for half the lengt at a time?
+			// But only if its more than 30 minutes left.
+			if(extendtime < 60 * 30 * 20) {
+				Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask((Plugin) this, new LotteryDraw(), extendtime);
+			} else {
+				extendtime = extendtime / 2;
+				Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask((Plugin) this, new extendLotteryDraw(), extendtime);
+			}
+			// For bugtesting:
+			getServer().broadcastMessage("New scheduler launched: " + extendtime);
+		}
+	}
 
 	public void makeConfig() {
 		c = getConfiguration();
@@ -498,16 +560,22 @@ public class Lottery extends JavaPlugin{
 	    	}
 	    } else {
 	    	// Do the player have money?
-	    	Account account = iConomy.getBank().getAccount(player.getName());
-	    	if(account.hasOver(Lottery.cost-1)) {
+	    	// First checking if the player got an account, if not let's create it.
+	    	if(!iConomy.hasAccount(player.getName())) {
+				Account account = iConomy.getAccount(player.getName());
+		    }
+	    	//Grab the holdings
+			Holdings balance = iConomy.getAccount(player.getName()).getHoldings();
+			// And lets withdraw some money
+	    	if(balance.hasOver(Lottery.cost-1)) {
 	    		// Removing coins from players account.
-	    		account.subtract(Lottery.cost);
+	    		balance.subtract(Lottery.cost);
 	    	} else {
 	    		return false;
 	    	}
 	    	
 	    }
-	    // If the user paid, continue. Else we would already have sent 
+	    // If the user paid, continue. Else we would already have sent return false
 		try {
 		    BufferedWriter out = new BufferedWriter(new FileWriter(getDataFolder() + File.separator + "lotteryPlayers.txt",true));
 		    out.write(player.getName());
@@ -650,6 +718,10 @@ public class Lottery extends JavaPlugin{
 	public static String timeUntil(long time) {
 
 		double timeLeft = Double.parseDouble(Long.toString(((time - System.currentTimeMillis()) / 1000)));
+		// If negative number, just tell them its DRAW TIME!
+		if(timeLeft < 0) 
+			return "Draw will occur soon!";
+		
 		// How many days left?
 		String stringTimeLeft = "";
 		if(timeLeft >= 60 * 60 * 24) {
@@ -693,6 +765,8 @@ public class Lottery extends JavaPlugin{
 		} else {
 			stringTimeLeft += secs + " seconds.";
 		}
+		
+		
 		
 		return stringTimeLeft;
 	}
