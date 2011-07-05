@@ -210,6 +210,10 @@ public class Lottery extends JavaPlugin{
 					}  else if(args[0].equalsIgnoreCase("addtopot")) {
 						// Do we trust this person?
 						if(hasPermission(sender, "lottery.admin.addtopot", true)) {
+							if(args[1] == null) {
+								sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "/lottery addtopot <number>");
+								return true;
+							}
 							int addToPot = 0;
 							// Is it a number?
 							try {
