@@ -50,6 +50,8 @@ public class Lottery extends JavaPlugin{
 	protected Integer extraInPot;
 	protected Boolean broadcastBuying;
 	protected Boolean welcomeMessage;
+	protected Integer netPayout;
+	protected Boolean clearExtraInPot;
 	protected Configuration c;
 	// Starting timer we are going to use for scheduling.
 	Timer timer;
@@ -275,6 +277,8 @@ public class Lottery extends JavaPlugin{
 		broadcastBuying = Boolean.parseBoolean(c.getProperty("broadcastBuying").toString());
 		welcomeMessage = Boolean.parseBoolean(c.getProperty("welcomeMessage").toString());
 		extraInPot = Integer.parseInt(c.getProperty("extraInPot").toString());
+		clearExtraInPot = Boolean.parseBoolean(c.getProperty("clearExtraInPot").toString());
+		netPayout = Integer.parseInt(c.getProperty("netPayout").toString());
 		
 		// Gets version number and writes out starting line to console.
 		PluginDescriptionFile pdfFile = this.getDescription();
@@ -312,11 +316,8 @@ public class Lottery extends JavaPlugin{
 		} else {
 			// Find rand. Do minus 1 since its a zero based array.
 			int rand = 0;
-			if(players.size() == 1) {
-				rand = 0;
-			} else {
-				rand = new Random().nextInt(players.size());
-			}
+
+			rand = new Random().nextInt(players.size());
 			
 			log.info("Rand: " + Integer.toString(rand));
 			int amount = winningAmount();
@@ -345,8 +346,11 @@ public class Lottery extends JavaPlugin{
 			c.setProperty("lastwinneramount", amount);
 			
 			// extra money in pot added by admins and mods?
-			c.setProperty("extraInPot", 0);
-			extraInPot = 0;
+			// Should this be removed?
+			if(clearExtraInPot == true) {
+				c.setProperty("extraInPot", 0);
+				extraInPot = 0;
+			}
 			// Clear file.
 			try {
 			    BufferedWriter out = new BufferedWriter(new FileWriter(getDataFolder() + File.separator + "lotteryPlayers.txt",false));
@@ -471,11 +475,11 @@ public class Lottery extends JavaPlugin{
 	void checkWhatMethodToUse(long extendtime) {
 		// Is this very long until? On servers with lag and long between restarts there might be a very long time between when server
 		// should have drawn winner and when it will draw. Perhaps help the server a bit by only scheduling for half the lengt at a time?
-		// But only if its more than 10 minutes left.
-		if(extendtime < 60 * 10 * 20) {
+		// But only if its more than 1 minute left.
+		if(extendtime < 60 * 1 * 20) {
 			Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask((Plugin) this, new LotteryDraw(), extendtime);
 		} else {
-			extendtime = extendtime / 4;
+			extendtime = extendtime / 20;
 			Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask((Plugin) this, new extendLotteryDraw(), extendtime);
 		}
 		// For bugtesting:
@@ -484,7 +488,7 @@ public class Lottery extends JavaPlugin{
 	public void makeConfig() {
 		c = getConfiguration();
 	
-		if(c.getProperty("broadcastBuying") == null || c.getProperty("cost") == null || c.getProperty("hours") == null || c.getProperty("material") == null  || c.getProperty("useiConomy") == null || c.getProperty("welcomeMessage") == null || c.getProperty("extraInPot") == null) {
+		if(c.getProperty("broadcastBuying") == null || c.getProperty("cost") == null || c.getProperty("hours") == null || c.getProperty("material") == null  || c.getProperty("useiConomy") == null || c.getProperty("welcomeMessage") == null || c.getProperty("extraInPot") == null || c.getProperty("netPayout") == null) {
 			
 			if(c.getProperty("cost") == null) {
 				c.setProperty("cost", "5");
@@ -507,6 +511,14 @@ public class Lottery extends JavaPlugin{
 			}
 			if(c.getProperty("extraInPot") == null) {
 				c.setProperty("extraInPot", 0);
+			}
+			
+			if(c.getProperty("clearExtraInPot") == null) {
+				c.setProperty("clearExtraInPot", true);
+			}
+			
+			if(c.getProperty("netPayout") == null) {
+				c.setProperty("netPayout", 100);
 			}
 			
 		    getConfiguration().save();
@@ -603,8 +615,13 @@ public class Lottery extends JavaPlugin{
     	int amount = 0;
     	ArrayList<String> players = playersInFile("lotteryPlayers.txt");
     	amount = players.size() * Lottery.cost;
+		// Set the net payout as configured in the config.
+    	if(netPayout > 0) {
+    		amount = amount * netPayout / 100;
+    	}
     	// Add extra money added by admins and mods?
     	amount += extraInPot;
+    	
     	return amount;
     }
     
