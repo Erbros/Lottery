@@ -488,7 +488,7 @@ public class Lottery extends JavaPlugin{
 	public void makeConfig() {
 		c = getConfiguration();
 	
-		if(c.getProperty("broadcastBuying") == null || c.getProperty("cost") == null || c.getProperty("hours") == null || c.getProperty("material") == null  || c.getProperty("useiConomy") == null || c.getProperty("welcomeMessage") == null || c.getProperty("extraInPot") == null || c.getProperty("netPayout") == null) {
+		if(c.getProperty("broadcastBuying") == null || c.getProperty("cost") == null || c.getProperty("hours") == null || c.getProperty("material") == null  || c.getProperty("useiConomy") == null || c.getProperty("welcomeMessage") == null || c.getProperty("extraInPot") == null || c.getProperty("netPayout") == null || c.getProperty("clearExtraInPot") == null) {
 			
 			if(c.getProperty("cost") == null) {
 				c.setProperty("cost", "5");
