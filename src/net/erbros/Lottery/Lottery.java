@@ -13,6 +13,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Logger;
 
+import net.erbros.Lottery.register.payment.Method;
+import net.erbros.Lottery.register.payment.Method.MethodAccount;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -30,8 +33,6 @@ import org.bukkit.util.config.Configuration;
 
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
-import com.nijikokun.register.payment.Method;
-import com.nijikokun.register.payment.Method.MethodAccount;
 
 public class Lottery extends JavaPlugin {
 
@@ -200,6 +201,7 @@ public class Lottery extends JavaPlugin {
 						// Let's check if the user tries to be funny
 						if (args.length > 1) {
 							try {
+								@SuppressWarnings("unused")
 								int x = Integer.parseInt(args[1]);
 							} catch (NumberFormatException nFE) {
 								sender.sendMessage(ChatColor.GOLD

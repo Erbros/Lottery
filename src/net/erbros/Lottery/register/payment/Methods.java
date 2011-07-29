@@ -1,4 +1,4 @@
-package com.nijikokun.register.payment;
+package net.erbros.Lottery.register.payment;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -63,13 +63,13 @@ public class Methods {
      * @see #Methods(java.lang.String)
      */
     private void _init() {
-        this.addMethod("iConomy", new com.nijikokun.register.payment.methods.iCo6());
-        this.addMethod("iConomy", new com.nijikokun.register.payment.methods.iCo5());
-        this.addMethod("iConomy", new com.nijikokun.register.payment.methods.iCo4());
-        this.addMethod("BOSEconomy", new com.nijikokun.register.payment.methods.BOSE6());
-        this.addMethod("BOSEconomy", new com.nijikokun.register.payment.methods.BOSE7());
-        this.addMethod("Essentials", new com.nijikokun.register.payment.methods.EE17());
-        this.addMethod("MultiCurrency", new com.nijikokun.register.payment.methods.MCUR());
+        this.addMethod("iConomy", new net.erbros.Lottery.payment.methods.iCo6());
+        this.addMethod("iConomy", new net.erbros.Lottery.payment.methods.iCo5());
+        this.addMethod("iConomy", new net.erbros.Lottery.payment.methods.iCo4());
+        this.addMethod("BOSEconomy", new net.erbros.Lottery.payment.methods.BOSE6());
+        this.addMethod("BOSEconomy", new net.erbros.Lottery.payment.methods.BOSE7());
+        this.addMethod("Essentials", new net.erbros.Lottery.payment.methods.EE17());
+        this.addMethod("MultiCurrency", new net.erbros.Lottery.payment.methods.MCUR());
     }
 
     /**

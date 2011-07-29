@@ -1,4 +1,4 @@
-package com.nijikokun.register.payment;
+package net.erbros.Lottery.register.payment;
 
 import org.bukkit.plugin.Plugin;
 

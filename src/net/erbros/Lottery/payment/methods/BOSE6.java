@@ -1,7 +1,8 @@
-package com.nijikokun.register.payment.methods;
+package net.erbros.Lottery.payment.methods;
 
-import com.nijikokun.register.payment.Method;
 import cosine.boseconomy.BOSEconomy;
+import net.erbros.Lottery.register.payment.Method;
+
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -11,8 +12,9 @@ import org.bukkit.plugin.Plugin;
  * @copyright (c) 2011
  * @license AOL license <http://aol.nexua.org>
  */
+@SuppressWarnings("deprecation")
 public class BOSE6 implements Method {
-    private BOSEconomy BOSEconomy;
+	private BOSEconomy BOSEconomy;
 
     public BOSEconomy getPlugin() {
         return this.BOSEconomy;
@@ -145,7 +147,8 @@ public class BOSE6 implements Method {
             return -1;
         }
 
-        public double balance() {
+        
+		public double balance() {
             return (double) this.BOSEconomy.getBankMoney(bank);
         }
 

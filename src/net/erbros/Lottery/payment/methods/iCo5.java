@@ -1,4 +1,4 @@
-package com.nijikokun.register.payment.methods;
+package net.erbros.Lottery.payment.methods;
 
 import com.iConomy.iConomy;
 import com.iConomy.system.Account;
@@ -6,7 +6,8 @@ import com.iConomy.system.BankAccount;
 import com.iConomy.system.Holdings;
 import com.iConomy.util.Constants;
 
-import com.nijikokun.register.payment.Method;
+
+import net.erbros.Lottery.register.payment.Method;
 
 import org.bukkit.plugin.Plugin;
 
@@ -17,6 +18,7 @@ import org.bukkit.plugin.Plugin;
  * @copyright (c) 2011
  * @license AOL license <http://aol.nexua.org>
  */
+@SuppressWarnings("static-access")
 public class iCo5 implements Method {
     private iConomy iConomy;
 

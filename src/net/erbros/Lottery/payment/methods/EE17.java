@@ -1,11 +1,12 @@
-package com.nijikokun.register.payment.methods;
+package net.erbros.Lottery.payment.methods;
 
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.api.Economy;
 import com.earth2me.essentials.api.NoLoanPermittedException;
 import com.earth2me.essentials.api.UserDoesNotExistException;
 
-import com.nijikokun.register.payment.Method;
+
+import net.erbros.Lottery.register.payment.Method;
 
 import org.bukkit.plugin.Plugin;
 

@@ -10,12 +10,13 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Timer;
 
+import net.erbros.Lottery.register.payment.Method.MethodAccount;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.nijikokun.register.payment.Method.MethodAccount;
 
 public class Etc extends Lottery {
 	

@@ -1,7 +1,8 @@
-package com.nijikokun.register.payment.methods;
+package net.erbros.Lottery.payment.methods;
 
-import com.nijikokun.register.payment.Method;
 import cosine.boseconomy.BOSEconomy;
+import net.erbros.Lottery.register.payment.Method;
+
 import org.bukkit.plugin.Plugin;
 
 /**
