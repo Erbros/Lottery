@@ -39,7 +39,7 @@ public class Lottery extends JavaPlugin {
 	protected static Integer cost;
 	protected Integer hours;
 	protected static Long nextexec;
-    public Method Method = null;
+	public Method Method = null;
 	public Boolean timerStarted = false;
 	protected static Boolean useiConomy;
 	protected static Integer material;
@@ -83,8 +83,8 @@ public class Lottery extends JavaPlugin {
 		if (useiConomy == true) {
 			// Event Registration
 			getServer().getPluginManager().registerEvent(
-					Event.Type.PLUGIN_ENABLE, new PluginListener(this), Priority.Monitor,
-					this);
+					Event.Type.PLUGIN_ENABLE, new PluginListener(this),
+					Priority.Monitor, this);
 			getServer().getPluginManager().registerEvent(
 					Event.Type.PLUGIN_DISABLE, new PluginListener(this),
 					Priority.Monitor, this);
@@ -476,7 +476,7 @@ public class Lottery extends JavaPlugin {
 			if (useiConomy == true) {
 				Method.hasAccount(players.get(rand));
 				MethodAccount account = Method.getAccount(players.get(rand));
-				
+
 				// Just make sure the account exists, or make it with default
 				// value.
 				// Add money to account.
@@ -787,9 +787,9 @@ public class Lottery extends JavaPlugin {
 			// First checking if the player got an account, if not let's create
 			// it.
 			Method.hasAccount(player.getName());
-					
+
 			MethodAccount account = Method.getAccount(player.getName());
-			
+
 			// And lets withdraw some money
 			if (account.hasOver(Lottery.cost * numberOfTickets - 1)) {
 				// Removing coins from players account.
@@ -1075,7 +1075,8 @@ public class Lottery extends JavaPlugin {
 		return "i don't know that word";
 	}
 
-	public Hashtable<String, Integer> realPlayersFromList(ArrayList<String> ticketList) {
+	public Hashtable<String, Integer> realPlayersFromList(
+			ArrayList<String> ticketList) {
 		Hashtable<String, Integer> playerList = new Hashtable<String, Integer>();
 		int value = 0;
 		for (String check : ticketList) {
