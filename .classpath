@@ -2,8 +2,15 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Users/Erbros/Desktop/bukkit-0.0.1-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Erbros/Desktop/iConomy.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Erbros/Desktop/Permissions.jar"/>
+	<classpathentry kind="lib" path="D:/Users/KHobbits/GIT/Essentials/lib/bukkit-0.0.1-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="D:/Users/KHobbits/GIT/Essentials/lib/craftbukkit-0.0.1-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="D:/Users/KHobbits/GIT/Essentials/lib/iCo5.jar"/>
+	<classpathentry kind="lib" path="D:/Users/KHobbits/GIT/Essentials/lib/Permissions.jar"/>
+	<classpathentry kind="lib" path="D:/Users/KHobbits/GIT/Essentials/lib/Permissions3.jar"/>
+	<classpathentry kind="lib" path="D:/Users/KHobbits/GIT/Essentials/lib/iCo4.jar"/>
+	<classpathentry kind="lib" path="D:/Users/KHobbits/GIT/Essentials/lib/BOSEconomy7.jar"/>
+	<classpathentry kind="lib" path="D:/Users/KHobbits/GIT/Essentials/lib/iCo6.jar"/>
+	<classpathentry kind="lib" path="D:/Users/KHobbits/GIT/Essentials/lib/MultiCurrency.jar"/>
+	<classpathentry kind="lib" path="D:/Users/KHobbits/GIT/Essentials/Essentials/dist/Essentials.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

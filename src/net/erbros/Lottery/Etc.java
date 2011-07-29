@@ -10,14 +10,12 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Timer;
 
-import net.erbros.Lottery.Lottery.LotteryDraw;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.nijiko.coelho.iConomy.system.Account;
+import com.nijikokun.register.payment.Method.MethodAccount;
 
 public class Etc extends Lottery {
 	
@@ -45,11 +43,10 @@ public class Etc extends Lottery {
     }
     
     public boolean getWinner() {
-    	Server = getServer();
 		ArrayList<String> players = playersInFile("lotteryPlayers.txt");
 		
 		if(players.isEmpty() == true) {
-			Server.broadcastMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "No tickets sold this round. Thats a shame.");
+			server.broadcastMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "No tickets sold this round. Thats a shame.");
 			return false;
 		} else {
 			// Find rand. Do minus 1 since its a zero based array.
@@ -63,18 +60,18 @@ public class Etc extends Lottery {
 			log.info("Rand: " + Integer.toString(rand));
 			int amount = winningAmount();
 			if(useiConomy == true) {
-				Account account = iConomy.getBank().getAccount(players.get(rand));
+				MethodAccount account = Method.getAccount(players.get(rand));
 				account.add(amount);
 				// Announce the winner:
-				Server.broadcastMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Congratulations to " + players.get(rand) + " for winning " + ChatColor.RED + iConomy.getBank().format(amount) + ".");
+				server.broadcastMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Congratulations to " + players.get(rand) + " for winning " + ChatColor.RED + Method.format(amount) + ".");
 				addToWinnerList(players.get(rand), amount, 0);
 			} else {
-				Server.broadcastMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Congratulations to " + players.get(rand) + " for winning " + ChatColor.RED + amount + " " + formatMaterialName(material) + ".");
-				Server.broadcastMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Use " + ChatColor.RED + "/lottery claim" + ChatColor.WHITE + " to claim the winnings.");
+				server.broadcastMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Congratulations to " + players.get(rand) + " for winning " + ChatColor.RED + amount + " " + formatMaterialName(material) + ".");
+				server.broadcastMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Use " + ChatColor.RED + "/lottery claim" + ChatColor.WHITE + " to claim the winnings.");
 				addToWinnerList(players.get(rand), amount, material);
 				addToClaimList(players.get(rand), amount, material.intValue());
 			}
-			Server.broadcastMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "There was in total " + players.size() + " players with a lottery ticket.");
+			server.broadcastMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "There was in total " + players.size() + " players with a lottery ticket.");
 			
 			// Add last winner to config.
 			c = getConfiguration();
@@ -138,7 +135,7 @@ public class Etc extends Lottery {
 			int claimAmount = Integer.parseInt(split[1]);
 			int claimMaterial = Integer.parseInt(split[2]);
 			player.getInventory().addItem( new ItemStack(claimMaterial, claimAmount));
-			player.sendMessage("You just claimed " + claimAmount + " " + etc.formatMaterialName(claimMaterial) + ".");
+			player.sendMessage("You just claimed " + claimAmount + " " + formatMaterialName(claimMaterial) + ".");
 		}
 		
 		
@@ -324,7 +321,7 @@ public class Etc extends Lottery {
 	    	}
 	    } else {
 	    	// Do the player have money?
-	    	Account account = iConomy.getBank().getAccount(player.getName());
+	    	MethodAccount account = Method.getAccount(player.getName());
 	    	if(account.hasOver(cost-1)) {
 	    		// Removing coins from players account.
 	    		account.subtract(cost);
