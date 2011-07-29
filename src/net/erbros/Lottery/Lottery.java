@@ -215,10 +215,10 @@ public class Lottery extends JavaPlugin {
 						if (args.length < 2) {
 							buyTickets = 1;
 						} else if (Integer.parseInt(args[1].toString()) > 1
-								&& moreThanOneTicket == false) {
-							buyTickets = 1;
-						} else {
+								&& moreThanOneTicket == true) {
 							buyTickets = Integer.parseInt(args[1].toString());
+						} else {
+							buyTickets = 1;
 						}
 						if (addPlayer(player, moreThanOneTicket, buyTickets) == true) {
 							// You got your ticket.
