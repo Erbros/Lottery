@@ -48,7 +48,7 @@ public class Lottery extends JavaPlugin {
 	protected Boolean welcomeMessage;
 	protected Integer netPayout;
 	protected Boolean clearExtraInPot;
-	protected Boolean moreThanOneTicket;
+	protected Integer maxTicketsEachUser;
 	protected Configuration c;
 	// Starting timer we are going to use for scheduling.
 	Timer timer;
@@ -140,7 +140,7 @@ public class Lottery extends JavaPlugin {
 								+ ChatColor.GREEN + Method.format(amount)
 								+ ChatColor.WHITE + " in the pot.");
 					}
-					if (moreThanOneTicket == true) {
+					if (maxTicketsEachUser > 1) {
 						sender.sendMessage(ChatColor.GOLD
 								+ "[LOTTERY] "
 								+ ChatColor.WHITE
@@ -214,13 +214,12 @@ public class Lottery extends JavaPlugin {
 
 						if (args.length < 2) {
 							buyTickets = 1;
-						} else if (Integer.parseInt(args[1].toString()) > 1
-								&& moreThanOneTicket == true) {
+						} else if (Integer.parseInt(args[1].toString()) <= maxTicketsEachUser) {
 							buyTickets = Integer.parseInt(args[1].toString());
 						} else {
 							buyTickets = 1;
 						}
-						if (addPlayer(player, moreThanOneTicket, buyTickets) == true) {
+						if (addPlayer(player, maxTicketsEachUser, buyTickets) == true) {
 							// You got your ticket.
 							if (useiConomy == false) {
 								sender.sendMessage(ChatColor.GOLD
@@ -245,7 +244,7 @@ public class Lottery extends JavaPlugin {
 							}
 							// Can a user buy more than one ticket? How many
 							// tickets have he bought now?
-							if (moreThanOneTicket == true) {
+							if (maxTicketsEachUser > 1) {
 								sender.sendMessage(ChatColor.GOLD
 										+ "[LOTTERY] "
 										+ ChatColor.WHITE
@@ -267,19 +266,10 @@ public class Lottery extends JavaPlugin {
 
 						} else {
 							// Something went wrong.
-							if (moreThanOneTicket == false) {
-								sender.sendMessage(ChatColor.GOLD
-										+ "[LOTTERY] "
-										+ ChatColor.WHITE
-										+ "Either you can't afford a ticket, or you got one already.");
-							} else {
-								sender.sendMessage(ChatColor.GOLD
-										+ "[LOTTERY] " + ChatColor.WHITE
-										+ "You can't afford " + buyTickets
-										+ " "
-										+ pluralWording("ticket", buyTickets)
-										+ ".");
-							}
+							sender.sendMessage(ChatColor.GOLD
+									+ "[LOTTERY] "
+									+ ChatColor.WHITE
+									+ "Either you can't afford a ticket, or you got one already.");
 						}
 					} else if (args[0].equalsIgnoreCase("claim")) {
 						removeFromClaimList((Player) sender);
@@ -443,8 +433,8 @@ public class Lottery extends JavaPlugin {
 		clearExtraInPot = Boolean.parseBoolean(c.getProperty("clearExtraInPot")
 				.toString());
 		netPayout = Integer.parseInt(c.getProperty("netPayout").toString());
-		moreThanOneTicket = Boolean.parseBoolean(c.getProperty(
-				"moreThanOneTicket").toString());
+		maxTicketsEachUser = Integer.parseInt(c.getProperty(
+				"maxTicketsEachUser").toString());
 
 		// Gets version number and writes out starting line to console.
 		PluginDescriptionFile pdfFile = this.getDescription();
@@ -681,7 +671,8 @@ public class Lottery extends JavaPlugin {
 				|| c.getProperty("extraInPot") == null
 				|| c.getProperty("netPayout") == null
 				|| c.getProperty("clearExtraInPot") == null
-				|| c.getProperty("moreThanOneTicket") == null) {
+				|| c.getProperty("moreThanOneTicket") == null
+				|| c.getProperty("maxTicketsEachUser") == null) {
 
 			if (c.getProperty("cost") == null) {
 				c.setProperty("cost", "5");
@@ -713,9 +704,9 @@ public class Lottery extends JavaPlugin {
 			if (c.getProperty("netPayout") == null) {
 				c.setProperty("netPayout", 100);
 			}
-
-			if (c.getProperty("moreThanOneTicket") == null) {
-				c.setProperty("moreThanOneTicket", false);
+			
+			if (c.getProperty("maxTicketsEachUser") == null) {
+				c.setProperty("maxTicketsEachUser", 1);
 			}
 
 			getConfiguration().save();
@@ -747,27 +738,10 @@ public class Lottery extends JavaPlugin {
 	}
 
 	public boolean addPlayer(Player player,
-			Boolean allowToBuyMoreThanOneTicket, Integer numberOfTickets) {
+			Integer maxAmountOfTickets, Integer numberOfTickets) {
 
-		if (allowToBuyMoreThanOneTicket == false) {
-			// Is the player already listed, and thus already have a ticket?
-			try {
-				BufferedReader in = new BufferedReader(
-						new FileReader(getDataFolder() + File.separator
-								+ "lotteryPlayers.txt"));
-				String str;
-				while ((str = in.readLine()) != null) {
-
-					if (str.equalsIgnoreCase(player.getName())) {
-						// Player have bought earlier. Will send false signal to
-						// tell.
-						in.close();
-						return false;
-					}
-				}
-				in.close();
-			} catch (IOException e) {
-			}
+		if (playerInList(player) + numberOfTickets > maxAmountOfTickets) {
+			return false;
 		}
 
 		// Do the ticket cost money or item?
