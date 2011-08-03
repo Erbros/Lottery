@@ -248,7 +248,7 @@ public class Lottery extends JavaPlugin {
 								sender.sendMessage(ChatColor.GOLD
 										+ "[LOTTERY] "
 										+ ChatColor.WHITE
-										+ "You now got "
+										+ "You now have "
 										+ ChatColor.RED
 										+ playerInList(player)
 										+ " "
@@ -292,8 +292,8 @@ public class Lottery extends JavaPlugin {
 								+ ChatColor.WHITE + "Help commands");
 						sender.sendMessage(ChatColor.RED + "/lottery"
 								+ ChatColor.WHITE + " : Basic lottery info.");
-						sender.sendMessage(ChatColor.RED + "/lottery buy"
-								+ ChatColor.WHITE + " : Buy a ticket.");
+						sender.sendMessage(ChatColor.RED + "/lottery buy <n>"
+								+ ChatColor.WHITE + " : Buy ticket(s).");
 						sender.sendMessage(ChatColor.RED + "/lottery claim"
 								+ ChatColor.WHITE + " : Claim outstandig wins.");
 						sender.sendMessage(ChatColor.RED + "/lottery winners"
