@@ -592,15 +592,19 @@ public class Lottery extends JavaPlugin {
 		public void run() {
 			// Cancel timer.
 			// Get new config.
+			log.info("Doing a lottery draw");
 			c = getConfiguration();
 			Lottery.nextexec = Long.parseLong(c.getProperty("nextexec")
 					.toString());
 
 			if (Lottery.nextexec > 0
-					&& System.currentTimeMillis() > Lottery.nextexec) {
+					&& System.currentTimeMillis() + 1000 >= Lottery.nextexec) {
 				// Get the winner, if any. And remove file so we are ready for
 				// new round.
-				getWinner();
+				if (getWinner() == false) {
+					log.info("Failed getting winner");
+				}
+				log.info("Getting winner.");
 				Lottery.nextexec = System.currentTimeMillis() + extendTime();
 
 				c.setProperty("nextexec", Lottery.nextexec);
@@ -650,18 +654,20 @@ public class Lottery extends JavaPlugin {
 		// restarts there might be a very long time between when server
 		// should have drawn winner and when it will draw. Perhaps help the
 		// server a bit by only scheduling for half the lengt at a time?
-		// But only if its more than 1 minute left.
-		if (extendtime < 60 * 1 * 20) {
+		// But only if its more than 5 seconds left.
+		if (extendtime < 5 * 20) {
 			Bukkit.getServer()
 					.getScheduler()
 					.scheduleAsyncDelayedTask((Plugin) this, new LotteryDraw(),
 							extendtime);
+			log.info("LotteryDraw() " + extendtime + 100);
 		} else {
-			extendtime = extendtime / 20;
+			extendtime = extendtime / 15;
 			Bukkit.getServer()
 					.getScheduler()
 					.scheduleAsyncDelayedTask((Plugin) this,
 							new extendLotteryDraw(), extendtime);
+			log.info("extendLotteryDraw() " + extendtime);
 		}
 		// For bugtesting:
 	}
