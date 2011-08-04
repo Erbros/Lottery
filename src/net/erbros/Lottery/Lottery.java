@@ -71,7 +71,7 @@ public class Lottery extends JavaPlugin {
 		PluginDescriptionFile pdfFile = this.getDescription();
 		System.out.println(pdfFile.getName() + " version "
 				+ pdfFile.getVersion() + " has been unloaded.");
-		log.info(getDescription().getName()
+		debugMsg(getDescription().getName()
 				+ ": has been disabled (including timers).");
 	}
 
@@ -396,6 +396,7 @@ public class Lottery extends JavaPlugin {
 								sender.sendMessage(ChatColor.RED + "/lottery config cost <i>");
 								sender.sendMessage(ChatColor.RED + "/lottery config hours <i>");
 								sender.sendMessage(ChatColor.RED + "/lottery config maxTicketsEachUser <i>");
+								sender.sendMessage(ChatColor.RED + "/lottery config reload");
 							} else if(args.length >= 2) {
 								if(args[1].equalsIgnoreCase("cost")) {
 									if(args.length == 2) {
@@ -407,7 +408,7 @@ public class Lottery extends JavaPlugin {
 										try {
 											newCoin = Integer.parseInt(args[2].toString());
 										} catch (NumberFormatException e) {
-											e.printStackTrace();
+											//e.printStackTrace();
 										}
 										if(newCoin <= 0) {
 											sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
@@ -435,7 +436,7 @@ public class Lottery extends JavaPlugin {
 										try {
 											newHours = Integer.parseInt(args[2].toString());
 										} catch (NumberFormatException e) {
-											e.printStackTrace();
+											//e.printStackTrace();
 										}
 										if(newHours <= 0) {
 											sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
@@ -463,7 +464,7 @@ public class Lottery extends JavaPlugin {
 										try {
 											newMaxTicketsEachUser = Integer.parseInt(args[2].toString());
 										} catch (NumberFormatException e) {
-											e.printStackTrace();
+											//e.printStackTrace();
 										}
 										if(newMaxTicketsEachUser <= 0) {
 											sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
@@ -481,6 +482,9 @@ public class Lottery extends JavaPlugin {
 										}
 										
 									}
+								} else if(args[1].equalsIgnoreCase("config")) {
+									// Lets just reload the config.
+									loadConfig();
 								}
 							}
 							// Let's save the configuration, just in case something was changed.
@@ -558,7 +562,7 @@ public class Lottery extends JavaPlugin {
 
 			rand = new Random().nextInt(players.size());
 
-			log.info("Rand: " + Integer.toString(rand));
+			debugMsg("Rand: " + Integer.toString(rand));
 			int amount = winningAmount();
 			if (useiConomy == true) {
 				Method.hasAccount(players.get(rand));
@@ -666,7 +670,7 @@ public class Lottery extends JavaPlugin {
 			c = getConfiguration();
 			c.setProperty("nextexec", System.currentTimeMillis() + 1000);
 			nextexec = System.currentTimeMillis() + 1000;
-			log.info("DRAW NOW");
+			debugMsg("DRAW NOW");
 		}
 
 		// Delay in server ticks. 20 ticks = 1 second.
@@ -682,7 +686,7 @@ public class Lottery extends JavaPlugin {
 		public void run() {
 			// Cancel timer.
 			// Get new config.
-			log.info("Doing a lottery draw");
+			debugMsg("Doing a lottery draw");
 			c = getConfiguration();
 			Lottery.nextexec = Long.parseLong(c.getProperty("nextexec")
 					.toString());
@@ -691,10 +695,10 @@ public class Lottery extends JavaPlugin {
 					&& System.currentTimeMillis() + 1000 >= Lottery.nextexec) {
 				// Get the winner, if any. And remove file so we are ready for
 				// new round.
+				debugMsg("Getting winner.");
 				if (getWinner() == false) {
-					log.info("Failed getting winner");
+					debugMsg("Failed getting winner");
 				}
-				log.info("Getting winner.");
 				Lottery.nextexec = System.currentTimeMillis() + extendTime();
 
 				c.setProperty("nextexec", Lottery.nextexec);
@@ -750,14 +754,14 @@ public class Lottery extends JavaPlugin {
 					.getScheduler()
 					.scheduleAsyncDelayedTask((Plugin) this, new LotteryDraw(),
 							extendtime);
-			log.info("LotteryDraw() " + extendtime + 100);
+			debugMsg("LotteryDraw() " + extendtime + 100);
 		} else {
 			extendtime = extendtime / 15;
 			Bukkit.getServer()
 					.getScheduler()
 					.scheduleAsyncDelayedTask((Plugin) this,
 							new extendLotteryDraw(), extendtime);
-			log.info("extendLotteryDraw() " + extendtime);
+			debugMsg("extendLotteryDraw() " + extendtime);
 		}
 		// For bugtesting:
 	}
@@ -1168,6 +1172,18 @@ public class Lottery extends JavaPlugin {
 		}
 		// Next
 		return "i don't know that word";
+	}
+	
+	// Enable some debugging?
+	public void debugMsg(String msg) {
+		if(c.getProperty("debug") != null) {
+			if(Boolean.parseBoolean(c.getProperty("debug").toString()) == true) {
+				if(msg != null) {
+					log.info(msg);
+					getServer().broadcastMessage(msg);
+				}
+			}
+		}
 	}
 
 	public Hashtable<String, Integer> realPlayersFromList(
