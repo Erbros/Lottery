@@ -218,11 +218,14 @@ public class Lottery extends JavaPlugin {
 							buyTickets = Integer.parseInt(args[1].toString());
 						} else if (Integer.parseInt(args[1].toString()) + playerInList(player) <= maxTicketsEachUser) {
 							buyTickets = maxTicketsEachUser - playerInList(player);
-						} else if (Integer.parseInt(args[1].toString()) < 1) {
-							buyTickets = 1;
 						} else {
 							buyTickets = 1;
 						}
+						
+						if (buyTickets < 1) {
+							buyTickets = 1;
+						}
+						
 						if (addPlayer(player, maxTicketsEachUser, buyTickets) == true) {
 							// You got your ticket.
 							if (useiConomy == false) {
