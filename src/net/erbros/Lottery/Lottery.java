@@ -314,6 +314,9 @@ public class Lottery extends JavaPlugin {
 							sender.sendMessage(ChatColor.BLUE
 									+ "/lottery addtopot" + ChatColor.WHITE
 									+ " : Add number to pot.");
+						if (hasPermission(sender, "lottery.admin.editconfig", true))
+							sender.sendMessage(ChatColor.BLUE + "/lottery config"
+									+ ChatColor.WHITE + " : Edit the config.");
 
 					} else if (args[0].equalsIgnoreCase("winners")) {
 						// Get the winners.
@@ -382,7 +385,108 @@ public class Lottery extends JavaPlugin {
 									+ ChatColor.WHITE
 									+ "You don't have access to that command.");
 						}
+					} else if (args[0].equalsIgnoreCase("config")) {
+						// Do we trust this person?
+						if (hasPermission(sender, "lottery.admin.editconfig",
+								true)) {
+							// Did the admin provide any additional args or should we show options?
+							if (args.length == 1) {
+								sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+										+ ChatColor.WHITE + "Edit config commands");
+								sender.sendMessage(ChatColor.RED + "/lottery config cost <i>");
+								sender.sendMessage(ChatColor.RED + "/lottery config hours <i>");
+								sender.sendMessage(ChatColor.RED + "/lottery config maxTicketsEachUser <i>");
+							} else if(args.length >= 2) {
+								if(args[1].equalsIgnoreCase("cost")) {
+									if(args.length == 2) {
+										sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+												+ ChatColor.WHITE + "Please provide a number");
+										return true;
+									} else {
+										int newCoin = 0;
+										try {
+											newCoin = Integer.parseInt(args[2].toString());
+										} catch (NumberFormatException e) {
+											e.printStackTrace();
+										}
+										if(newCoin <= 0) {
+											sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+													+ ChatColor.WHITE + "Provide a integer (number) greater than zero");
+											return true;
+										} else {
+											sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+													+ ChatColor.WHITE + "Cost changed to "
+													+ ChatColor.RED + newCoin);
+											c.setProperty("cost", newCoin);
+											// Save the configuration
+											getConfiguration().save();
+											// Reload the configuration
+											loadConfig();
+										}
+										
+									}
+								} else if(args[1].equalsIgnoreCase("hours")) {
+									if(args.length == 2) {
+										sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+												+ ChatColor.WHITE + "Please provide a number");
+										return true;
+									} else {
+										int newHours = 0;
+										try {
+											newHours = Integer.parseInt(args[2].toString());
+										} catch (NumberFormatException e) {
+											e.printStackTrace();
+										}
+										if(newHours <= 0) {
+											sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+													+ ChatColor.WHITE + "Provide a integer (number) greater than zero");
+											return true;
+										} else {
+											sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+													+ ChatColor.WHITE + "Hours changed to "
+													+ ChatColor.RED + newHours);
+											c.setProperty("hours", newHours);
+											// Save the configuration
+											getConfiguration().save();
+											// Reload the configuration
+											loadConfig();
+										}
+										
+									}
+								} else if(args[1].equalsIgnoreCase("maxTicketsEachUser") || args[1].equalsIgnoreCase("max")) {
+									if(args.length == 2) {
+										sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+												+ ChatColor.WHITE + "Please provide a number");
+										return true;
+									} else {
+										int newMaxTicketsEachUser = 0;
+										try {
+											newMaxTicketsEachUser = Integer.parseInt(args[2].toString());
+										} catch (NumberFormatException e) {
+											e.printStackTrace();
+										}
+										if(newMaxTicketsEachUser <= 0) {
+											sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+													+ ChatColor.WHITE + "Provide a integer (number) greater to or equal to zero");
+											return true;
+										} else {
+											sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+													+ ChatColor.WHITE + "Max amount of tickets changed to "
+													+ ChatColor.RED + newMaxTicketsEachUser);
+											c.setProperty("maxTicketsEachUser", newMaxTicketsEachUser);
+											// Save the configuration
+											getConfiguration().save();
+											// Reload the configuration
+											loadConfig();
+										}
+										
+									}
+								}
+							}
+							// Let's save the configuration, just in case something was changed.
+						}
 					} else {
+						
 						sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
 								+ ChatColor.WHITE
 								+ "Hey, I don't recognize that command!");
@@ -427,21 +531,7 @@ public class Lottery extends JavaPlugin {
 
 		makeConfig();
 
-		cost = Integer.parseInt(c.getProperty("cost").toString());
-		hours = Integer.parseInt(c.getProperty("hours").toString());
-		useiConomy = Boolean.parseBoolean(c.getProperty("useiConomy")
-				.toString());
-		material = Integer.parseInt(c.getProperty("material").toString());
-		broadcastBuying = Boolean.parseBoolean(c.getProperty("broadcastBuying")
-				.toString());
-		welcomeMessage = Boolean.parseBoolean(c.getProperty("welcomeMessage")
-				.toString());
-		extraInPot = Integer.parseInt(c.getProperty("extraInPot").toString());
-		clearExtraInPot = Boolean.parseBoolean(c.getProperty("clearExtraInPot")
-				.toString());
-		netPayout = Integer.parseInt(c.getProperty("netPayout").toString());
-		maxTicketsEachUser = Integer.parseInt(c.getProperty(
-				"maxTicketsEachUser").toString());
+		loadConfig();
 
 		// Gets version number and writes out starting line to console.
 		PluginDescriptionFile pdfFile = this.getDescription();
@@ -725,6 +815,24 @@ public class Lottery extends JavaPlugin {
 			getConfiguration().save();
 		}
 
+	}
+	
+	public void loadConfig() {
+		cost = Integer.parseInt(c.getProperty("cost").toString());
+		hours = Integer.parseInt(c.getProperty("hours").toString());
+		useiConomy = Boolean.parseBoolean(c.getProperty("useiConomy")
+				.toString());
+		material = Integer.parseInt(c.getProperty("material").toString());
+		broadcastBuying = Boolean.parseBoolean(c.getProperty("broadcastBuying")
+				.toString());
+		welcomeMessage = Boolean.parseBoolean(c.getProperty("welcomeMessage")
+				.toString());
+		extraInPot = Integer.parseInt(c.getProperty("extraInPot").toString());
+		clearExtraInPot = Boolean.parseBoolean(c.getProperty("clearExtraInPot")
+				.toString());
+		netPayout = Integer.parseInt(c.getProperty("netPayout").toString());
+		maxTicketsEachUser = Integer.parseInt(c.getProperty(
+				"maxTicketsEachUser").toString());
 	}
 
 	public long extendTime() {
