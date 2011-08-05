@@ -276,7 +276,7 @@ public class Lottery extends JavaPlugin {
 							sender.sendMessage(ChatColor.GOLD
 									+ "[LOTTERY] "
 									+ ChatColor.WHITE
-									+ "Either you can't afford a ticket, or you got one already.");
+									+ "Either you can't afford a ticket, or you got " + maxTicketsEachUser + " " + pluralWording("ticket", maxTicketsEachUser) + " already.");
 						}
 					} else if (args[0].equalsIgnoreCase("claim")) {
 						removeFromClaimList((Player) sender);
@@ -485,6 +485,8 @@ public class Lottery extends JavaPlugin {
 								} else if(args[1].equalsIgnoreCase("config")) {
 									// Lets just reload the config.
 									loadConfig();
+									sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+											+ ChatColor.WHITE + "Config reloaded");
 								}
 							}
 							// Let's save the configuration, just in case something was changed.
