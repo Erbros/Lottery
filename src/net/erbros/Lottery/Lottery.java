@@ -216,7 +216,7 @@ public class Lottery extends JavaPlugin {
 							buyTickets = 1;
 						} else if (Integer.parseInt(args[1].toString()) + playerInList(player) <= maxTicketsEachUser) {
 							buyTickets = Integer.parseInt(args[1].toString());
-						} else if (Integer.parseInt(args[1].toString()) + playerInList(player) <= maxTicketsEachUser) {
+						} else if (Integer.parseInt(args[1].toString()) + playerInList(player) > maxTicketsEachUser) {
 							buyTickets = maxTicketsEachUser - playerInList(player);
 						} else {
 							buyTickets = 1;
