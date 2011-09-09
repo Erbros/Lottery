@@ -1085,6 +1085,7 @@ public class Lottery extends JavaPlugin {
 
 		// How many days left?
 		String stringTimeLeft = "";
+		/*
 		if (timeLeft >= 60 * 60 * 24) {
 			int days = (int) Math.floor(timeLeft / (60 * 60 * 24));
 			timeLeft -= 60 * 60 * 24 * days;
@@ -1094,6 +1095,7 @@ public class Lottery extends JavaPlugin {
 				stringTimeLeft += Integer.toString(days) + " days, ";
 			}
 		}
+		*/
 		if (timeLeft >= 60 * 60) {
 			int hours = (int) Math.floor(timeLeft / (60 * 60));
 			timeLeft -= 60 * 60 * hours;

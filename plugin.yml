@@ -1,6 +1,6 @@
 name: Lottery
 main: net.erbros.Lottery.Lottery
-version: 0.6.0
+version: 0.6.1
 author: Erbros
 website: www.erbros.net
 commands:
@@ -9,6 +9,3 @@ commands:
     permission: lottery.buy
     usage: |
            /<command>
-           Example: /<command> | Displays Permissions Info
-           Example: /<command> -reload all | Reloads the default world configuration
-           Example: /<command> -reload [world] | Reloads the [world] configuration file
