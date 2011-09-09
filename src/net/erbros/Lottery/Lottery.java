@@ -103,11 +103,9 @@ public class Lottery extends JavaPlugin {
 			public boolean onCommand(CommandSender sender, Command command,
 					String label, String[] args) {
 				// Can the player access the plugin?
-				if (!hasPermission(sender, "lottery.buy", false)) {
-					sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
-							+ ChatColor.WHITE
-							+ "You don't have access to that command!");
-					return true;
+				if (!sender.hasPermission("lottery.buy")) {
+					
+					return false;
 				}
 				// If its just /lottery, and no args.
 				if (args.length == 0) {
@@ -282,7 +280,7 @@ public class Lottery extends JavaPlugin {
 						removeFromClaimList((Player) sender);
 					} else if (args[0].equalsIgnoreCase("draw")) {
 
-						if (hasPermission(sender, "lottery.admin.draw", true)) {
+						if (sender.hasPermission("lottery.admin.draw")) {
 							// Start a timer that ends in 3 secs.
 							sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
 									+ ChatColor.WHITE
@@ -306,15 +304,14 @@ public class Lottery extends JavaPlugin {
 						sender.sendMessage(ChatColor.RED + "/lottery winners"
 								+ ChatColor.WHITE + " : Check last winners.");
 						// Are we dealing with admins?
-						if (hasPermission(sender, "lottery.admin.draw", true))
+						if (sender.hasPermission("lottery.admin.draw"))
 							sender.sendMessage(ChatColor.BLUE + "/lottery draw"
 									+ ChatColor.WHITE + " : Draw lottery.");
-						if (hasPermission(sender, "lottery.admin.addtopot",
-								true))
+						if (sender.hasPermission("lottery.admin.addtopot"))
 							sender.sendMessage(ChatColor.BLUE
 									+ "/lottery addtopot" + ChatColor.WHITE
 									+ " : Add number to pot.");
-						if (hasPermission(sender, "lottery.admin.editconfig", true))
+						if (sender.hasPermission("lottery.admin.editconfig"))
 							sender.sendMessage(ChatColor.BLUE + "/lottery config"
 									+ ChatColor.WHITE + " : Edit the config.");
 
@@ -352,8 +349,7 @@ public class Lottery extends JavaPlugin {
 						}
 					} else if (args[0].equalsIgnoreCase("addtopot")) {
 						// Do we trust this person?
-						if (hasPermission(sender, "lottery.admin.addtopot",
-								true)) {
+						if (sender.hasPermission("lottery.admin.addtopot")) {
 							if (args[1] == null) {
 								sender.sendMessage(ChatColor.GOLD
 										+ "[LOTTERY] " + ChatColor.WHITE
@@ -387,8 +383,7 @@ public class Lottery extends JavaPlugin {
 						}
 					} else if (args[0].equalsIgnoreCase("config")) {
 						// Do we trust this person?
-						if (hasPermission(sender, "lottery.admin.editconfig",
-								true)) {
+						if (sender.hasPermission("lottery.admin.editconfig")) {
 							// Did the admin provide any additional args or should we show options?
 							if (args.length == 1) {
 								sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
@@ -1134,6 +1129,7 @@ public class Lottery extends JavaPlugin {
 		return stringTimeLeft;
 	}
 
+	/*
 	// Stolen from ltguide! Thank you so much :)
 	public Boolean hasPermission(CommandSender sender, String node,
 			Boolean needOp) {
@@ -1151,11 +1147,15 @@ public class Lottery extends JavaPlugin {
 				return Permissions.has(player, node);
 			}
 		}
+		
+		
+		
 		if (needOp) {
 			return player.isOp();
 		}
 		return true;
 	}
+	*/
 
 	public String pluralWording(String word, Integer number) {
 		// Start
