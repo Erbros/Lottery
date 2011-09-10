@@ -1,0 +1,25 @@
+<project name="simpleCompile" default="run" basedir=".">
+    <target name="init">
+        <property name="sourceDir" value="src" />
+        <property name="outputDir" value="bin" />
+        <property name="libdir" value="lib/" />
+        <property name="jarname" value="Lottery" />
+        <property name="config" value="config/" />
+    </target>
+    <target name="clean" depends="init">
+        <deltree dir="${outputDir}" />
+    </target>
+    <target name="prepare" depends="clean">
+        <mkdir dir="${outputDir}" />
+    </target>
+    <target name="compile" depends="prepare">
+        <javac destdir="${outputDir}">
+            <src path="${sourceDir}"/>
+            <classpath>
+                <fileset dir="${libdir}">
+                    <include name="*.jar" />
+                </fileset>
+            </classpath>
+        </javac>
+    </target>
+</project>
