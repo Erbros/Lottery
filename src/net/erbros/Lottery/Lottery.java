@@ -98,8 +98,20 @@ public class Lottery extends JavaPlugin {
 			@Override
 			public boolean onCommand(CommandSender sender, Command command,
 					String label, String[] args) {
-				// Can the player access the plugin?
-				if (!sender.hasPermission("lottery.buy")) {
+				
+                            // Is this a console? If so, just tell that lottery is running and time until next draw.
+                            if(!(sender instanceof Player)) {
+                                sender.sendMessage("Hi Console - The Lottery plugin is running");
+                                
+                                // Send some messages:
+                                sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+                                                + ChatColor.WHITE + "Draw in: " + ChatColor.RED
+                                                + timeUntil(Lottery.nextexec));
+                                return true;
+                            }
+                            Player player = (Player) sender;
+                            // Can the player access the plugin?
+				if (!player.hasPermission("lottery.buy")) {
 					
 					return false;
 				}
@@ -108,34 +120,34 @@ public class Lottery extends JavaPlugin {
 					// Check if we got any money/items in the pot.
 					int amount = winningAmount();
 					// Send some messages:
-					sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+					player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
 							+ ChatColor.WHITE + "Draw in: " + ChatColor.RED
 							+ timeUntil(Lottery.nextexec));
 					if (useiConomy == false) {
-						sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+						player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
 								+ ChatColor.WHITE + "Buy a ticket for "
 								+ ChatColor.RED + Lottery.cost + " "
 								+ formatMaterialName(material)
 								+ ChatColor.WHITE + " with " + ChatColor.RED
 								+ "/lottery buy");
-						sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+						player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
 								+ ChatColor.WHITE + "There is currently "
 								+ ChatColor.GREEN + amount + " "
 								+ formatMaterialName(material)
 								+ ChatColor.WHITE + " in the pot.");
 					} else {
-						sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+						player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
 								+ ChatColor.WHITE + "Buy a ticket for "
 								+ ChatColor.RED + Method.format(Lottery.cost)
 								+ ChatColor.WHITE + " with " + ChatColor.RED
 								+ "/lottery buy");
-						sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+						player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
 								+ ChatColor.WHITE + "There is currently "
 								+ ChatColor.GREEN + Method.format(amount)
 								+ ChatColor.WHITE + " in the pot.");
 					}
 					if (maxTicketsEachUser > 1) {
-						sender.sendMessage(ChatColor.GOLD
+						player.sendMessage(ChatColor.GOLD
 								+ "[LOTTERY] "
 								+ ChatColor.WHITE
 								+ "You got "
@@ -146,7 +158,7 @@ public class Lottery extends JavaPlugin {
 								+ pluralWording("ticket",
 										playerInList((Player) sender)));
 					}
-					sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+					player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
 							+ ChatColor.RED + "/lottery help" + ChatColor.WHITE
 							+ " for other commands");
 					// Does lastwinner exist and != null? Show.
@@ -154,7 +166,7 @@ public class Lottery extends JavaPlugin {
 					// material.
 					if (useiConomy == true) {
 						if (c.getProperty("lastwinner") != null) {
-							sender.sendMessage(ChatColor.GOLD
+							player.sendMessage(ChatColor.GOLD
 									+ "[LOTTERY] "
 									+ ChatColor.WHITE
 									+ "Last winner: "
@@ -167,7 +179,7 @@ public class Lottery extends JavaPlugin {
 
 					} else {
 						if (c.getProperty("lastwinner") != null) {
-							sender.sendMessage(ChatColor.GOLD
+							player.sendMessage(ChatColor.GOLD
 									+ "[LOTTERY] "
 									+ ChatColor.WHITE
 									+ "Last winner: "
@@ -181,7 +193,7 @@ public class Lottery extends JavaPlugin {
 
 					// if not iConomy, make players check for claims.
 					if (useiConomy == false) {
-						sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+						player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
 								+ ChatColor.WHITE
 								+ "Check if you have won with " + ChatColor.RED
 								+ "/lottery claim");
@@ -189,7 +201,6 @@ public class Lottery extends JavaPlugin {
 
 				} else {
 					if (args[0].equalsIgnoreCase("buy")) {
-						Player player = (Player) sender;
 						// How many tickets do the player want to buy?
 						int buyTickets = 1;
 						// Let's check if the user tries to be funny
@@ -198,7 +209,7 @@ public class Lottery extends JavaPlugin {
 								@SuppressWarnings("unused")
 								int x = Integer.parseInt(args[1]);
 							} catch (NumberFormatException nFE) {
-								sender.sendMessage(ChatColor.GOLD
+								player.sendMessage(ChatColor.GOLD
 										+ "[LOTTERY] " + ChatColor.WHITE
 										+ "Use a number! /lottery buy <number>");
 								// Just setting args[1] to 1;
@@ -223,7 +234,7 @@ public class Lottery extends JavaPlugin {
 						if (addPlayer(player, maxTicketsEachUser, buyTickets) == true) {
 							// You got your ticket.
 							if (useiConomy == false) {
-								sender.sendMessage(ChatColor.GOLD
+								player.sendMessage(ChatColor.GOLD
 										+ "[LOTTERY] " + ChatColor.WHITE
 										+ "You got " + buyTickets + " "
 										+ pluralWording("ticket", buyTickets)
@@ -231,7 +242,7 @@ public class Lottery extends JavaPlugin {
 										+ Lottery.cost * buyTickets + " "
 										+ formatMaterialName(material));
 							} else {
-								sender.sendMessage(ChatColor.GOLD
+								player.sendMessage(ChatColor.GOLD
 										+ "[LOTTERY] "
 										+ ChatColor.WHITE
 										+ "You got "
@@ -246,7 +257,7 @@ public class Lottery extends JavaPlugin {
 							// Can a user buy more than one ticket? How many
 							// tickets have he bought now?
 							if (maxTicketsEachUser > 1) {
-								sender.sendMessage(ChatColor.GOLD
+								player.sendMessage(ChatColor.GOLD
 										+ "[LOTTERY] "
 										+ ChatColor.WHITE
 										+ "You now have "
@@ -267,7 +278,7 @@ public class Lottery extends JavaPlugin {
 
 						} else {
 							// Something went wrong.
-							sender.sendMessage(ChatColor.GOLD
+							player.sendMessage(ChatColor.GOLD
 									+ "[LOTTERY] "
 									+ ChatColor.WHITE
 									+ "Either you can't afford a ticket, or you got " + maxTicketsEachUser + " " + pluralWording("ticket", maxTicketsEachUser) + " already.");
@@ -276,39 +287,39 @@ public class Lottery extends JavaPlugin {
 						removeFromClaimList((Player) sender);
 					} else if (args[0].equalsIgnoreCase("draw")) {
 
-						if (sender.hasPermission("lottery.admin.draw")) {
+						if (player.hasPermission("lottery.admin.draw")) {
 							// Start a timer that ends in 3 secs.
-							sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+							player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
 									+ ChatColor.WHITE
 									+ "Lottery will be drawn at once.");
 							StartTimerSchedule(true);
 						} else {
-							sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+							player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
 									+ ChatColor.WHITE
 									+ "You don't have access to that command.");
 						}
 
 					} else if (args[0].equalsIgnoreCase("help")) {
-						sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+						player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
 								+ ChatColor.WHITE + "Help commands");
-						sender.sendMessage(ChatColor.RED + "/lottery"
+						player.sendMessage(ChatColor.RED + "/lottery"
 								+ ChatColor.WHITE + " : Basic lottery info.");
-						sender.sendMessage(ChatColor.RED + "/lottery buy <n>"
+						player.sendMessage(ChatColor.RED + "/lottery buy <n>"
 								+ ChatColor.WHITE + " : Buy ticket(s).");
-						sender.sendMessage(ChatColor.RED + "/lottery claim"
+						player.sendMessage(ChatColor.RED + "/lottery claim"
 								+ ChatColor.WHITE + " : Claim outstandig wins.");
-						sender.sendMessage(ChatColor.RED + "/lottery winners"
+						player.sendMessage(ChatColor.RED + "/lottery winners"
 								+ ChatColor.WHITE + " : Check last winners.");
 						// Are we dealing with admins?
-						if (sender.hasPermission("lottery.admin.draw"))
-							sender.sendMessage(ChatColor.BLUE + "/lottery draw"
+						if (player.hasPermission("lottery.admin.draw"))
+							player.sendMessage(ChatColor.BLUE + "/lottery draw"
 									+ ChatColor.WHITE + " : Draw lottery.");
-						if (sender.hasPermission("lottery.admin.addtopot"))
-							sender.sendMessage(ChatColor.BLUE
+						if (player.hasPermission("lottery.admin.addtopot"))
+							player.sendMessage(ChatColor.BLUE
 									+ "/lottery addtopot" + ChatColor.WHITE
 									+ " : Add number to pot.");
-						if (sender.hasPermission("lottery.admin.editconfig"))
-							sender.sendMessage(ChatColor.BLUE + "/lottery config"
+						if (player.hasPermission("lottery.admin.editconfig"))
+							player.sendMessage(ChatColor.BLUE + "/lottery config"
 									+ ChatColor.WHITE + " : Edit the config.");
 
 					} else if (args[0].equalsIgnoreCase("winners")) {
@@ -340,14 +351,14 @@ public class Lottery extends JavaPlugin {
 												Integer.parseInt(split[2]))
 												.toString();
 							}
-							sender.sendMessage((i + 1) + ". " + split[0] + " "
+							player.sendMessage((i + 1) + ". " + split[0] + " "
 									+ winListPrice);
 						}
 					} else if (args[0].equalsIgnoreCase("addtopot")) {
 						// Do we trust this person?
-						if (sender.hasPermission("lottery.admin.addtopot")) {
+						if (player.hasPermission("lottery.admin.addtopot")) {
 							if (args[1] == null) {
-								sender.sendMessage(ChatColor.GOLD
+								player.sendMessage(ChatColor.GOLD
 										+ "[LOTTERY] " + ChatColor.WHITE
 										+ "/lottery addtopot <number>");
 								return true;
@@ -357,7 +368,7 @@ public class Lottery extends JavaPlugin {
 							try {
 								addToPot = Integer.parseInt(args[1]);
 							} catch (NumberFormatException nFE) {
-								sender.sendMessage(ChatColor.GOLD
+								player.sendMessage(ChatColor.GOLD
 										+ "[LOTTERY] " + ChatColor.WHITE
 										+ "Not a number.");
 								return true;
@@ -366,32 +377,32 @@ public class Lottery extends JavaPlugin {
 							c.setProperty("extraInPot", extraInPot);
 							getConfiguration().save();
 
-							sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+							player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
 									+ ChatColor.WHITE + "Added "
 									+ ChatColor.GREEN + addToPot
 									+ ChatColor.WHITE
 									+ " to pot. Extra total is "
 									+ ChatColor.GREEN + extraInPot);
 						} else {
-							sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+							player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
 									+ ChatColor.WHITE
 									+ "You don't have access to that command.");
 						}
 					} else if (args[0].equalsIgnoreCase("config")) {
 						// Do we trust this person?
-						if (sender.hasPermission("lottery.admin.editconfig")) {
+						if (player.hasPermission("lottery.admin.editconfig")) {
 							// Did the admin provide any additional args or should we show options?
 							if (args.length == 1) {
-								sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+								player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
 										+ ChatColor.WHITE + "Edit config commands");
-								sender.sendMessage(ChatColor.RED + "/lottery config cost <i>");
-								sender.sendMessage(ChatColor.RED + "/lottery config hours <i>");
-								sender.sendMessage(ChatColor.RED + "/lottery config maxTicketsEachUser <i>");
-								sender.sendMessage(ChatColor.RED + "/lottery config reload");
+								player.sendMessage(ChatColor.RED + "/lottery config cost <i>");
+								player.sendMessage(ChatColor.RED + "/lottery config hours <i>");
+								player.sendMessage(ChatColor.RED + "/lottery config maxTicketsEachUser <i>");
+								player.sendMessage(ChatColor.RED + "/lottery config reload");
 							} else if(args.length >= 2) {
 								if(args[1].equalsIgnoreCase("cost")) {
 									if(args.length == 2) {
-										sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+										player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
 												+ ChatColor.WHITE + "Please provide a number");
 										return true;
 									} else {
@@ -402,11 +413,11 @@ public class Lottery extends JavaPlugin {
 											//e.printStackTrace();
 										}
 										if(newCoin <= 0) {
-											sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+											player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
 													+ ChatColor.WHITE + "Provide a integer (number) greater than zero");
 											return true;
 										} else {
-											sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+											player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
 													+ ChatColor.WHITE + "Cost changed to "
 													+ ChatColor.RED + newCoin);
 											c.setProperty("cost", newCoin);
@@ -419,7 +430,7 @@ public class Lottery extends JavaPlugin {
 									}
 								} else if(args[1].equalsIgnoreCase("hours")) {
 									if(args.length == 2) {
-										sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+										player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
 												+ ChatColor.WHITE + "Please provide a number");
 										return true;
 									} else {
@@ -430,11 +441,11 @@ public class Lottery extends JavaPlugin {
 											//e.printStackTrace();
 										}
 										if(newHours <= 0) {
-											sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+											player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
 													+ ChatColor.WHITE + "Provide a integer (number) greater than zero");
 											return true;
 										} else {
-											sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+											player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
 													+ ChatColor.WHITE + "Hours changed to "
 													+ ChatColor.RED + newHours);
 											c.setProperty("hours", newHours);
@@ -447,7 +458,7 @@ public class Lottery extends JavaPlugin {
 									}
 								} else if(args[1].equalsIgnoreCase("maxTicketsEachUser") || args[1].equalsIgnoreCase("max")) {
 									if(args.length == 2) {
-										sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+										player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
 												+ ChatColor.WHITE + "Please provide a number");
 										return true;
 									} else {
@@ -458,11 +469,11 @@ public class Lottery extends JavaPlugin {
 											//e.printStackTrace();
 										}
 										if(newMaxTicketsEachUser <= 0) {
-											sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+											player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
 													+ ChatColor.WHITE + "Provide a integer (number) greater to or equal to zero");
 											return true;
 										} else {
-											sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+											player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
 													+ ChatColor.WHITE + "Max amount of tickets changed to "
 													+ ChatColor.RED + newMaxTicketsEachUser);
 											c.setProperty("maxTicketsEachUser", newMaxTicketsEachUser);
@@ -476,7 +487,7 @@ public class Lottery extends JavaPlugin {
 								} else if(args[1].equalsIgnoreCase("config")) {
 									// Lets just reload the config.
 									loadConfig();
-									sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+									player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
 											+ ChatColor.WHITE + "Config reloaded");
 								}
 							}
@@ -484,7 +495,7 @@ public class Lottery extends JavaPlugin {
 						}
 					} else {
 						
-						sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+						player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
 								+ ChatColor.WHITE
 								+ "Hey, I don't recognize that command!");
 					}
