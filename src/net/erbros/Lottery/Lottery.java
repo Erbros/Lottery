@@ -31,8 +31,6 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 
-import com.nijiko.permissions.PermissionHandler;
-import com.nijikokun.bukkit.Permissions.Permissions;
 
 public class Lottery extends JavaPlugin {
 
@@ -56,8 +54,6 @@ public class Lottery extends JavaPlugin {
 	private static PlayerJoinListener PlayerListener = null;
 	public PluginDescriptionFile info = null;
 	protected static org.bukkit.Server server = null;
-	// Permission variables
-	public static PermissionHandler Permissions;
 
 	// Doing some logging. Thanks cyklo
 	protected final Logger log = Logger.getLogger("Minecraft");;
