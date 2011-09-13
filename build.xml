@@ -71,4 +71,6 @@
     nbproject/build-impl.xml file. 
 
     -->
+    
+    <target depends="init" if="have.sources" name="-javadoc-build"></target>
 </project>
