@@ -7,6 +7,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Random;
 import java.util.Timer;
@@ -47,7 +49,9 @@ public class Lottery extends JavaPlugin {
 	protected Integer netPayout;
 	protected Boolean clearExtraInPot;
 	protected Integer maxTicketsEachUser;
+        protected ArrayList<String> msgWelcome;
 	protected Configuration c;
+        protected Configuration msgConfig;
 	// Starting timer we are going to use for scheduling.
 	Timer timer;
 
@@ -566,6 +570,10 @@ public class Lottery extends JavaPlugin {
 		makeConfig();
 
 		loadConfig();
+                
+                // Woa, custom messages?
+                msgConfig = new Configuration(new File(getDataFolder().getPath() + File.pathSeparatorChar + "customMessages.yml"));
+                loadCustomMessages();
 
 		// Gets version number and writes out starting line to console.
 		PluginDescriptionFile pdfFile = this.getDescription();
@@ -814,6 +822,7 @@ public class Lottery extends JavaPlugin {
 			if (c.getProperty("cost") == null) {
 				c.setProperty("cost", "5");
 			}
+                        
 			if (c.getProperty("hours") == null) {
 				c.setProperty("hours", "24");
 			}
@@ -868,9 +877,27 @@ public class Lottery extends JavaPlugin {
 		maxTicketsEachUser = Integer.parseInt(c.getProperty(
 				"maxTicketsEachUser").toString());
 	}
+        
+        public void loadCustomMessages() {
+            
+            
+            msgWelcome = formatCustomMessage("welcome", "&6[LOTTERY] &fDraw in: &c%d");
+        }
+        
+        public ArrayList<String> formatCustomMessage (String node, String def) {
+            ArrayList<String> fList = new ArrayList<String>();
+            String[] tmp;
+            // Lets find a msg.
+            String msg = msgConfig.getString(node, def);
+            // Lets get some colors on this, shall we?
+            msg.replaceAll("(&([a-f0-9]))", "\u00A7$2");
+            // Lets put this in a arrayList in case we want more than one line.
+            Collections.addAll(fList, msg.split("\n"));
+            
+            return fList;
+        }
 
 	public long extendTime() {
-		c = getConfiguration();
 		hours = Integer.parseInt(c.getProperty("hours").toString());
 		Long extendTime = Long.parseLong(hours.toString()) * 60 * 60 * 1000;
 		return extendTime;
