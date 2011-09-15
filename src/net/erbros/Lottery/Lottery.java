@@ -90,7 +90,7 @@ public class Lottery extends JavaPlugin {
 					Priority.Monitor, this);
 		}
 		if (welcomeMessage == true) {
-			PlayerListener = new PlayerJoinListener();
+			PlayerListener = new PlayerJoinListener(this);
 			getServer().getPluginManager().registerEvent(
 					Event.Type.PLAYER_JOIN, PlayerListener, Priority.Monitor,
 					this);
@@ -886,7 +886,6 @@ public class Lottery extends JavaPlugin {
         
         public ArrayList<String> formatCustomMessage (String node, String def) {
             ArrayList<String> fList = new ArrayList<String>();
-            String[] tmp;
             // Lets find a msg.
             String msg = msgConfig.getString(node, def);
             // Lets get some colors on this, shall we?
