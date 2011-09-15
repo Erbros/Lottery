@@ -17,6 +17,7 @@ public class PlayerJoinListener extends PlayerListener {
         
         for (String msg : plugin.msgWelcome) {
             event.getPlayer().sendMessage(plugin.formatCustomMessageLive(msg, event.getPlayer()));
+            plugin.debugMsg("Welcome msg sent: " + msg);
         }
     }
 

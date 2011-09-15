@@ -119,7 +119,7 @@ public class Lottery extends JavaPlugin {
                                     // Send some messages:
                                     sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
                                                     + ChatColor.WHITE + "Draw in: " + ChatColor.RED
-                                                    + timeUntil(Lottery.nextexec));
+                                                    + timeUntil(Lottery.nextexec, false));
                                     return true;
                                 }
                                 Player player = (Player) sender;
@@ -129,7 +129,7 @@ public class Lottery extends JavaPlugin {
                                 // Send some messages:
                                 player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
                                                 + ChatColor.WHITE + "Draw in: " + ChatColor.RED
-                                                + timeUntil(Lottery.nextexec));
+                                                + timeUntil(Lottery.nextexec, false));
                                 if (useiConomy == false) {
                                         player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
                                                         + ChatColor.WHITE + "Buy a ticket for "
@@ -573,6 +573,7 @@ public class Lottery extends JavaPlugin {
                 
                 // Woa, custom messages?
                 msgConfig = new Configuration(new File(getDataFolder().getPath() + File.separatorChar + "customMessages.yml"));
+                msgConfig.load();
                 loadCustomMessages();
                 msgConfig.save();
 
@@ -882,7 +883,7 @@ public class Lottery extends JavaPlugin {
         public void loadCustomMessages() {
             
             
-            msgWelcome = formatCustomMessage("welcome", "&6[LOTTERY] &fDraw in: &c%d");
+            msgWelcome = formatCustomMessage("welcome", "&6[LOTTERY] &fDraw in: &c%drawLong%");
         }
         
         public ArrayList<String> formatCustomMessage (String node, String def) {
@@ -892,14 +893,18 @@ public class Lottery extends JavaPlugin {
             // Lets get some colors on this, shall we?
             msg.replaceAll("(&([a-f0-9]))", "\u00A7$2");
             // Lets put this in a arrayList in case we want more than one line.
-            Collections.addAll(fList, msg.split("\n"));
+            Collections.addAll(fList, msg.split("%newline%"));
+            
+            debugMsg("members in arraylist: " + Integer.toString(fList.size()));
             
             return fList;
         }
         
         public String formatCustomMessageLive (String msg, Player player) {
             //Lets give timeLeft back if user provie %draw%
-            msg = msg.replaceAll("%draw%", timeUntil(nextexec));
+            msg = msg.replaceAll("%draw%", timeUntil(nextexec, true));
+            //Lets give timeLeft with full words back if user provie %drawLong%
+            msg = msg.replaceAll("%drawLong%", timeUntil(nextexec, false));
             // If %player% = Player name
             msg = msg.replaceAll("%player%", player.getDisplayName());
             // %cost% = cost
@@ -1140,62 +1145,64 @@ public class Lottery extends JavaPlugin {
 		return true;
 	}
 
-	public static String timeUntil(long time) {
+	public static String timeUntil(long time, boolean mini) {
 
 		double timeLeft = Double.parseDouble(Long.toString(((time - System
 				.currentTimeMillis()) / 1000)));
 		// If negative number, just tell them its DRAW TIME!
 		if (timeLeft < 0) {
+                    if(mini) {
+                        return "Soon";
+                    }
 			return "Draw will occur soon!";
 
 		}
 
 		// How many days left?
 		String stringTimeLeft = "";
-		/*
+		
 		if (timeLeft >= 60 * 60 * 24) {
 			int days = (int) Math.floor(timeLeft / (60 * 60 * 24));
 			timeLeft -= 60 * 60 * 24 * days;
-			if (days == 1) {
-				stringTimeLeft += Integer.toString(days) + " day, ";
+			if (!mini) {
+				stringTimeLeft += Integer.toString(days) + " " + pluralWording("day", days) + ", ";
 			} else {
-				stringTimeLeft += Integer.toString(days) + " days, ";
+				stringTimeLeft += Integer.toString(days) + "d ";
 			}
 		}
-		*/
 		if (timeLeft >= 60 * 60) {
 			int hours = (int) Math.floor(timeLeft / (60 * 60));
 			timeLeft -= 60 * 60 * hours;
-			if (hours == 1) {
-				stringTimeLeft += Integer.toString(hours) + " hour, ";
+			if (!mini) {
+				stringTimeLeft += Integer.toString(hours) + " " + pluralWording("hour", hours) + ", ";
 			} else {
-				stringTimeLeft += Integer.toString(hours) + " hours, ";
+				stringTimeLeft += Integer.toString(hours) + "h ";
 			}
 		}
 		if (timeLeft >= 60) {
 			int minutes = (int) Math.floor(timeLeft / (60));
 			timeLeft -= 60 * minutes;
-			if (minutes == 1) {
-				stringTimeLeft += Integer.toString(minutes) + " minute ";
+			if (!mini) {
+				stringTimeLeft += Integer.toString(minutes) + " " + pluralWording("minute", minutes) + ", ";
 			} else {
-				stringTimeLeft += Integer.toString(minutes) + " minutes ";
+				stringTimeLeft += Integer.toString(minutes) + "m ";
 			}
 		} else {
 			// Lets remove the last comma, since it will look bad with 2 days, 3
 			// hours, and 14 seconds.
-			if (stringTimeLeft.equalsIgnoreCase("") == false) {
+			if (stringTimeLeft.equalsIgnoreCase("") == false && !mini) {
 				stringTimeLeft = stringTimeLeft.substring(0,
 						stringTimeLeft.length() - 1);
 			}
 		}
 		int secs = (int) timeLeft;
-		if (stringTimeLeft.equalsIgnoreCase("") == false) {
+		if (stringTimeLeft.equalsIgnoreCase("") == false && !mini) {
 			stringTimeLeft += "and ";
 		}
-		if (secs == 1) {
-			stringTimeLeft += secs + " second.";
-		} else {
-			stringTimeLeft += secs + " seconds.";
+		if (!mini) {
+                    stringTimeLeft += Integer.toString(secs) + " " + pluralWording("second", secs);
+                } else {
+                    stringTimeLeft += secs + "s";
 		}
 
 		return stringTimeLeft;
@@ -1229,7 +1236,7 @@ public class Lottery extends JavaPlugin {
 	}
 	*/
 
-	public String pluralWording(String word, Integer number) {
+	public static String pluralWording(String word, Integer number) {
 		// Start
 		if (word.equalsIgnoreCase("ticket")) {
 			if (number == 1) {
@@ -1244,6 +1251,38 @@ public class Lottery extends JavaPlugin {
 				return "player";
 			} else {
 				return "players";
+			}
+		}
+		// Next
+		if (word.equalsIgnoreCase("day")) {
+			if (number == 1) {
+				return "day";
+			} else {
+				return "days";
+			}
+		}
+		// Next
+		if (word.equalsIgnoreCase("hour")) {
+			if (number == 1) {
+				return "hour";
+			} else {
+				return "hours";
+			}
+		}
+		// Next
+		if (word.equalsIgnoreCase("minute")) {
+			if (number == 1) {
+				return "minute";
+			} else {
+				return "minutes";
+			}
+		}
+		// Next
+		if (word.equalsIgnoreCase("second")) {
+			if (number == 1) {
+				return "second";
+			} else {
+				return "seconds";
 			}
 		}
 		// Next
