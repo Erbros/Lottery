@@ -896,6 +896,18 @@ public class Lottery extends JavaPlugin {
             
             return fList;
         }
+        
+        public String formatCustomMessageLive (String msg, Player player) {
+            //Lets give timeLeft back if user provie %draw%
+            msg = msg.replaceAll("%draw%", timeUntil(nextexec));
+            // If %player% = Player name
+            msg = msg.replaceAll("%player%", player.getDisplayName());
+            // %cost% = cost
+            msg = msg.replaceAll("%cost%", cost.toString());
+            // %pot%
+            msg = msg.replaceAll("%pot%", Integer.toString(winningAmount()));
+            return msg;
+        }
 
 	public long extendTime() {
 		hours = Integer.parseInt(c.getProperty("hours").toString());

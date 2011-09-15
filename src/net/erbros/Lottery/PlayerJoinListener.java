@@ -16,7 +16,7 @@ public class PlayerJoinListener extends PlayerListener {
         // Send the player some info about time until lottery draw?
         
         for (String msg : plugin.msgWelcome) {
-            event.getPlayer().sendMessage(msg);
+            event.getPlayer().sendMessage(plugin.formatCustomMessageLive(msg, event.getPlayer()));
         }
     }
 
