@@ -572,8 +572,9 @@ public class Lottery extends JavaPlugin {
 		loadConfig();
                 
                 // Woa, custom messages?
-                msgConfig = new Configuration(new File(getDataFolder().getPath() + File.pathSeparatorChar + "customMessages.yml"));
+                msgConfig = new Configuration(new File(getDataFolder().getPath() + File.separatorChar + "customMessages.yml"));
                 loadCustomMessages();
+                msgConfig.save();
 
 		// Gets version number and writes out starting line to console.
 		PluginDescriptionFile pdfFile = this.getDescription();
