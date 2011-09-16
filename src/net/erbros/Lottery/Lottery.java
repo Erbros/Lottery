@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Random;
@@ -706,10 +705,10 @@ public class Lottery extends JavaPlugin {
 		// Is the drawAtOnce boolean set to true? In that case, do drawing in a
 		// few secs.
 		if (drawAtOnce) {
-			extendtime = 1000;
+			extendtime = 500;
 			c = getConfiguration();
-			c.setProperty("nextexec", System.currentTimeMillis() + 1000);
-			nextexec = System.currentTimeMillis() + 1000;
+			c.setProperty("nextexec", System.currentTimeMillis() + 500);
+			nextexec = System.currentTimeMillis() + 500;
 			debugMsg("DRAW NOW");
 		}
 
@@ -1145,12 +1144,15 @@ public class Lottery extends JavaPlugin {
 		return true;
 	}
 
-	public static String timeUntil(long time, boolean mini) {
+	public String timeUntil(long time, boolean mini) {
 
 		double timeLeft = Double.parseDouble(Long.toString(((time - System
 				.currentTimeMillis()) / 1000)));
 		// If negative number, just tell them its DRAW TIME!
 		if (timeLeft < 0) {
+                    // Lets make it draw at once.. ;)
+                    StartTimerSchedule(true);
+                    // And return some string to let the user know we are doing our best ;)
                     if(mini) {
                         return "Soon";
                     }
