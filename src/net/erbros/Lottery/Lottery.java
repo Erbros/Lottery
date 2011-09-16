@@ -59,7 +59,7 @@ public class Lottery extends JavaPlugin {
 	protected static org.bukkit.Server server = null;
 
 	// Doing some logging. Thanks cyklo
-	protected final Logger log = Logger.getLogger("Minecraft");;
+	protected static final Logger log = Logger.getLogger("Minecraft");;
 
 	@Override
 	public void onDisable() {
@@ -561,6 +561,7 @@ public class Lottery extends JavaPlugin {
 
 	}
 
+    @Override
 	public void onLoad() {
 		getDataFolder().mkdirs();
 
@@ -1058,7 +1059,7 @@ public class Lottery extends JavaPlugin {
 		}
 
 		// Did the user have any claims?
-		if (claimArray.size() == 0) {
+		if (claimArray.isEmpty()) {
 			player.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE
 					+ "You did not have anything unclaimed.");
 			return false;
