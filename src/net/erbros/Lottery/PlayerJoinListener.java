@@ -1,6 +1,5 @@
 package net.erbros.Lottery;
 
-import org.bukkit.ChatColor;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerListener;
 
