@@ -910,7 +910,7 @@ public class Lottery extends JavaPlugin {
             // %pot%
             msg = msg.replaceAll("%pot%", Integer.toString(winningAmount()));
             // Lets get some colors on this, shall we?
-            msg.replaceAll("(&([a-f0-9]))", "\u00A7$2");
+            msg = msg.replaceAll("(&([a-f0-9]))", "\u00A7$2");
             return msg;
         }
 
