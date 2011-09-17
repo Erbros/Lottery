@@ -890,8 +890,6 @@ public class Lottery extends JavaPlugin {
             ArrayList<String> fList = new ArrayList<String>();
             // Lets find a msg.
             String msg = msgConfig.getString(node, def);
-            // Lets get some colors on this, shall we?
-            msg.replaceAll("(&([a-f0-9]))", "\u00A7$2");
             // Lets put this in a arrayList in case we want more than one line.
             Collections.addAll(fList, msg.split("%newline%"));
             
@@ -911,6 +909,8 @@ public class Lottery extends JavaPlugin {
             msg = msg.replaceAll("%cost%", cost.toString());
             // %pot%
             msg = msg.replaceAll("%pot%", Integer.toString(winningAmount()));
+            // Lets get some colors on this, shall we?
+            msg.replaceAll("(&([a-f0-9]))", "\u00A7$2");
             return msg;
         }
 
