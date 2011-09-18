@@ -700,16 +700,16 @@ public class Lottery extends JavaPlugin {
 		// If the time is passed (perhaps the server was offline?), draw lottery
 		// at once.
 		if (extendtime <= 0) {
-			extendtime = 3000;
+			extendtime = 100;
 		}
 
 		// Is the drawAtOnce boolean set to true? In that case, do drawing in a
 		// few secs.
 		if (drawAtOnce) {
-			extendtime = 500;
+			extendtime = 100;
 			c = getConfiguration();
-			c.setProperty("nextexec", System.currentTimeMillis() + 500);
-			nextexec = System.currentTimeMillis() + 500;
+			c.setProperty("nextexec", System.currentTimeMillis() + 100);
+			nextexec = System.currentTimeMillis() + 100;
 			debugMsg("DRAW NOW");
 		}
 
