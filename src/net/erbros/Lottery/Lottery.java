@@ -287,7 +287,7 @@ public class Lottery extends JavaPlugin {
                                                                                         playerInList(player)));
                                                 }
                                                 if (broadcastBuying == true) {
-                                                        Lottery.server.broadcastMessage(ChatColor.GOLD
+                                                        Bukkit.broadcastMessage(ChatColor.GOLD
                                                                         + "[LOTTERY] " + ChatColor.WHITE
                                                                         + player.getDisplayName()
                                                                         + " just bought " + buyTickets + " "
@@ -592,7 +592,7 @@ public class Lottery extends JavaPlugin {
 		ArrayList<String> players = playersInFile("lotteryPlayers.txt");
 
 		if (players.isEmpty() == true) {
-			Lottery.server.broadcastMessage(ChatColor.GOLD + "[LOTTERY] "
+			Bukkit.broadcastMessage(ChatColor.GOLD + "[LOTTERY] "
 					+ ChatColor.WHITE
 					+ "No tickets sold this round. Thats a shame.");
 			return false;
@@ -613,24 +613,24 @@ public class Lottery extends JavaPlugin {
 				// Add money to account.
 				account.add(amount);
 				// Announce the winner:
-				Lottery.server.broadcastMessage(ChatColor.GOLD + "[LOTTERY] "
+				Bukkit.broadcastMessage(ChatColor.GOLD + "[LOTTERY] "
 						+ ChatColor.WHITE + "Congratulations to "
 						+ players.get(rand) + " for winning " + ChatColor.RED
 						+ Method.format(amount) + ".");
 				addToWinnerList(players.get(rand), amount, 0);
 			} else {
-				Lottery.server.broadcastMessage(ChatColor.GOLD + "[LOTTERY] "
+				Bukkit.broadcastMessage(ChatColor.GOLD + "[LOTTERY] "
 						+ ChatColor.WHITE + "Congratulations to "
 						+ players.get(rand) + " for winning " + ChatColor.RED
 						+ amount + " " + formatMaterialName(material) + ".");
-				Lottery.server.broadcastMessage(ChatColor.GOLD + "[LOTTERY] "
+				Bukkit.broadcastMessage(ChatColor.GOLD + "[LOTTERY] "
 						+ ChatColor.WHITE + "Use " + ChatColor.RED
 						+ "/lottery claim" + ChatColor.WHITE
 						+ " to claim the winnings.");
 				addToWinnerList(players.get(rand), amount, material);
 				addToClaimList(players.get(rand), amount, material.intValue());
 			}
-			Lottery.server.broadcastMessage(ChatColor.GOLD
+			Bukkit.broadcastMessage(ChatColor.GOLD
 					+ "[LOTTERY] "
 					+ ChatColor.WHITE
 					+ "There was in total "
@@ -1157,7 +1157,7 @@ public class Lottery extends JavaPlugin {
                     if(mini) {
                         return "Soon";
                     }
-			return "Draw will occur soon!";
+                    return "Draw will occur soon!";
 
 		}
 
