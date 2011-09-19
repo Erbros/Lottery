@@ -2,6 +2,7 @@ package net.erbros.Lottery;
 
 import net.erbros.Lottery.register.payment.Methods;
 
+import org.bukkit.Bukkit;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.event.server.ServerListener;
@@ -31,7 +32,7 @@ public class PluginListener extends ServerListener {
 	@Override
 	public void onPluginEnable(PluginEnableEvent event) {
 		if (!this.Methods.hasMethod()) {
-			if (this.Methods.setMethod(event.getPlugin())) {
+			if (this.Methods.setMethod(Bukkit.getPluginManager())) {
 				// You might want to make this a public variable inside your
 				// MAIN class public Method Method = null;
 				// then reference it through this.plugin.Method so that way you
