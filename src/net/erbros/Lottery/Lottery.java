@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 
 import net.erbros.Lottery.register.payment.Method;
 import net.erbros.Lottery.register.payment.Method.MethodAccount;
+import net.erbros.Lottery.register.payment.Methods;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -39,6 +40,7 @@ public class Lottery extends JavaPlugin {
 	protected Integer hours;
 	protected static Long nextexec;
 	public Method Method = null;
+        public Methods Methods = null;
 	public Boolean timerStarted = false;
 	protected static Boolean useiConomy;
 	protected static Integer material;
@@ -107,6 +109,16 @@ public class Lottery extends JavaPlugin {
 
                                     return false;
                             }
+                            // Lets check if we have found a plugin for money.
+                            if (!Methods.hasMethod() && useiConomy == true) {
+                                debugMsg("No money plugin found yet.");
+                                sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+                                                    + ChatColor.WHITE + "Sorry, we haven't found a money plugin yet..");
+                                
+                                return false;
+                            }
+                            
+                            
                             // If its just /lottery, and no args.
                             if (args.length == 0) {
 
@@ -958,6 +970,7 @@ public class Lottery extends JavaPlugin {
 			// First checking if the player got an account, if not let's create
 			// it.
 			Method.hasAccount(player.getName());
+                        Method.
 
 			MethodAccount account = Method.getAccount(player.getName());
 
