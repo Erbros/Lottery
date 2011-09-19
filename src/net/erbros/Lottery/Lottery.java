@@ -110,14 +110,14 @@ public class Lottery extends JavaPlugin {
                             sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
                                                 + ChatColor.WHITE + "Sorry, we haven't found a money plugin yet..");
 
-                            return false;
+                            return true;
                         }
 
 
                         // Can the player access the plugin?
                         if (!sender.hasPermission("lottery.buy")) {
 
-                                return false;
+                                return true;
                         }
 
 
