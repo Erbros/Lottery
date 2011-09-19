@@ -893,8 +893,6 @@ public class Lottery extends JavaPlugin {
             // Lets put this in a arrayList in case we want more than one line.
             Collections.addAll(fList, msg.split("%newline%"));
             
-            debugMsg("members in arraylist: " + Integer.toString(fList.size()));
-            
             return fList;
         }
         
