@@ -179,12 +179,12 @@ public class Methods {
                         if (preferred.isEmpty())
                             Method = attached;
 
-                        if (count == 0)
+                        if (count == 0) {
                             if (preferred.equalsIgnoreCase(attached.getName()))
                                 Method = attached;
-
-                        else
+                        } else {
                             Method = attached;
+                        }
                     }
 
                     count++;

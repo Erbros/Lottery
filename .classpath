@@ -2,13 +2,12 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Users/Erbros/Desktop/bukkit-0.0.1-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Erbros/Desktop/iConomy.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Erbros/Desktop/Permissions.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Erbros/Desktop/BOSEconomy.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Erbros/Desktop/iConomy4.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Erbros/Desktop/iConomy6.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Erbros/Desktop/Essentials.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Erbros/Desktop/MultiCurrency.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Erbros/Github/Lottery/lib/BOSEconomy.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Erbros/Github/Lottery/lib/bukkit-0.0.1-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Erbros/Github/Lottery/lib/Essentials.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Erbros/Github/Lottery/lib/iConomy v4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Erbros/Github/Lottery/lib/iConomy v5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Erbros/Github/Lottery/lib/iConomy v6.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Erbros/Github/Lottery/lib/MultiCurrency.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
