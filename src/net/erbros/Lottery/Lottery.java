@@ -50,6 +50,8 @@ public class Lottery extends JavaPlugin {
 	protected Integer netPayout;
 	protected Boolean clearExtraInPot;
 	protected Integer maxTicketsEachUser;
+	protected Integer numberOfTicketsAvailable;
+	protected Integer jackpot;
         protected ArrayList<String> msgWelcome;
 	protected Configuration c;
         protected Configuration msgConfig;
@@ -179,6 +181,18 @@ public class Lottery extends JavaPlugin {
                                                     + pluralWording("ticket",
                                                                     playerInList((Player) sender)));
                             }
+                            // Number of tickets available?
+                            if(numberOfTicketsAvailable > 0) {
+                            	player.sendMessage(ChatColor.GOLD
+                            			+ "[LOTTERY]"
+                            			+ ChatColor.WHITE
+                            			+ "There is "
+                            			+ ChatColor.RED
+                            			+ (numberOfTicketsAvailable - ticketsSold())
+                            			+ ChatColor.WHITE
+                            			+ pluralWording("ticket",numberOfTicketsAvailable - ticketsSold())
+                            			+ "left.");
+                            }
                             player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
                                             + ChatColor.RED + "/lottery help" + ChatColor.WHITE
                                             + " for other commands");
@@ -263,58 +277,73 @@ public class Lottery extends JavaPlugin {
                                     if (buyTickets < 1) {
                                             buyTickets = 1;
                                     }
+                                    
+                                    // Have the admin entered a max number of tickets in the lottery?
+                                    if(numberOfTicketsAvailable > 0) {
+                                    	// If so, can this user buy the selected amount?
+                                    	if(ticketsSold() + buyTickets > numberOfTicketsAvailable) {
+                                    		if(ticketsSold() >= numberOfTicketsAvailable) {
+                                    			player.sendMessage(ChatColor.GOLD
+                                                        + "[LOTTERY] " + ChatColor.WHITE
+                                                        + "There are no more tickets available");
+                                    			return true;
+                                    		} else {
+                                    			buyTickets = numberOfTicketsAvailable - ticketsSold();
+                                    		}
+                                    	}
+                                    }
 
                                     if (addPlayer(player, maxTicketsEachUser, buyTickets) == true) {
-                                            // You got your ticket.
-                                            if (useiConomy == false) {
-                                                    player.sendMessage(ChatColor.GOLD
-                                                                    + "[LOTTERY] " + ChatColor.WHITE
-                                                                    + "You got " + buyTickets + " "
-                                                                    + pluralWording("ticket", buyTickets)
-                                                                    + " for " + ChatColor.RED
-                                                                    + Lottery.cost * buyTickets + " "
-                                                                    + formatMaterialName(material));
-                                            } else {
-                                                    player.sendMessage(ChatColor.GOLD
-                                                                    + "[LOTTERY] "
-                                                                    + ChatColor.WHITE
-                                                                    + "You got "
-                                                                    + buyTickets
-                                                                    + " "
-                                                                    + pluralWording("ticket", buyTickets)
-                                                                    + " for "
-                                                                    + ChatColor.RED
-                                                                    + Method.format(Lottery.cost
-                                                                                    * buyTickets));
-                                            }
-                                            // Can a user buy more than one ticket? How many
-                                            // tickets have he bought now?
-                                            if (maxTicketsEachUser > 1) {
-                                                    player.sendMessage(ChatColor.GOLD
-                                                                    + "[LOTTERY] "
-                                                                    + ChatColor.WHITE
-                                                                    + "You now have "
-                                                                    + ChatColor.RED
-                                                                    + playerInList(player)
-                                                                    + " "
-                                                                    + ChatColor.WHITE
-                                                                    + pluralWording("ticket",
-                                                                                    playerInList(player)));
-                                            }
-                                            if (broadcastBuying == true) {
-                                                    Bukkit.broadcastMessage(ChatColor.GOLD
-                                                                    + "[LOTTERY] " + ChatColor.WHITE
-                                                                    + player.getDisplayName()
-                                                                    + " just bought " + buyTickets + " "
-                                                                    + pluralWording("ticket", buyTickets));
-                                            }
+                                        // You got your ticket.
+                                        if (useiConomy == false) {
+                                                player.sendMessage(ChatColor.GOLD
+                                                                + "[LOTTERY] " + ChatColor.WHITE
+                                                                + "You got " + buyTickets + " "
+                                                                + pluralWording("ticket", buyTickets)
+                                                                + " for " + ChatColor.RED
+                                                                + Lottery.cost * buyTickets + " "
+                                                                + formatMaterialName(material));
+                                        } else {
+                                                player.sendMessage(ChatColor.GOLD
+                                                                + "[LOTTERY] "
+                                                                + ChatColor.WHITE
+                                                                + "You got "
+                                                                + buyTickets
+                                                                + " "
+                                                                + pluralWording("ticket", buyTickets)
+                                                                + " for "
+                                                                + ChatColor.RED
+                                                                + Method.format(Lottery.cost
+                                                                                * buyTickets));
+                                        }
+                                        // Can a user buy more than one ticket? How many
+                                        // tickets have he bought now?
+                                        if (maxTicketsEachUser > 1) {
+                                                player.sendMessage(ChatColor.GOLD
+                                                                + "[LOTTERY] "
+                                                                + ChatColor.WHITE
+                                                                + "You now have "
+                                                                + ChatColor.RED
+                                                                + playerInList(player)
+                                                                + " "
+                                                                + ChatColor.WHITE
+                                                                + pluralWording("ticket",
+                                                                                playerInList(player)));
+                                        }
+                                        if (broadcastBuying == true) {
+                                                Bukkit.broadcastMessage(ChatColor.GOLD
+                                                                + "[LOTTERY] " + ChatColor.WHITE
+                                                                + player.getDisplayName()
+                                                                + " just bought " + buyTickets + " "
+                                                                + pluralWording("ticket", buyTickets));
+                                        }
 
                                     } else {
-                                            // Something went wrong.
-                                            player.sendMessage(ChatColor.GOLD
-                                                            + "[LOTTERY] "
-                                                            + ChatColor.WHITE
-                                                            + "Either you can't afford a ticket, or you got " + maxTicketsEachUser + " " + pluralWording("ticket", maxTicketsEachUser) + " already.");
+                                        // Something went wrong.
+                                        player.sendMessage(ChatColor.GOLD
+                                                        + "[LOTTERY] "
+                                                        + ChatColor.WHITE
+                                                        + "Either you can't afford a ticket, or you got " + maxTicketsEachUser + " " + pluralWording("ticket", maxTicketsEachUser) + " already.");
                                     }
                                 } else if (args[0].equalsIgnoreCase("claim")) {
 
@@ -580,17 +609,14 @@ public class Lottery extends JavaPlugin {
 	public void onLoad() {
 		getDataFolder().mkdirs();
 
-		// Does config exist? If not, make it.
-
-		makeConfig();
-
+		// Load the config.
 		loadConfig();
                 
-                // Woa, custom messages?
-                msgConfig = new Configuration(new File(getDataFolder().getPath() + File.separatorChar + "customMessages.yml"));
-                msgConfig.load();
-                loadCustomMessages();
-                msgConfig.save();
+        // Woa, custom messages?
+        msgConfig = new Configuration(new File(getDataFolder().getPath() + File.separatorChar + "customMessages.yml"));
+        msgConfig.load();
+        loadCustomMessages();
+        msgConfig.save();
 
 		// Gets version number and writes out starting line to console.
 		PluginDescriptionFile pdfFile = this.getDescription();
@@ -608,14 +634,48 @@ public class Lottery extends JavaPlugin {
 
 		if (players.isEmpty() == true) {
 			Bukkit.broadcastMessage(ChatColor.GOLD + "[LOTTERY] "
-					+ ChatColor.WHITE
-					+ "No tickets sold this round. Thats a shame.");
+				+ ChatColor.WHITE
+				+ "No tickets sold this round. Thats a shame.");
 			return false;
 		} else {
 			// Find rand. Do minus 1 since its a zero based array.
 			int rand = 0;
 
-			rand = new Random().nextInt(players.size());
+			// is max number of tickets 0? If not, include empty tickets not sold.
+			if(numberOfTicketsAvailable > 0 && ticketsSold() < numberOfTicketsAvailable) {
+				rand = new Random().nextInt(numberOfTicketsAvailable);
+				if(players.get(rand) == null) {
+					// No winner this time, pot goes on to jackpot!
+					Integer amount = winningAmount();
+					jackpot = jackpot + amount;
+					c.setProperty("jackpot", jackpot);
+					addToWinnerList("Jackpot", amount, useiConomy ? 0 : material);
+					c.setProperty("lastwinner", "Jackpot");
+					c.setProperty("lastwinneramount", amount);
+					Bukkit.broadcastMessage(ChatColor.GOLD + "[LOTTERY] "
+						+ ChatColor.WHITE
+						+ "No winner! "
+						+ ChatColor.GREEN
+						+ amount
+						+ " "
+						+ ((useiConomy)? Method.format(amount) : material)
+						+ ChatColor.WHITE
+						+ " went to jackpot!");
+					Bukkit.broadcastMessage(ChatColor.GOLD + "[LOTTERY] "
+						+ ChatColor.WHITE
+						+ "It is now "
+						+ ChatColor.GREEN
+						+ jackpot
+						+ (useiConomy ? Method.format(jackpot) : material)
+						+ ChatColor.WHITE
+						+ " in the jackpot.");
+					clearAfterGettingWinner();
+				}
+			} else {
+				// Else just continue
+				rand = new Random().nextInt(players.size());
+			}
+			
 
 			debugMsg("Rand: " + Integer.toString(rand));
 			int amount = winningAmount();
@@ -660,24 +720,29 @@ public class Lottery extends JavaPlugin {
 			c.setProperty("lastwinner", players.get(rand));
 			c.setProperty("lastwinneramount", amount);
 
-			// extra money in pot added by admins and mods?
-			// Should this be removed?
-			if (clearExtraInPot == true) {
-				c.setProperty("extraInPot", 0);
-				extraInPot = 0;
-			}
-			// Clear file.
-			try {
-				BufferedWriter out = new BufferedWriter(
-						new FileWriter(getDataFolder() + File.separator
-								+ "lotteryPlayers.txt", false));
-				out.write("");
-				out.close();
-
-			} catch (IOException e) {
-			}
+			clearAfterGettingWinner();
 		}
 		return true;
+	}
+	
+	public void clearAfterGettingWinner() {
+
+		// extra money in pot added by admins and mods?
+		// Should this be removed?
+		if (clearExtraInPot == true) {
+			c.setProperty("extraInPot", 0);
+			extraInPot = 0;
+		}
+		// Clear file.
+					try {
+						BufferedWriter out = new BufferedWriter(
+								new FileWriter(getDataFolder() + File.separator
+										+ "lotteryPlayers.txt", false));
+						out.write("");
+						out.close();
+
+					} catch (IOException e) {
+					}
 	}
 
 	void StartTimerSchedule(boolean drawAtOnce) {
@@ -821,83 +886,24 @@ public class Lottery extends JavaPlugin {
 		// For bugtesting:
 	}
 
-	public void makeConfig() {
-		c = getConfiguration();
-
-		if (c.getProperty("broadcastBuying") == null
-				|| c.getProperty("cost") == null
-				|| c.getProperty("hours") == null
-				|| c.getProperty("material") == null
-				|| c.getProperty("useiConomy") == null
-				|| c.getProperty("welcomeMessage") == null
-				|| c.getProperty("extraInPot") == null
-				|| c.getProperty("netPayout") == null
-				|| c.getProperty("clearExtraInPot") == null
-				|| c.getProperty("moreThanOneTicket") == null
-				|| c.getProperty("maxTicketsEachUser") == null) {
-
-			if (c.getProperty("cost") == null) {
-				c.setProperty("cost", "5");
-			}
-                        
-			if (c.getProperty("hours") == null) {
-				c.setProperty("hours", "24");
-			}
-			if (c.getProperty("material") == null) {
-				c.setProperty("material", "266");
-			}
-			if (c.getProperty("useiConomy") == null) {
-				c.setProperty("useiConomy", "true");
-			}
-
-			if (c.getProperty("broadcastBuying") == null) {
-				c.setProperty("broadcastBuying", "true");
-			}
-			if (c.getProperty("welcomeMesasge") == null) {
-				c.setProperty("welcomeMessage", true);
-			}
-			if (c.getProperty("extraInPot") == null) {
-				c.setProperty("extraInPot", 0);
-			}
-
-			if (c.getProperty("clearExtraInPot") == null) {
-				c.setProperty("clearExtraInPot", true);
-			}
-
-			if (c.getProperty("netPayout") == null) {
-				c.setProperty("netPayout", 100);
-			}
-			
-			if (c.getProperty("maxTicketsEachUser") == null) {
-				c.setProperty("maxTicketsEachUser", 1);
-			}
-
-			getConfiguration().save();
-		}
-
-	}
 	
 	public void loadConfig() {
-		cost = Integer.parseInt(c.getProperty("cost").toString());
-		hours = Integer.parseInt(c.getProperty("hours").toString());
-		useiConomy = Boolean.parseBoolean(c.getProperty("useiConomy")
-				.toString());
-		material = Integer.parseInt(c.getProperty("material").toString());
-		broadcastBuying = Boolean.parseBoolean(c.getProperty("broadcastBuying")
-				.toString());
-		welcomeMessage = Boolean.parseBoolean(c.getProperty("welcomeMessage")
-				.toString());
-		extraInPot = Integer.parseInt(c.getProperty("extraInPot").toString());
-		clearExtraInPot = Boolean.parseBoolean(c.getProperty("clearExtraInPot")
-				.toString());
-		netPayout = Integer.parseInt(c.getProperty("netPayout").toString());
-		maxTicketsEachUser = Integer.parseInt(c.getProperty(
-				"maxTicketsEachUser").toString());
+		cost = c.getInt("cost",5);
+		hours = c.getInt("hours", 24);
+		useiConomy = c.getBoolean("useiConomy", true);
+		material = c.getInt("material", 266);
+		broadcastBuying = c.getBoolean("broadcastBuying", true);
+		welcomeMessage = c.getBoolean("welcomeMessage", true);
+		extraInPot = c.getInt("extraInPot", 0);
+		clearExtraInPot = c.getBoolean("clearExtraInPot", true);
+		netPayout = c.getInt("netPayout", 100);
+		maxTicketsEachUser = c.getInt("maxTicketsEachUser", 1);
+		numberOfTicketsAvailable = c.getInt("numberOfTicketsAvailable", 0);
+		jackpot = c.getInt("jackpot", 0);
 	}
         
         public void loadCustomMessages() {
-            
-            
+               
             msgWelcome = formatCustomMessage("welcome", "&6[LOTTERY] &fDraw in: &c%drawLong%");
         }
         
@@ -1033,8 +1039,17 @@ public class Lottery extends JavaPlugin {
 		}
 		// Add extra money added by admins and mods?
 		amount += extraInPot;
+		// Any money in jackpot?
+		amount += jackpot;
 
 		return amount;
+	}
+	
+	public int ticketsSold() {
+		int sold = 0;
+		ArrayList<String> players = playersInFile("lotteryPlayers.txt");
+		sold = players.size();
+		return sold;
 	}
 
 	public String formatMaterialName(int materialId) {
