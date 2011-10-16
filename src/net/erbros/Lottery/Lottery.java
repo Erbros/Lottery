@@ -3,6 +3,7 @@ package net.erbros.Lottery;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -24,6 +25,8 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
@@ -53,8 +56,8 @@ public class Lottery extends JavaPlugin {
 	protected Integer numberOfTicketsAvailable;
 	protected Integer jackpot;
         protected ArrayList<String> msgWelcome;
-	protected Configuration c;
-        protected Configuration msgConfig;
+	protected YamlConfiguration c;
+        protected YamlConfiguration msgConfig;
 	// Starting timer we are going to use for scheduling.
 	Timer timer;
 
@@ -200,28 +203,27 @@ public class Lottery extends JavaPlugin {
                             // Show different things if we are using iConomy over
                             // material.
                             if (useiConomy == true) {
-                                    if (c.getProperty("lastwinner") != null) {
+                                    if (c.getString("lastwinner") != null) {
                                             player.sendMessage(ChatColor.GOLD
                                                             + "[LOTTERY] "
                                                             + ChatColor.WHITE
                                                             + "Last winner: "
-                                                            + c.getProperty("lastwinner")
+                                                            + c.getString("lastwinner")
                                                             + " ("
-                                                            + Method.format(Integer.parseInt(c
-                                                                            .getProperty("lastwinneramount")
-                                                                            .toString())) + ")");
+                                                            + Method.format(c.getInt("lastwinneramount"))
+                                                            + ")");
                                     }
 
                             } else {
-                                    if (c.getProperty("lastwinner") != null) {
+                                    if (c.getString("lastwinner") != null) {
                                             player.sendMessage(ChatColor.GOLD
                                                             + "[LOTTERY] "
                                                             + ChatColor.WHITE
                                                             + "Last winner: "
-                                                            + c.getProperty("lastwinner")
+                                                            + c.getString("lastwinner")
                                                             + " ("
-                                                            + c.getProperty("lastwinneramount")
-                                                                            .toString() + " "
+                                                            + c.getInt("lastwinneramount")
+                                                            + " "
                                                             + formatMaterialName(material) + ")");
                                     }
                             }
@@ -447,8 +449,13 @@ public class Lottery extends JavaPlugin {
                                                     return true;
                                             }
                                             extraInPot += addToPot;
-                                            c.setProperty("extraInPot", extraInPot);
-                                            getConfiguration().save();
+                                            c.set("extraInPot", extraInPot);
+                                            try {
+												c.save("config.yml");
+											} catch (IOException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											}
 
                                             sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
                                                             + ChatColor.WHITE + "Added "
@@ -493,9 +500,14 @@ public class Lottery extends JavaPlugin {
                                                                             sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
                                                                                             + ChatColor.WHITE + "Cost changed to "
                                                                                             + ChatColor.RED + newCoin);
-                                                                            c.setProperty("cost", newCoin);
+                                                                            c.set("cost", newCoin);
                                                                             // Save the configuration
-                                                                            getConfiguration().save();
+                                                                            try {
+																				c.save("config.yml");
+																			} catch (IOException e) {
+																				// TODO Auto-generated catch block
+																				e.printStackTrace();
+																			}
                                                                             // Reload the configuration
                                                                             loadConfig();
                                                                     }
@@ -521,9 +533,14 @@ public class Lottery extends JavaPlugin {
                                                                             sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
                                                                                             + ChatColor.WHITE + "Hours changed to "
                                                                                             + ChatColor.RED + newHours);
-                                                                            c.setProperty("hours", newHours);
+                                                                            c.set("hours", newHours);
                                                                             // Save the configuration
-                                                                            getConfiguration().save();
+                                                                            try {
+																				c.save("config.yml");
+																			} catch (IOException e) {
+																				// TODO Auto-generated catch block
+																				e.printStackTrace();
+																			}
                                                                             // Reload the configuration
                                                                             loadConfig();
                                                                     }
@@ -549,9 +566,14 @@ public class Lottery extends JavaPlugin {
                                                                             sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
                                                                                             + ChatColor.WHITE + "Max amount of tickets changed to "
                                                                                             + ChatColor.RED + newMaxTicketsEachUser);
-                                                                            c.setProperty("maxTicketsEachUser", newMaxTicketsEachUser);
+                                                                            c.set("maxTicketsEachUser", newMaxTicketsEachUser);
                                                                             // Save the configuration
-                                                                            getConfiguration().save();
+                                                                            try {
+																				c.save("config.yml");
+																			} catch (IOException e) {
+																				// TODO Auto-generated catch block
+																				e.printStackTrace();
+																			}
                                                                             // Reload the configuration
                                                                             loadConfig();
                                                                     }
@@ -580,20 +602,20 @@ public class Lottery extends JavaPlugin {
 
 		// Is the date we are going to draw the lottery set? If not, we should
 		// do it.
-		if (c.getProperty("nextexec") == null) {
+		if (c.getLong("nextexec") == 0) {
 
 			// Set first time to be config hours later? Millisecs, * 1000.
 			nextexec = System.currentTimeMillis() + extendTime();
-			c.setProperty("nextexec", nextexec);
+			c.set("nextexec", nextexec);
 
-			if (!getConfiguration().save()) {
-				getServer()
-						.getLogger()
-						.warning(
-								"Unable to persist configuration files, changes will not be saved.");
+			try {
+				c.save("config.yml");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		} else {
-			nextexec = Long.parseLong(c.getProperty("nextexec").toString());
+			nextexec = c.getLong("nextexec");
 		}
 
 		// Start the timer for the first time.
@@ -612,11 +634,28 @@ public class Lottery extends JavaPlugin {
 		// Load the config.
 		loadConfig();
                 
-        // Woa, custom messages?
-        msgConfig = new Configuration(new File(getDataFolder().getPath() + File.separatorChar + "customMessages.yml"));
-        msgConfig.load();
+        new YamlConfiguration();
+		// Woa, custom messages?
+        msgConfig = YamlConfiguration.loadConfiguration(new File("customMessages.yml"));
+        try {
+			msgConfig.load(new File("customMessages.yml"));
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (InvalidConfigurationException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
         loadCustomMessages();
-        msgConfig.save();
+        try {
+			msgConfig.save(new File("customMessages.yml"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		// Gets version number and writes out starting line to console.
 		PluginDescriptionFile pdfFile = this.getDescription();
@@ -648,10 +687,10 @@ public class Lottery extends JavaPlugin {
 					// No winner this time, pot goes on to jackpot!
 					Integer amount = winningAmount();
 					jackpot = jackpot + amount;
-					c.setProperty("jackpot", jackpot);
+					c.set("jackpot", jackpot);
 					addToWinnerList("Jackpot", amount, useiConomy ? 0 : material);
-					c.setProperty("lastwinner", "Jackpot");
-					c.setProperty("lastwinneramount", amount);
+					c.set("lastwinner", "Jackpot");
+					c.set("lastwinneramount", amount);
 					Bukkit.broadcastMessage(ChatColor.GOLD + "[LOTTERY] "
 						+ ChatColor.WHITE
 						+ "No winner! "
@@ -716,9 +755,8 @@ public class Lottery extends JavaPlugin {
 					+ pluralWording("ticket", players.size()));
 
 			// Add last winner to config.
-			c = getConfiguration();
-			c.setProperty("lastwinner", players.get(rand));
-			c.setProperty("lastwinneramount", amount);
+			c.set("lastwinner", players.get(rand));
+			c.set("lastwinneramount", amount);
 
 			clearAfterGettingWinner();
 		}
@@ -730,7 +768,7 @@ public class Lottery extends JavaPlugin {
 		// extra money in pot added by admins and mods?
 		// Should this be removed?
 		if (clearExtraInPot == true) {
-			c.setProperty("extraInPot", 0);
+			c.set("extraInPot", 0);
 			extraInPot = 0;
 		}
 		// Clear file.
@@ -768,12 +806,12 @@ public class Lottery extends JavaPlugin {
 		if (System.currentTimeMillis() + extendTime() < nextexec) {
 			nextexec = System.currentTimeMillis() + extendTime();
 
-			c.setProperty("nextexec", Lottery.nextexec);
-			if (!getConfiguration().save()) {
-				getServer()
-						.getLogger()
-						.warning(
-								"Unable to persist configuration files, changes will not be saved.");
+			c.set("nextexec", Lottery.nextexec);
+			try {
+				c.save("config.yml");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 
@@ -787,8 +825,7 @@ public class Lottery extends JavaPlugin {
 		// few secs.
 		if (drawAtOnce) {
 			extendtime = 100;
-			c = getConfiguration();
-			c.setProperty("nextexec", System.currentTimeMillis() + 100);
+			c.set("nextexec", System.currentTimeMillis() + 100);
 			nextexec = System.currentTimeMillis() + 100;
 			debugMsg("DRAW NOW");
 		}
@@ -807,9 +844,8 @@ public class Lottery extends JavaPlugin {
 			// Cancel timer.
 			// Get new config.
 			debugMsg("Doing a lottery draw");
-			c = getConfiguration();
-			Lottery.nextexec = Long.parseLong(c.getProperty("nextexec")
-					.toString());
+			
+			Lottery.nextexec = c.getLong("nextexec");
 
 			if (Lottery.nextexec > 0
 					&& System.currentTimeMillis() + 1000 >= Lottery.nextexec) {
@@ -821,12 +857,12 @@ public class Lottery extends JavaPlugin {
 				}
 				Lottery.nextexec = System.currentTimeMillis() + extendTime();
 
-				c.setProperty("nextexec", Lottery.nextexec);
-				if (!getConfiguration().save()) {
-					getServer()
-							.getLogger()
-							.warning(
-									"Unable to persist configuration files, changes will not be saved.");
+				c.set("nextexec", Lottery.nextexec);
+				try {
+					c.save("config.yml");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 			// Call a new timer.
@@ -843,9 +879,7 @@ public class Lottery extends JavaPlugin {
 			}
 			;
 
-			// Get new config.
-			c = getConfiguration();
-			nextexec = Long.parseLong(c.getProperty("nextexec").toString());
+			nextexec = c.getLong("nextexec");
 
 			long extendtime = 0;
 
@@ -888,6 +922,9 @@ public class Lottery extends JavaPlugin {
 
 	
 	public void loadConfig() {
+		
+		YamlConfiguration c = YamlConfiguration.loadConfiguration(new File("config.yml"));
+		
 		cost = c.getInt("cost",5);
 		hours = c.getInt("hours", 24);
 		useiConomy = c.getBoolean("useiConomy", true);
@@ -900,6 +937,13 @@ public class Lottery extends JavaPlugin {
 		maxTicketsEachUser = c.getInt("maxTicketsEachUser", 1);
 		numberOfTicketsAvailable = c.getInt("numberOfTicketsAvailable", 0);
 		jackpot = c.getInt("jackpot", 0);
+		
+		try {
+			c.save("config.yml");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
         
         public void loadCustomMessages() {
@@ -934,7 +978,7 @@ public class Lottery extends JavaPlugin {
         }
 
 	public long extendTime() {
-		hours = Integer.parseInt(c.getProperty("hours").toString());
+		hours = c.getInt("hours");
 		Long extendTime = Long.parseLong(hours.toString()) * 60 * 60 * 1000;
 		return extendTime;
 	}
@@ -1323,12 +1367,10 @@ public class Lottery extends JavaPlugin {
 	
 	// Enable some debugging?
 	public void debugMsg(String msg) {
-		if(c.getProperty("debug") != null) {
-			if(Boolean.parseBoolean(c.getProperty("debug").toString()) == true) {
-				if(msg != null) {
-					log.info(msg);
-					getServer().broadcastMessage(msg);
-				}
+		if(c.getBoolean("debug") == true) {
+			if(msg != null) {
+				log.info(msg);
+				getServer().broadcastMessage(msg);
 			}
 		}
 	}
