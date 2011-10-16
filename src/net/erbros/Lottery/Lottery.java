@@ -633,22 +633,10 @@ public class Lottery extends JavaPlugin {
 
 		// Load the config.
 		loadConfig();
-                
-        new YamlConfiguration();
+        
 		// Woa, custom messages?
         msgConfig = YamlConfiguration.loadConfiguration(new File("customMessages.yml"));
-        try {
-			msgConfig.load(new File("customMessages.yml"));
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (InvalidConfigurationException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+        
         loadCustomMessages();
         try {
 			msgConfig.save(new File("customMessages.yml"));
