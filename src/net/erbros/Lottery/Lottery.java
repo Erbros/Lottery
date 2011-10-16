@@ -3,7 +3,6 @@ package net.erbros.Lottery;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -929,6 +928,7 @@ public class Lottery extends JavaPlugin {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			debugMsg("Error with saving config");
 		}
 	}
         
