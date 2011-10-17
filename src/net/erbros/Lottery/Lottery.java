@@ -3,6 +3,7 @@ package net.erbros.Lottery;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -24,6 +25,7 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -634,13 +636,18 @@ public class Lottery extends JavaPlugin {
         
 		// Woa, custom messages?
         msgConfig = YamlConfiguration.loadConfiguration(new File(getDataFolder().getPath() + getDataFolder().separator + "customMessages.yml"));
-        
-        FileConfiguration conf;
-        
-        conf = this.getConfig();
-        
-        
-        
+        try {
+			msgConfig.load(new File(getDataFolder().getPath() + getDataFolder().separator + "customMessages.yml"));
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (InvalidConfigurationException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
         
         loadCustomMessages();
         try {
@@ -917,6 +924,18 @@ public class Lottery extends JavaPlugin {
 	public void loadConfig() {
 		
 		YamlConfiguration c = YamlConfiguration.loadConfiguration(new File(getDataFolder().getPath() + getDataFolder().separator + "config.yml"));
+		try {
+			c.load(new File(getDataFolder().getPath() + getDataFolder().separator + "config.yml"));
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (InvalidConfigurationException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		cost = c.getInt("cost",5);
 		c.set("cost", cost);
