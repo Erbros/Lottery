@@ -602,7 +602,7 @@ public class Lottery extends JavaPlugin {
 
 		// Is the date we are going to draw the lottery set? If not, we should
 		// do it.
-		if (c.getLong("nextexec",0) == 0) {
+		if (nextexec == 0) {
 
 			// Set first time to be config hours later? Millisecs, * 1000.
 			nextexec = System.currentTimeMillis() + extendTime();
