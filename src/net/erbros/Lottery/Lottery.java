@@ -972,6 +972,18 @@ public class Lottery extends JavaPlugin {
 	
 	public void setDefaultConfig(File file, String path, Object value) {
 		YamlConfiguration tempConfig = YamlConfiguration.loadConfiguration(file);
+		try {
+			tempConfig.load(file);
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			debugMsg("Could not open file - setDefaultConfig method");
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (InvalidConfigurationException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		//tempConfig.load(file);
 		if(!tempConfig.contains(path)) {
 			tempConfig.addDefault(path, value);
