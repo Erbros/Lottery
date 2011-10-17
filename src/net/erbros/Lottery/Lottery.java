@@ -640,6 +640,7 @@ public class Lottery extends JavaPlugin {
 			msgConfig.load(new File(getDataFolder().getPath() + getDataFolder().separator + "customMessages.yml"));
 		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
+			msgConfig.addDefault("welcome", "&6[LOTTERY] &fDraw in: &c%drawLong%");
 			try {
 				msgConfig.save(new File(getDataFolder().getPath() + getDataFolder().separator + "customMessages.yml"));
 			} catch (IOException e) {
@@ -933,7 +934,13 @@ public class Lottery extends JavaPlugin {
 			c.load(new File(getDataFolder().getPath() + getDataFolder().separator + "config.yml"));
 		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			c.set("cost", 5);
+			try {
+				c.save(new File(getDataFolder().getPath() + getDataFolder().separator + "config.yml"));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
