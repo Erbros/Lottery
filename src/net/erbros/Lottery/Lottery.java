@@ -975,13 +975,23 @@ public class Lottery extends JavaPlugin {
            
         msgWelcome = formatCustomMessage("welcome", "&6[LOTTERY] &fDraw in: &c%drawLong%");
         
+        
+        // After loading all strings do a save.
+        try {
+			msgConfig.save(new File(getDataFolder().getPath() + getDataFolder().separator + "customMessages.yml"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
     }
     
     public ArrayList<String> formatCustomMessage (String node, String def) {
         ArrayList<String> fList = new ArrayList<String>();
         // Lets find a msg.
         String msg = msgConfig.getString(node, def);
-        c.set(node, msg);
+        msgConfig.set(node, msg);
+        
         // Lets put this in a arrayList in case we want more than one line.
         Collections.addAll(fList, msg.split("%newline%"));
         
