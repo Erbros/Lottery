@@ -933,14 +933,7 @@ public class Lottery extends JavaPlugin {
 		try {
 			c.load(new File(getDataFolder().getPath() + getDataFolder().separator + "config.yml"));
 		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			c.set("cost", 5);
-			try {
-				c.save(new File(getDataFolder().getPath() + getDataFolder().separator + "config.yml"));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			log.info("[LOTTERY] No config file found. Trying to create.");
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -949,32 +942,24 @@ public class Lottery extends JavaPlugin {
 			e1.printStackTrace();
 		}
 		
+		setDefaultConfig(new File(getDataFolder().getPath() + getDataFolder().separator + "config.yml"), "cost", 5);
 		cost = c.getInt("cost",5);
-		c.set("cost", cost);
+		setDefaultConfig(new File(getDataFolder().getPath() + getDataFolder().separator + "config.yml"), "hours", 24);
 		hours = c.getInt("hours", 24);
-		c.set("hours", hours);
+		setDefaultConfig(new File(getDataFolder().getPath() + getDataFolder().separator + "config.yml"), "useiConomy", true);
 		useiConomy = c.getBoolean("useiConomy", true);
-		c.set("useiConomy", useiConomy);
+		setDefaultConfig(new File(getDataFolder().getPath() + getDataFolder().separator + "config.yml"), "material", 266);
 		material = c.getInt("material", 266);
-		c.set("material", material);
+		setDefaultConfig(new File(getDataFolder().getPath() + getDataFolder().separator + "config.yml"), "broadcastBuying", true);
 		broadcastBuying = c.getBoolean("broadcastBuying", true);
-		c.set("broadcastBuying", broadcastBuying);
 		welcomeMessage = c.getBoolean("welcomeMessage", true);
-		c.set("welcomeMessage", welcomeMessage);
 		extraInPot = c.getInt("extraInPot", 0);
-		c.set("extraInPot", extraInPot);
 		clearExtraInPot = c.getBoolean("clearExtraInPot", true);
-		c.set("clearExtraInPot", clearExtraInPot);
 		netPayout = c.getInt("netPayout", 100);
-		c.set("netPayout", netPayout);
 		maxTicketsEachUser = c.getInt("maxTicketsEachUser", 1);
-		c.set("maxTicketsEachUser", maxTicketsEachUser);
 		numberOfTicketsAvailable = c.getInt("numberOfTicketsAvailable", 0);
-		c.set("numberOfTicketsAvailable", numberOfTicketsAvailable);
 		jackpot = c.getInt("jackpot", 0);
-		c.set("jackpot", jackpot);
-		nextexec = c.getLong("nextexec", System.currentTimeMillis() + extendTime());
-		c.set("nextexec", nextexec);
+		nextexec = c.getLong("nextexec");
 		
 		try {
 			c.save(new File(getDataFolder().getPath() + getDataFolder().separator + "config.yml"));
@@ -984,7 +969,22 @@ public class Lottery extends JavaPlugin {
 			debugMsg("Error with saving config");
 		}
 	}
-    
+	
+	public void setDefaultConfig(File file, String path, Object value) {
+		YamlConfiguration tempConfig = YamlConfiguration.loadConfiguration(file);
+		//tempConfig.load(file);
+		if(!tempConfig.contains(path)) {
+			tempConfig.addDefault(path, value);
+			try {
+				tempConfig.save(file);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				debugMsg("Could not save config - setDefaultConfig method");
+			}
+			debugMsg("Adding " + value.toString() + " to path " + path + " in file " + file.getName());
+		}
+	}
+
     public void loadCustomMessages() {
            
         msgWelcome = formatCustomMessage("welcome", "&6[LOTTERY] &fDraw in: &c%drawLong%");
