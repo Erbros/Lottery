@@ -966,8 +966,8 @@ public class Lottery extends JavaPlugin {
 		c.set("numberOfTicketsAvailable", numberOfTicketsAvailable);
 		jackpot = c.getInt("jackpot", 0);
 		c.set("jackpot", jackpot);
-		nextexec = c.getLong("nextexec", 0);
-		c.set("nextexec", jackpot);
+		nextexec = c.getLong("nextexec", System.currentTimeMillis() + extendTime());
+		c.set("nextexec", nextexec);
 		
 		try {
 			c.save(new File(getDataFolder().getPath() + getDataFolder().separator + "config.yml"));
