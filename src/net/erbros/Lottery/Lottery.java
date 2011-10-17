@@ -24,6 +24,7 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -448,7 +449,7 @@ public class Lottery extends JavaPlugin {
                                             extraInPot += addToPot;
                                             c.set("extraInPot", extraInPot);
                                             try {
-												c.save("config.yml");
+												c.save(new File(getDataFolder().getPath() + getDataFolder().separator + "config.yml"));
 											} catch (IOException e) {
 												// TODO Auto-generated catch block
 												e.printStackTrace();
@@ -500,7 +501,7 @@ public class Lottery extends JavaPlugin {
                                                                             c.set("cost", newCoin);
                                                                             // Save the configuration
                                                                             try {
-																				c.save("config.yml");
+																				c.save(new File(getDataFolder().getPath() + getDataFolder().separator + "config.yml"));
 																			} catch (IOException e) {
 																				// TODO Auto-generated catch block
 																				e.printStackTrace();
@@ -533,7 +534,7 @@ public class Lottery extends JavaPlugin {
                                                                             c.set("hours", newHours);
                                                                             // Save the configuration
                                                                             try {
-																				c.save("config.yml");
+																				c.save(new File(getDataFolder().getPath() + getDataFolder().separator + "config.yml"));
 																			} catch (IOException e) {
 																				// TODO Auto-generated catch block
 																				e.printStackTrace();
@@ -566,7 +567,7 @@ public class Lottery extends JavaPlugin {
                                                                             c.set("maxTicketsEachUser", newMaxTicketsEachUser);
                                                                             // Save the configuration
                                                                             try {
-																				c.save("config.yml");
+																				c.save(new File(getDataFolder().getPath() + getDataFolder().separator + "config.yml"));
 																			} catch (IOException e) {
 																				// TODO Auto-generated catch block
 																				e.printStackTrace();
@@ -606,7 +607,7 @@ public class Lottery extends JavaPlugin {
 			c.set("nextexec", nextexec);
 
 			try {
-				c.save("config.yml");
+				c.save(new File(getDataFolder().getPath() + getDataFolder().separator + "config.yml"));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -632,11 +633,18 @@ public class Lottery extends JavaPlugin {
 		loadConfig();
         
 		// Woa, custom messages?
-        msgConfig = YamlConfiguration.loadConfiguration(new File("customMessages.yml"));
+        msgConfig = YamlConfiguration.loadConfiguration(new File(getDataFolder().getPath() + getDataFolder().separator + "customMessages.yml"));
+        
+        FileConfiguration conf;
+        
+        conf = this.getConfig();
+        
+        
+        
         
         loadCustomMessages();
         try {
-			msgConfig.save(new File("customMessages.yml"));
+			msgConfig.save(new File(getDataFolder().getPath() + getDataFolder().separator + "customMessages.yml"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -793,7 +801,7 @@ public class Lottery extends JavaPlugin {
 
 			c.set("nextexec", Lottery.nextexec);
 			try {
-				c.save("config.yml");
+				c.save(new File(getDataFolder().getPath() + getDataFolder().separator + "config.yml"));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -844,7 +852,7 @@ public class Lottery extends JavaPlugin {
 
 				c.set("nextexec", Lottery.nextexec);
 				try {
-					c.save("config.yml");
+					c.save(new File(getDataFolder().getPath() + getDataFolder().separator + "config.yml"));
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -908,7 +916,7 @@ public class Lottery extends JavaPlugin {
 	
 	public void loadConfig() {
 		
-		YamlConfiguration c = YamlConfiguration.loadConfiguration(new File("config.yml"));
+		YamlConfiguration c = YamlConfiguration.loadConfiguration(new File(getDataFolder().getPath() + getDataFolder().separator + "config.yml"));
 		
 		cost = c.getInt("cost",5);
 		hours = c.getInt("hours", 24);
@@ -924,7 +932,7 @@ public class Lottery extends JavaPlugin {
 		jackpot = c.getInt("jackpot", 0);
 		
 		try {
-			c.save("config.yml");
+			c.save(new File(getDataFolder().getPath() + getDataFolder().separator + "config.yml"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
