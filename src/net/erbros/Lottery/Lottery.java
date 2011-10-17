@@ -919,17 +919,29 @@ public class Lottery extends JavaPlugin {
 		YamlConfiguration c = YamlConfiguration.loadConfiguration(new File(getDataFolder().getPath() + getDataFolder().separator + "config.yml"));
 		
 		cost = c.getInt("cost",5);
+		c.set("cost", cost);
 		hours = c.getInt("hours", 24);
+		c.set("hours", hours);
 		useiConomy = c.getBoolean("useiConomy", true);
+		c.set("useiConomy", useiConomy);
 		material = c.getInt("material", 266);
+		c.set("material", material);
 		broadcastBuying = c.getBoolean("broadcastBuying", true);
+		c.set("broadcastBuying", broadcastBuying);
 		welcomeMessage = c.getBoolean("welcomeMessage", true);
+		c.set("welcomeMessage", welcomeMessage);
 		extraInPot = c.getInt("extraInPot", 0);
+		c.set("extraInPot", extraInPot);
 		clearExtraInPot = c.getBoolean("clearExtraInPot", true);
+		c.set("clearExtraInPot", clearExtraInPot);
 		netPayout = c.getInt("netPayout", 100);
+		c.set("netPayout", netPayout);
 		maxTicketsEachUser = c.getInt("maxTicketsEachUser", 1);
+		c.set("maxTicketsEachUser", maxTicketsEachUser);
 		numberOfTicketsAvailable = c.getInt("numberOfTicketsAvailable", 0);
+		c.set("numberOfTicketsAvailable", numberOfTicketsAvailable);
 		jackpot = c.getInt("jackpot", 0);
+		c.set("jackpot", jackpot);
 		
 		try {
 			c.save(new File(getDataFolder().getPath() + getDataFolder().separator + "config.yml"));
@@ -939,37 +951,39 @@ public class Lottery extends JavaPlugin {
 			debugMsg("Error with saving config");
 		}
 	}
+    
+    public void loadCustomMessages() {
+           
+        msgWelcome = formatCustomMessage("welcome", "&6[LOTTERY] &fDraw in: &c%drawLong%");
         
-        public void loadCustomMessages() {
-               
-            msgWelcome = formatCustomMessage("welcome", "&6[LOTTERY] &fDraw in: &c%drawLong%");
-        }
+    }
+    
+    public ArrayList<String> formatCustomMessage (String node, String def) {
+        ArrayList<String> fList = new ArrayList<String>();
+        // Lets find a msg.
+        String msg = msgConfig.getString(node, def);
+        c.set(node, msg);
+        // Lets put this in a arrayList in case we want more than one line.
+        Collections.addAll(fList, msg.split("%newline%"));
         
-        public ArrayList<String> formatCustomMessage (String node, String def) {
-            ArrayList<String> fList = new ArrayList<String>();
-            // Lets find a msg.
-            String msg = msgConfig.getString(node, def);
-            // Lets put this in a arrayList in case we want more than one line.
-            Collections.addAll(fList, msg.split("%newline%"));
-            
-            return fList;
-        }
-        
-        public String formatCustomMessageLive (String msg, Player player) {
-            //Lets give timeLeft back if user provie %draw%
-            msg = msg.replaceAll("%draw%", timeUntil(nextexec, true));
-            //Lets give timeLeft with full words back if user provie %drawLong%
-            msg = msg.replaceAll("%drawLong%", timeUntil(nextexec, false));
-            // If %player% = Player name
-            msg = msg.replaceAll("%player%", player.getDisplayName());
-            // %cost% = cost
-            msg = msg.replaceAll("%cost%", cost.toString());
-            // %pot%
-            msg = msg.replaceAll("%pot%", Integer.toString(winningAmount()));
-            // Lets get some colors on this, shall we?
-            msg = msg.replaceAll("(&([a-f0-9]))", "\u00A7$2");
-            return msg;
-        }
+        return fList;
+    }
+    
+    public String formatCustomMessageLive (String msg, Player player) {
+        //Lets give timeLeft back if user provie %draw%
+        msg = msg.replaceAll("%draw%", timeUntil(nextexec, true));
+        //Lets give timeLeft with full words back if user provie %drawLong%
+        msg = msg.replaceAll("%drawLong%", timeUntil(nextexec, false));
+        // If %player% = Player name
+        msg = msg.replaceAll("%player%", player.getDisplayName());
+        // %cost% = cost
+        msg = msg.replaceAll("%cost%", cost.toString());
+        // %pot%
+        msg = msg.replaceAll("%pot%", Integer.toString(winningAmount()));
+        // Lets get some colors on this, shall we?
+        msg = msg.replaceAll("(&([a-f0-9]))", "\u00A7$2");
+        return msg;
+    }
 
 	public long extendTime() {
 		hours = c.getInt("hours");
