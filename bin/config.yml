@@ -1,0 +1,17 @@
+config:
+    cost: '5'
+    hours: '24'
+    nextexec: 1300368259883
+    material: '266'
+    useiConomy: 'false'
+    broadcastBuying: 'true'
+    welcomeMessage: 'true'
+    extraInPot: 0
+    clearExtraInPot: true
+    netPayout: 100
+    maxTicketsEachUser: 1
+    numberOfTicketsAvailable: 0
+    jackpot: 0
+    debug: false
+message:
+    welcome: '&6[LOTTERY] &fDraw in: &c%drawLong%'
