@@ -906,7 +906,9 @@ public class Lottery extends JavaPlugin {
 		numberOfTicketsAvailable = config.getInt("config.numberOfTicketsAvailable", 0);
 		jackpot = config.getInt("config.jackpot", 0);
 		nextexec = config.getLong("config.nextexec", System.currentTimeMillis() + extendTime());
-		// Msg config
+		// Load messages?
+		loadCustomMessages();
+		// Then lets save this stuff :)
 		saveConfig();
 	}
 	
