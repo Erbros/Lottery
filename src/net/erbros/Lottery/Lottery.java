@@ -867,7 +867,24 @@ public class Lottery extends JavaPlugin {
 
     public void configReplacePath (String pathFrom, String pathReplace, boolean deleteFrom) {
         if(config.contains(pathFrom)) {
-            config.set(pathReplace, config.get(pathFrom));
+            // Let's check for booleans etc so we can save the objects correctly.
+            if(config.isBoolean(pathReplace) && config.isBoolean(pathFrom)) {
+                config.set(pathReplace, config.getBoolean(pathFrom));
+            }
+            // Int?
+            if(config.isInt(pathReplace) && config.isInt(pathFrom)) {
+                config.set(pathReplace, config.getInt(pathFrom));
+            }
+            if(config.isLong(pathReplace) && config.isLong(pathFrom)) {
+                config.set(pathReplace, config.getLong(pathFrom));
+            }
+            if(config.isBoolean(pathReplace) && config.isBoolean(pathFrom)) {
+                config.set(pathReplace, config.getBoolean(pathFrom));
+            }
+            if(config.isString(pathReplace) && config.isString(pathFrom)) {
+                config.set(pathReplace, config.getString(pathFrom));
+            }
+            
             // Should we remove the old path?
             if(deleteFrom) config.set(pathFrom, null);
         }
