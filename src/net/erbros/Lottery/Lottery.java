@@ -45,7 +45,7 @@ public class Lottery extends JavaPlugin {
 	protected Integer hours;
 	protected static Long nextexec;
 	public Method Method = null;
-        public Methods Methods = null;
+    public Methods Methods = null;
 	public Boolean timerStarted = false;
 	protected static Boolean useiConomy;
 	protected static Integer material;
@@ -85,12 +85,20 @@ public class Lottery extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		
+
+    // Gets version number and writes out starting line to console.
+	    PluginDescriptionFile pdfFile = this.getDescription();
+	    System.out.println(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled");
+	    
+	    
 		// Lets find some configs
 		config = this.getConfig();
 	  
 		config.options().copyDefaults(true);
 		saveConfig();
 		loadConfig();
+		
+		
 		server = getServer();
 		// Do we need iConomy?
 		if (useiConomy == true) {
@@ -758,7 +766,8 @@ public class Lottery extends JavaPlugin {
 		// If the time is passed (perhaps the server was offline?), draw lottery
 		// at once.
 		if (extendtime <= 0) {
-			extendtime = 100;
+			extendtime = 1000;
+			debugMsg("Seems we need to make a draw at once!");
 		}
 
 		// Is the drawAtOnce boolean set to true? In that case, do drawing in a
@@ -905,7 +914,7 @@ public class Lottery extends JavaPlugin {
 		maxTicketsEachUser = config.getInt("config.maxTicketsEachUser", 1);
 		numberOfTicketsAvailable = config.getInt("config.numberOfTicketsAvailable", 0);
 		jackpot = config.getInt("config.jackpot", 0);
-		nextexec = config.getLong("config.nextexec", System.currentTimeMillis() + extendTime());
+		nextexec = config.getLong("config.nextexec");
 		// Load messages?
 		loadCustomMessages();
 		// Then lets save this stuff :)
@@ -950,6 +959,7 @@ public class Lottery extends JavaPlugin {
 	public long extendTime() {
 		hours = config.getInt("config.hours");
 		Long extendTime = Long.parseLong(hours.toString()) * 60 * 60 * 1000;
+		debugMsg("extendTime: " + extendTime);
 		return extendTime;
 	}
 
@@ -1337,7 +1347,7 @@ public class Lottery extends JavaPlugin {
 	
 	// Enable some debugging?
 	public void debugMsg(String msg) {
-		if(config.getBoolean("debug") == true) {
+		if(config.getBoolean("config.debug") == true) {
 			if(msg != null) {
 				log.info(msg);
 				getServer().broadcastMessage(msg);

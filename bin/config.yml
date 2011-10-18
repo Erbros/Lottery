@@ -1,8 +1,8 @@
 config:
-    cost: '5'
-    hours: '24'
-    nextexec: 1300368259883
-    material: '266'
+    cost: 5
+    hours: 24
+    nextexec: 0
+    material: 266
     useiConomy: false
     broadcastBuying: true
     welcomeMessage: true
