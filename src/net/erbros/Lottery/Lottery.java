@@ -591,7 +591,7 @@ public class Lottery extends JavaPlugin {
 
 			// Set first time to be config hours later? Millisecs, * 1000.
 			nextexec = System.currentTimeMillis() + extendTime();
-			config.set("nextexec", nextexec);
+			config.set("config.nextexec", nextexec);
 
 			saveConfig();
 		} else {
@@ -749,7 +749,7 @@ public class Lottery extends JavaPlugin {
 		if (System.currentTimeMillis() + extendTime() < nextexec) {
 			nextexec = System.currentTimeMillis() + extendTime();
 
-			config.set("nextexec", Lottery.nextexec);
+			config.set("config.nextexec", Lottery.nextexec);
 			saveConfig();
 		}
 
@@ -763,7 +763,7 @@ public class Lottery extends JavaPlugin {
 		// few secs.
 		if (drawAtOnce) {
 			extendtime = 100;
-			config.set("nextexec", System.currentTimeMillis() + 100);
+			config.set("config.nextexec", System.currentTimeMillis() + 100);
 			nextexec = System.currentTimeMillis() + 100;
 			debugMsg("DRAW NOW");
 		}
@@ -795,7 +795,7 @@ public class Lottery extends JavaPlugin {
 				}
 				Lottery.nextexec = System.currentTimeMillis() + extendTime();
 
-				config.set("nextexec", Lottery.nextexec);
+				config.set("config.nextexec", Lottery.nextexec);
 				saveConfig();
 			}
 			// Call a new timer.
