@@ -3,7 +3,6 @@ package net.erbros.Lottery;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -27,9 +26,7 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
@@ -636,7 +633,8 @@ public class Lottery extends JavaPlugin {
 			// is max number of tickets 0? If not, include empty tickets not sold.
 			if(numberOfTicketsAvailable > 0 && ticketsSold() < numberOfTicketsAvailable) {
 				rand = new Random().nextInt(numberOfTicketsAvailable);
-				if(players.get(rand) == null) {
+				// If it wasn't a player winning, then do some stuff. If it was a player, just continue below.
+				if(rand > players.size()-1) {
 					// No winner this time, pot goes on to jackpot!
 					Integer amount = winningAmount();
 					jackpot = jackpot + amount;
@@ -650,7 +648,7 @@ public class Lottery extends JavaPlugin {
 						+ ChatColor.GREEN
 						+ amount
 						+ " "
-						+ ((useiConomy)? Method.format(amount) : material)
+						+ ((useiConomy)? Method.format(amount) : formatMaterialName(material))
 						+ ChatColor.WHITE
 						+ " went to jackpot!");
 					Bukkit.broadcastMessage(ChatColor.GOLD + "[LOTTERY] "
@@ -658,7 +656,7 @@ public class Lottery extends JavaPlugin {
 						+ "It is now "
 						+ ChatColor.GREEN
 						+ jackpot
-						+ (useiConomy ? Method.format(jackpot) : material)
+						+ (useiConomy ? Method.format(jackpot) : formatMaterialName(material))
 						+ ChatColor.WHITE
 						+ " in the jackpot.");
 					clearAfterGettingWinner();
