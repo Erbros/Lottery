@@ -3,9 +3,9 @@ config:
     hours: '24'
     nextexec: 1300368259883
     material: '266'
-    useiConomy: 'false'
-    broadcastBuying: 'true'
-    welcomeMessage: 'true'
+    useiConomy: false
+    broadcastBuying: true
+    welcomeMessage: true
     extraInPot: 0
     clearExtraInPot: true
     netPayout: 100
