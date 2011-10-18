@@ -8,8 +8,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -852,9 +854,44 @@ public class Lottery extends JavaPlugin {
 		}
 		// For bugtesting:
 	}
+	
+
+    public void configReplacePath (String pathFrom, String pathReplace, boolean deleteFrom) {
+        if(config.contains(pathFrom)) {
+            config.set(pathReplace, config.get(pathFrom));
+            // Should we remove the old path?
+            if(deleteFrom) config.set(pathFrom, null);
+        }
+    }
 
 	
 	public void loadConfig() {
+		
+		// lets check if there exist old config that needs to be loaded, then removed.
+		if(config.contains("cost")) {
+			String oldConfigs[] = new String[] {"cost", 
+			        "hours", 
+			        "useiConomy", 
+			        "material", 
+			        "broadcastBuying", 
+			        "welcomeMessage", 
+			        "extraInPot", 
+			        "clearExtraInPot", 
+			        "netPayout", 
+			        "maxTicketsEachUser", 
+			        "numberOfTicketsEachUser",
+			        "jackpot",
+			        "nextexec",
+			        "debug"};
+			
+			List<String> oldConfigList = Arrays.asList(oldConfigs);
+			
+			for (String current : oldConfigList) {
+			    configReplacePath(current, "config." + current, true);
+			    debugMsg("Got value from old path: " + current + ", to new: config." + current);
+			}
+
+		}
 		
 		cost = config.getInt("config.cost",5);
 		hours = config.getInt("config.hours", 24);
@@ -872,6 +909,7 @@ public class Lottery extends JavaPlugin {
 		// Msg config
 		saveConfig();
 	}
+	
 	
     public void loadCustomMessages() {
 
