@@ -204,12 +204,12 @@ public class Lottery extends JavaPlugin {
                     	player.sendMessage(ChatColor.GOLD
                     			+ "[LOTTERY]"
                     			+ ChatColor.WHITE
-                    			+ "There is "
+                    			+ " There is "
                     			+ ChatColor.RED
                     			+ (numberOfTicketsAvailable - ticketsSold())
                     			+ ChatColor.WHITE
                     			+ pluralWording("ticket",numberOfTicketsAvailable - ticketsSold())
-                    			+ "left.");
+                    			+ " left.");
                     }
                     player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
                                     + ChatColor.RED + "/lottery help" + ChatColor.WHITE
