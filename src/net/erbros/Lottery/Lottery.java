@@ -88,7 +88,7 @@ public class Lottery extends JavaPlugin {
 	  
 		config.options().copyDefaults(true);
 		saveConfig();
-
+		loadConfig();
 		server = getServer();
 		// Do we need iConomy?
 		if (useiConomy == true) {
