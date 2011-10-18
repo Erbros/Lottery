@@ -636,30 +636,22 @@ public class Lottery extends JavaPlugin {
 				// If it wasn't a player winning, then do some stuff. If it was a player, just continue below.
 				if(rand > players.size()-1) {
 					// No winner this time, pot goes on to jackpot!
-					Integer amount = winningAmount();
-					jackpot = jackpot + amount;
-					config.set("jackpot", jackpot);
-					addToWinnerList("Jackpot", amount, useiConomy ? 0 : material);
-					config.set("lastwinner", "Jackpot");
-					config.set("lastwinneramount", amount);
+					Integer jackpot = winningAmount();
+					config.set("config.jackpot", jackpot);
+					addToWinnerList("Jackpot", jackpot, useiConomy ? 0 : material);
+					config.set("config.lastwinner", "Jackpot");
+					config.set("config.lastwinneramount", jackpot);
 					Bukkit.broadcastMessage(ChatColor.GOLD + "[LOTTERY] "
 						+ ChatColor.WHITE
 						+ "No winner! "
 						+ ChatColor.GREEN
-						+ amount
+						+ jackpot
 						+ " "
-						+ ((useiConomy)? Method.format(amount) : formatMaterialName(material))
+						+ ((useiConomy)? Method.format(jackpot) : formatMaterialName(material))
 						+ ChatColor.WHITE
 						+ " went to jackpot!");
-					Bukkit.broadcastMessage(ChatColor.GOLD + "[LOTTERY] "
-						+ ChatColor.WHITE
-						+ "It is now "
-						+ ChatColor.GREEN
-						+ jackpot
-						+ (useiConomy ? Method.format(jackpot) : formatMaterialName(material))
-						+ ChatColor.WHITE
-						+ " in the jackpot.");
 					clearAfterGettingWinner();
+					return true;
 				}
 			} else {
 				// Else just continue
@@ -706,8 +698,9 @@ public class Lottery extends JavaPlugin {
 					+ pluralWording("ticket", players.size()));
 
 			// Add last winner to config.
-			config.set("lastwinner", players.get(rand));
-			config.set("lastwinneramount", amount);
+			config.set("config.lastwinner", players.get(rand));
+			config.set("config.lastwinneramount", amount);
+			config.set("config.jackpot", 0);
 
 			clearAfterGettingWinner();
 		}
@@ -1079,7 +1072,7 @@ public class Lottery extends JavaPlugin {
 		// Add extra money added by admins and mods?
 		amount += extraInPot;
 		// Any money in jackpot?
-		amount += jackpot;
+		amount += config.getInt("config.jackpot");
 
 		return amount;
 	}
