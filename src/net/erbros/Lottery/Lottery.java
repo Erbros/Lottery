@@ -205,6 +205,7 @@ public class Lottery extends JavaPlugin {
                     			+ ChatColor.RED
                     			+ (numberOfTicketsAvailable - ticketsSold())
                     			+ ChatColor.WHITE
+                    			+ " "
                     			+ pluralWording("ticket",numberOfTicketsAvailable - ticketsSold())
                     			+ " left.");
                     }
@@ -215,26 +216,26 @@ public class Lottery extends JavaPlugin {
                     // Show different things if we are using iConomy over
                     // material.
                     if (useiConomy == true) {
-                            if (config.getString("lastwinner") != null) {
+                            if (config.getString("config.lastwinner") != null) {
                                     player.sendMessage(ChatColor.GOLD
                                                     + "[LOTTERY] "
                                                     + ChatColor.WHITE
                                                     + "Last winner: "
-                                                    + config.getString("lastwinner")
+                                                    + config.getString("config.lastwinner")
                                                     + " ("
-                                                    + Method.format(config.getInt("lastwinneramount"))
+                                                    + Method.format(config.getInt("config.lastwinneramount"))
                                                     + ")");
                             }
 
                     } else {
-                            if (config.getString("lastwinner") != null) {
+                            if (config.getString("config.lastwinner") != null) {
                                     player.sendMessage(ChatColor.GOLD
                                                     + "[LOTTERY] "
                                                     + ChatColor.WHITE
                                                     + "Last winner: "
-                                                    + config.getString("lastwinner")
+                                                    + config.getString("config.lastwinner")
                                                     + " ("
-                                                    + config.getInt("lastwinneramount")
+                                                    + config.getInt("config.lastwinneramount")
                                                     + " "
                                                     + formatMaterialName(material) + ")");
                             }
