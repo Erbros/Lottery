@@ -862,19 +862,34 @@ public class Lottery extends JavaPlugin {
             // Let's check for booleans etc so we can save the objects correctly.
             if(config.isBoolean(pathReplace) && config.isBoolean(pathFrom)) {
                 config.set(pathReplace, config.getBoolean(pathFrom));
+                debugMsg("Got value from old path: " + pathFrom + ", to new: " + pathReplace);
+            } else {
+                debugMsg("isBoolean: " + pathReplace + "(" + config.isBoolean(pathReplace) + ") :: isBoolean: " + pathFrom + "(" + config.isBoolean(pathFrom) + ")");
             }
             // Int?
             if(config.isInt(pathReplace) && config.isInt(pathFrom)) {
                 config.set(pathReplace, config.getInt(pathFrom));
+                debugMsg("Got value from old path: " + pathFrom + ", to new: " + pathReplace);
+            } else {
+                debugMsg("isBoolean: " + pathReplace + "(" + config.isBoolean(pathReplace) + ") :: isBoolean: " + pathFrom + "(" + config.isBoolean(pathFrom) + ")");
             }
             if(config.isLong(pathReplace) && config.isLong(pathFrom)) {
                 config.set(pathReplace, config.getLong(pathFrom));
+                debugMsg("Got value from old path: " + pathFrom + ", to new: " + pathReplace);
+            } else {
+                debugMsg("isBoolean: " + pathReplace + "(" + config.isBoolean(pathReplace) + ") :: isBoolean: " + pathFrom + "(" + config.isBoolean(pathFrom) + ")");
             }
             if(config.isBoolean(pathReplace) && config.isBoolean(pathFrom)) {
                 config.set(pathReplace, config.getBoolean(pathFrom));
+                debugMsg("Got value from old path: " + pathFrom + ", to new: " + pathReplace);
+            } else {
+                debugMsg("isBoolean: " + pathReplace + "(" + config.isBoolean(pathReplace) + ") :: isBoolean: " + pathFrom + "(" + config.isBoolean(pathFrom) + ")");
             }
             if(config.isString(pathReplace) && config.isString(pathFrom)) {
                 config.set(pathReplace, config.getString(pathFrom));
+                debugMsg("Got value from old path: " + pathFrom + ", to new: " + pathReplace);
+            } else {
+                debugMsg("isBoolean: " + pathReplace + "(" + config.isBoolean(pathReplace) + ") :: isBoolean: " + pathFrom + "(" + config.isBoolean(pathFrom) + ")");
             }
             
             // Should we remove the old path?
@@ -886,30 +901,27 @@ public class Lottery extends JavaPlugin {
 	public void loadConfig() {
 		
 		// lets check if there exist old config that needs to be loaded, then removed.
-		if(config.contains("cost")) {
-			String oldConfigs[] = new String[] {"cost", 
-			        "hours", 
-			        "useiConomy", 
-			        "material", 
-			        "broadcastBuying", 
-			        "welcomeMessage", 
-			        "extraInPot", 
-			        "clearExtraInPot", 
-			        "netPayout", 
-			        "maxTicketsEachUser", 
-			        "numberOfTicketsEachUser",
-			        "jackpot",
-			        "nextexec",
-			        "debug"};
-			
-			List<String> oldConfigList = Arrays.asList(oldConfigs);
-			
-			for (String current : oldConfigList) {
-			    configReplacePath(current, "config." + current, true);
-			    debugMsg("Got value from old path: " + current + ", to new: config." + current);
-			}
-
+		String oldConfigs[] = new String[] {"cost", 
+		        "hours", 
+		        "useiConomy", 
+		        "material", 
+		        "broadcastBuying", 
+		        "welcomeMessage", 
+		        "extraInPot", 
+		        "clearExtraInPot", 
+		        "netPayout", 
+		        "maxTicketsEachUser", 
+		        "numberOfTicketsEachUser",
+		        "jackpot",
+		        "nextexec",
+		        "debug"};
+		
+		List<String> oldConfigList = Arrays.asList(oldConfigs);
+		
+		for (String current : oldConfigList) {
+		    configReplacePath(current, "config." + current, true);
 		}
+
 		
 		cost = config.getInt("config.cost",5);
 		hours = config.getInt("config.hours", 24);
