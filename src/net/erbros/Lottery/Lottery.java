@@ -644,11 +644,9 @@ public class Lottery extends JavaPlugin {
 					config.set("config.lastwinneramount", jackpot);
 					Bukkit.broadcastMessage(ChatColor.GOLD + "[LOTTERY] "
 						+ ChatColor.WHITE
-						+ "No winner! "
+						+ "No winner, we have a rollover! "
 						+ ChatColor.GREEN
-						+ jackpot
-						+ " "
-						+ ((useiConomy)? Method.format(jackpot) : formatMaterialName(material))
+						+ ((useiConomy)? Method.format(jackpot) :  + jackpot + " " + formatMaterialName(material))
 						+ ChatColor.WHITE
 						+ " went to jackpot!");
 					clearAfterGettingWinner();
