@@ -508,7 +508,7 @@ public class Lottery extends JavaPlugin {
                                                                     sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
                                                                                     + ChatColor.WHITE + "Cost changed to "
                                                                                     + ChatColor.RED + newCoin);
-                                                                    config.set("cost", newCoin);
+                                                                    config.set("config.cost", newCoin);
                                                                     // Save the configuration
                                                                     saveConfig();
                                                                     // Reload the configuration
@@ -536,7 +536,7 @@ public class Lottery extends JavaPlugin {
                                                                     sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
                                                                                     + ChatColor.WHITE + "Hours changed to "
                                                                                     + ChatColor.RED + newHours);
-                                                                    config.set("hours", newHours);
+                                                                    config.set("config.hours", newHours);
                                                                     // Save the configuration
                                                                     saveConfig();
                                                                     // Reload the configuration
@@ -564,7 +564,7 @@ public class Lottery extends JavaPlugin {
                                                                     sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
                                                                                     + ChatColor.WHITE + "Max amount of tickets changed to "
                                                                                     + ChatColor.RED + newMaxTicketsEachUser);
-                                                                    config.set("maxTicketsEachUser", newMaxTicketsEachUser);
+                                                                    config.set("config.maxTicketsEachUser", newMaxTicketsEachUser);
                                                                     // Save the configuration
                                                                     saveConfig();
                                                                     // Reload the configuration
