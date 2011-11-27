@@ -1027,7 +1027,7 @@ public class Lottery extends JavaPlugin {
 			MethodAccount account = Method.getAccount(player.getName());
 
 			// And lets withdraw some money
-			if (account.hasOver(Lottery.cost * numberOfTickets - 1)) {
+			if (account.hasOver(Lottery.cost * numberOfTickets)) {
 				// Removing coins from players account.
 				account.subtract(Lottery.cost * numberOfTickets);
 			} else {
