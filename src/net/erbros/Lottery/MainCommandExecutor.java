@@ -59,7 +59,7 @@ public class MainCommandExecutor implements CommandExecutor {
                 Player player = (Player) sender;
 
                 // Check if we got any money/items in the pot.
-                int amount = etc.winningAmount();
+                double amount = etc.winningAmount();
                 // Send some messages:
                 player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
                                 + ChatColor.WHITE + "Draw in: " + ChatColor.RED

@@ -6,11 +6,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Random;
 
 import net.erbros.Lottery.register.payment.Method;
@@ -22,7 +21,6 @@ import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
 
 public class Etc {
     public Lottery plugin;
@@ -103,20 +101,20 @@ public class Etc {
         }
         */
         
-        Lottery.cost = config.getInt("config.cost",5);
+        Lottery.cost = config.getDouble("config.cost",5);
 
         debugMsg("2");
-        plugin.hours = config.getInt("config.hours", 24);
+        plugin.hours = config.getDouble("config.hours", 24);
         Lottery.useiConomy = config.getBoolean("config.useiConomy", true);
         Lottery.material = config.getInt("config.material", 266);
         plugin.broadcastBuying = config.getBoolean("config.broadcastBuying", true);
         plugin.welcomeMessage = config.getBoolean("config.welcomeMessage", true);
-        plugin.extraInPot = config.getInt("config.extraInPot", 0);
+        plugin.extraInPot = config.getDouble("config.extraInPot", 0);
         plugin.clearExtraInPot = config.getBoolean("config.clearExtraInPot", true);
-        plugin.netPayout = config.getInt("config.netPayout", 100);
+        plugin.netPayout = config.getDouble("config.netPayout", 100);
         plugin.maxTicketsEachUser = config.getInt("config.maxTicketsEachUser", 1);
         plugin.numberOfTicketsAvailable = config.getInt("config.numberOfTicketsAvailable", 0);
-        plugin.jackpot = config.getInt("config.jackpot", 0);
+        plugin.jackpot = config.getDouble("config.jackpot", 0);
         Lottery.nextexec = config.getLong("config.nextexec");
 
         // Load messages?
@@ -154,7 +152,7 @@ public class Etc {
         // %cost% = cost
         msg = msg.replaceAll("%cost%", Lottery.cost.toString());
         // %pot%
-        msg = msg.replaceAll("%pot%", Integer.toString(winningAmount()));
+        msg = msg.replaceAll("%pot%", Double.toString(winningAmount()));
         // Lets get some colors on this, shall we?
         msg = msg.replaceAll("(&([a-f0-9]))", "\u00A7$2");
         return msg;
@@ -186,13 +184,13 @@ public class Etc {
 
         // Do the ticket cost money or item?
         if (Lottery.useiConomy == false) {
-            // Do the user have the item?
+            // Do the user have the item
             if (player.getInventory().contains(Lottery.material,
-                    Lottery.cost * numberOfTickets)) {
+                    Integer.getInteger(String.valueOf(Lottery.cost)) * numberOfTickets)) {
                 // Remove items.
                 player.getInventory().removeItem(
-                        new ItemStack(Lottery.material, Lottery.cost
-                                * numberOfTickets));
+                        new ItemStack(Lottery.material, 
+                                    Integer.getInteger(String.valueOf(Lottery.cost)) * numberOfTickets));
             } else {
                 return false;
             }
@@ -251,8 +249,8 @@ public class Etc {
         return numberOfTickets;
     }
 
-    public int winningAmount() {
-        int amount = 0;
+    public double winningAmount() {
+        double amount = 0;
         ArrayList<String> players = playersInFile("lotteryPlayers.txt");
         amount = players.size() * Lottery.cost;
         // Set the net payout as configured in the config.
@@ -263,7 +261,20 @@ public class Etc {
         amount += plugin.extraInPot;
         // Any money in jackpot?
         amount += config.getInt("config.jackpot");
-
+        
+        return amount;
+    }
+    
+    public double formatAmount (double amount, int afterComma, int material) {
+        // Okay, if this is a material it's really simple. Just floor it.
+        if(material > 0) {
+            amount = Math.floor(amount);
+        } else {
+            DecimalFormat formatter = new DecimalFormat("0.00");
+            amount = Double.parseDouble(formatter.format(amount));
+        }
+        
+        
         return amount;
     }
     
@@ -357,7 +368,7 @@ public class Etc {
         return true;
     }
 
-    public boolean addToWinnerList(String playerName, int winningAmount,
+    public boolean addToWinnerList(String playerName, Double winningAmount,
             int winningMaterial) {
         // This list should be 10 players long.
         ArrayList<String> winnerArray = new ArrayList<String>();
@@ -587,7 +598,7 @@ public class Etc {
                 // If it wasn't a player winning, then do some stuff. If it was a player, just continue below.
                 if(rand > players.size()-1) {
                     // No winner this time, pot goes on to jackpot!
-                    Integer jackpot = winningAmount();
+                    Double jackpot = winningAmount();
                     config.set("config.jackpot", jackpot);
                     addToWinnerList("Jackpot", jackpot, Lottery.useiConomy ? 0 : Lottery.material);
                     config.set("config.lastwinner", "Jackpot");
@@ -609,7 +620,7 @@ public class Etc {
             
 
             debugMsg("Rand: " + Integer.toString(rand));
-            int amount = winningAmount();
+            double amount = winningAmount();
             if (Lottery.useiConomy == true) {
                 plugin.Method.hasAccount(players.get(rand));
                 MethodAccount account = plugin.Method.getAccount(players.get(rand));
@@ -625,6 +636,8 @@ public class Etc {
                         + plugin.Method.format(amount) + ".");
                 addToWinnerList(players.get(rand), amount, 0);
             } else {
+                // let's throw it to an int.
+                
                 Bukkit.broadcastMessage(ChatColor.GOLD + "[LOTTERY] "
                         + ChatColor.WHITE + "Congratulations to "
                         + players.get(rand) + " for winning " + ChatColor.RED
@@ -634,7 +647,8 @@ public class Etc {
                         + "/lottery claim" + ChatColor.WHITE
                         + " to claim the winnings.");
                 addToWinnerList(players.get(rand), amount, Lottery.material);
-                addToClaimList(players.get(rand), amount, Lottery.material.intValue());
+                int matAmount = Integer.getInteger(String.valueOf(amount));
+                addToClaimList(players.get(rand), matAmount, Lottery.material.intValue());
             }
             Bukkit.broadcastMessage(ChatColor.GOLD
                     + "[LOTTERY] "
@@ -662,7 +676,7 @@ public class Etc {
         // Should this be removed?
         if (plugin.clearExtraInPot == true) {
             config.set("extraInPot", 0);
-            plugin.extraInPot = 0;
+            plugin.extraInPot = (double) 0;
         }
         // Clear file.
                     try {

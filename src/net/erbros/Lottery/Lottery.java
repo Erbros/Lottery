@@ -19,22 +19,22 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class Lottery extends JavaPlugin {
 
-	protected static Integer cost;
-	protected Integer hours;
+	protected static Double cost;
+	protected Double hours;
 	protected static Long nextexec;
 	public Method Method = null;
     public Methods Methods = null;
 	public Boolean timerStarted = false;
 	protected static Boolean useiConomy;
 	protected static Integer material;
-	protected Integer extraInPot;
+	protected Double extraInPot;
 	protected Boolean broadcastBuying;
 	protected Boolean welcomeMessage;
-	protected Integer netPayout;
+	protected Double netPayout;
 	protected Boolean clearExtraInPot;
 	protected Integer maxTicketsEachUser;
 	protected Integer numberOfTicketsAvailable;
-	protected Integer jackpot;
+	protected Double jackpot;
     protected ArrayList<String> msgWelcome;
     public FileConfiguration config;
 	// Starting timer we are going to use for scheduling.
@@ -260,9 +260,10 @@ public class Lottery extends JavaPlugin {
     
 
     public long extendTime() {
-        hours = config.getInt("config.hours");
-        Long extendTime = Long.parseLong(hours.toString()) * 60 * 60 * 1000;
-        etc.debugMsg("extendTime: " + extendTime);
+        hours = config.getDouble("config.hours");
+        double exacttime = hours * 60 * 60 * 1000;
+        Long extendTime = (long) exacttime;
+        etc.debugMsg( "extendTime: " + extendTime );
         return extendTime;
     }
 
