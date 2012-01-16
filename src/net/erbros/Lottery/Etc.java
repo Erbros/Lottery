@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
@@ -21,6 +22,8 @@ import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import com.sun.org.apache.xalan.internal.xsltc.compiler.util.NumberType;
 
 public class Etc {
     public Lottery plugin;
@@ -101,9 +104,10 @@ public class Etc {
         }
         */
         
-        Lottery.cost = config.getDouble("config.cost",5);
-
-        debugMsg("2");
+        plugin.reloadConfig();
+        
+        debugMsg("Loading Lottery configuration");
+        
         plugin.hours = config.getDouble("config.hours", 24);
         Lottery.useiConomy = config.getBoolean("config.useiConomy", true);
         Lottery.material = config.getInt("config.material", 266);
@@ -116,6 +120,9 @@ public class Etc {
         plugin.numberOfTicketsAvailable = config.getInt("config.numberOfTicketsAvailable", 0);
         plugin.jackpot = config.getDouble("config.jackpot", 0);
         Lottery.nextexec = config.getLong("config.nextexec");
+        Lottery.cost = formatAmount(config.getDouble("config.cost", 5),Lottery.useiConomy);
+        
+        
 
         // Load messages?
         loadCustomMessages();
@@ -150,7 +157,12 @@ public class Etc {
         // If %player% = Player name
         msg = msg.replaceAll("%player%", player.getDisplayName());
         // %cost% = cost
-        msg = msg.replaceAll("%cost%", Lottery.cost.toString());
+        if(Lottery.useiConomy) {
+            msg = msg.replaceAll("%cost%", String.valueOf( formatAmount(Lottery.cost,Lottery.useiConomy)));
+        } else {
+            msg = msg.replaceAll("%cost%", String.valueOf( (int) formatAmount(Lottery.cost,Lottery.useiConomy)));
+        }
+        
         // %pot%
         msg = msg.replaceAll("%pot%", Double.toString(winningAmount()));
         // Lets get some colors on this, shall we?
@@ -186,11 +198,11 @@ public class Etc {
         if (Lottery.useiConomy == false) {
             // Do the user have the item
             if (player.getInventory().contains(Lottery.material,
-                    Integer.getInteger(String.valueOf(Lottery.cost)) * numberOfTickets)) {
+                    (int) Lottery.cost * numberOfTickets)) {
                 // Remove items.
                 player.getInventory().removeItem(
                         new ItemStack(Lottery.material, 
-                                    Integer.getInteger(String.valueOf(Lottery.cost)) * numberOfTickets));
+                                (int) Lottery.cost * numberOfTickets));
             } else {
                 return false;
             }
@@ -252,7 +264,7 @@ public class Etc {
     public double winningAmount() {
         double amount = 0;
         ArrayList<String> players = playersInFile("lotteryPlayers.txt");
-        amount = players.size() * Lottery.cost;
+        amount = players.size() * formatAmount(Lottery.cost,Lottery.useiConomy);
         // Set the net payout as configured in the config.
         if (plugin.netPayout > 0) {
             amount = amount * plugin.netPayout / 100;
@@ -260,19 +272,23 @@ public class Etc {
         // Add extra money added by admins and mods?
         amount += plugin.extraInPot;
         // Any money in jackpot?
-        amount += config.getInt("config.jackpot");
+        amount += config.getDouble("config.jackpot");
+        
+        // format it once again.
+        amount = formatAmount(amount,Lottery.useiConomy);
         
         return amount;
     }
     
-    public double formatAmount (double amount, int afterComma, int material) {
+    public double formatAmount (double amount, boolean usingiConomy) {
         // Okay, if this is a material it's really simple. Just floor it.
-        if(material > 0) {
-            amount = Math.floor(amount);
+        DecimalFormat formatter = null;
+        if(!usingiConomy) {
+            formatter = new DecimalFormat("0");
         } else {
-            DecimalFormat formatter = new DecimalFormat("0.00");
-            amount = Double.parseDouble(formatter.format(amount));
+            formatter = new DecimalFormat("0.00");
         }
+        amount = Double.parseDouble(formatter.format(amount));
         
         
         return amount;
@@ -637,18 +653,19 @@ public class Etc {
                 addToWinnerList(players.get(rand), amount, 0);
             } else {
                 // let's throw it to an int.
-                
+                int matAmount = (int) formatAmount(amount,Lottery.useiConomy);
+                amount = (double) matAmount;
                 Bukkit.broadcastMessage(ChatColor.GOLD + "[LOTTERY] "
                         + ChatColor.WHITE + "Congratulations to "
                         + players.get(rand) + " for winning " + ChatColor.RED
-                        + amount + " " + formatMaterialName(Lottery.material) + ".");
+                        + matAmount + " " + formatMaterialName(Lottery.material) + ".");
                 Bukkit.broadcastMessage(ChatColor.GOLD + "[LOTTERY] "
                         + ChatColor.WHITE + "Use " + ChatColor.RED
                         + "/lottery claim" + ChatColor.WHITE
                         + " to claim the winnings.");
                 addToWinnerList(players.get(rand), amount, Lottery.material);
-                int matAmount = Integer.getInteger(String.valueOf(amount));
-                addToClaimList(players.get(rand), matAmount, Lottery.material.intValue());
+
+                addToClaimList(players.get(rand), matAmount, Lottery.material);
             }
             Bukkit.broadcastMessage(ChatColor.GOLD
                     + "[LOTTERY] "
@@ -690,4 +707,22 @@ public class Etc {
                     }
     }
     
+    // Not in use at the moment
+    public ChangeConfig setConfig (String node, int value) {
+        
+        config.set(node, value);
+        
+        ChangeConfig change = new ChangeConfig(true,"String");
+        return change;
+    }
+    //Not in use at the moment
+    public boolean isCorrectType (Object obj, Object typeRequested) {
+        
+        // Okay, let's see if object is the same type as typerequested.
+        if(obj.getClass() == typeRequested.getClass()) {
+            return true;
+        }
+        
+        return false;
+    }
 }

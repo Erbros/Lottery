@@ -19,22 +19,22 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class Lottery extends JavaPlugin {
 
-	protected static Double cost;
-	protected Double hours;
+	protected static double cost;
+	protected double hours;
 	protected static Long nextexec;
 	public Method Method = null;
     public Methods Methods = null;
-	public Boolean timerStarted = false;
-	protected static Boolean useiConomy;
-	protected static Integer material;
-	protected Double extraInPot;
-	protected Boolean broadcastBuying;
-	protected Boolean welcomeMessage;
-	protected Double netPayout;
-	protected Boolean clearExtraInPot;
-	protected Integer maxTicketsEachUser;
-	protected Integer numberOfTicketsAvailable;
-	protected Double jackpot;
+	public boolean timerStarted = false;
+	protected static boolean useiConomy;
+	protected static int material;
+	protected double extraInPot;
+	protected boolean broadcastBuying;
+	protected boolean welcomeMessage;
+	protected double netPayout;
+	protected boolean clearExtraInPot;
+	protected int maxTicketsEachUser;
+	protected int numberOfTicketsAvailable;
+	protected double jackpot;
     protected ArrayList<String> msgWelcome;
     public FileConfiguration config;
 	// Starting timer we are going to use for scheduling.
@@ -43,7 +43,7 @@ public class Lottery extends JavaPlugin {
 	private static PlayerJoinListener PlayerListener = null;
 	public PluginDescriptionFile info = null;
 	protected static org.bukkit.Server server = null;
-	protected MainCommandExecutor MainCommand = null;
+	protected MainCommandExecutor mainExecutor;
 	public Etc etc;
 
 	// Doing some logging. Thanks cyklo
@@ -99,8 +99,8 @@ public class Lottery extends JavaPlugin {
 		}
 
 		// Listen for some player interaction perhaps? Thanks to cyklo :)
-
-        getCommand("lottery").setExecutor(MainCommand);
+		mainExecutor = new MainCommandExecutor(this);
+        getCommand("lottery").setExecutor(mainExecutor);
 
 		// Is the date we are going to draw the lottery set? If not, we should
 		// do it.

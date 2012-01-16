@@ -9,6 +9,7 @@ public class PlayerJoinListener extends PlayerListener {
     
     public PlayerJoinListener(Lottery plugin) {
         this.plugin = plugin;
+        this.etc = plugin.etc;
     }
 
     @Override
