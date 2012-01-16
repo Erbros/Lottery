@@ -72,14 +72,11 @@ public class Lottery extends JavaPlugin {
 	    
 	    etc = new Etc (this);
 		// Lets find some configs
-        log.info("onEnable1");
 		config = getConfig();
 	  
 		config.options().copyDefaults(true);
 		saveConfig();
-		
-        log.info("ticketsSold(): " + String.valueOf(etc.ticketsSold()));
-        log.info("onEnable2");
+
 		etc.loadConfig();
 		
 		

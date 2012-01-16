@@ -79,7 +79,6 @@ public class Etc {
 
     
     public void loadConfig() {
-        plugin.log.info("loadConfig1");
         /*
         // lets check if there exist old config that needs to be loaded, then removed.
         String oldConfigs[] = new String[] {"cost", 
@@ -103,7 +102,6 @@ public class Etc {
             configReplacePath(current, "config." + current, true);
         }
         */
-        debugMsg("1");
         
         Lottery.cost = config.getInt("config.cost",5);
 
@@ -121,7 +119,6 @@ public class Etc {
         plugin.jackpot = config.getInt("config.jackpot", 0);
         Lottery.nextexec = config.getLong("config.nextexec");
 
-        debugMsg("3");
         // Load messages?
         loadCustomMessages();
         // Then lets save this stuff :)
@@ -548,15 +545,12 @@ public class Etc {
     
     // Enable some debugging?
     public void debugMsg(String msg) {
-        Lottery.log.info(msg);
-        /*
         if(config.getBoolean("config.debug") == true) {
             if(msg != null) {
-                
+                Lottery.log.info(msg);
                 plugin.getServer().broadcastMessage(msg);
             }
         }
-        */
     }
 
     public Hashtable<String, Integer> realPlayersFromList(
