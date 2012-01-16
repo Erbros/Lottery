@@ -18,8 +18,8 @@ public class PluginListener extends ServerListener {
 
 	@Override
 	public void onPluginDisable(PluginDisableEvent event) {
-            if (this.Methods != null && this.Methods.hasMethod()) {
-                Boolean check = this.Methods.checkDisabled(event.getPlugin());
+            if (this.Methods != null && net.erbros.Lottery.register.payment.Methods.hasMethod()) {
+                Boolean check = net.erbros.Lottery.register.payment.Methods.checkDisabled(event.getPlugin());
 
                 if (check) {
                     this.plugin.Method = null;
@@ -31,13 +31,13 @@ public class PluginListener extends ServerListener {
 
 	@Override
 	public void onPluginEnable(PluginEnableEvent event) {
-            if (!this.Methods.hasMethod()) {
-                if (this.Methods.setMethod(Bukkit.getPluginManager())) {
+            if (!net.erbros.Lottery.register.payment.Methods.hasMethod()) {
+                if (net.erbros.Lottery.register.payment.Methods.setMethod(Bukkit.getPluginManager())) {
                     // You might want to make this a public variable inside your
                     // MAIN class public Method Method = null;
                     // then reference it through this.plugin.Method so that way you
                     // can use it in the rest of your plugin ;)
-                    this.plugin.Method = this.Methods.getMethod();
+                    this.plugin.Method = net.erbros.Lottery.register.payment.Methods.getMethod();
                     System.out.println("[Lottery] Payment method found ("
                                     + this.plugin.Method.getName() + " version: "
                                     + this.plugin.Method.getVersion() + ")");
