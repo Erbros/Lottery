@@ -45,6 +45,7 @@ public class Lottery extends JavaPlugin {
 	protected static org.bukkit.Server server = null;
 	protected MainCommandExecutor mainExecutor;
 	public Etc etc;
+    public String jackpotAccount;
 
 	// Doing some logging. Thanks cyklo
 	protected static final Logger log = Logger.getLogger("Minecraft");;

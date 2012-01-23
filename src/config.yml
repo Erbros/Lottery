@@ -13,5 +13,6 @@ config:
     numberOfTicketsAvailable: 0
     jackpot: 0
     debug: false
+    jackpotAccount: ''
 message:
     welcome: '&6[LOTTERY] &fDraw in: &c%drawLong%'

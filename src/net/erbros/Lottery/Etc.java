@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
@@ -22,8 +21,6 @@ import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
-import com.sun.org.apache.xalan.internal.xsltc.compiler.util.NumberType;
 
 public class Etc {
     public Lottery plugin;
@@ -121,6 +118,7 @@ public class Etc {
         plugin.jackpot = config.getDouble("config.jackpot", 0);
         Lottery.nextexec = config.getLong("config.nextexec");
         Lottery.cost = formatAmount(config.getDouble("config.cost", 5),Lottery.useiConomy);
+        plugin.jackpotAccount = config.getString("config.jackpotAccount","");
         
         
 
@@ -272,7 +270,16 @@ public class Etc {
         // Add extra money added by admins and mods?
         amount += plugin.extraInPot;
         // Any money in jackpot?
-        amount += config.getDouble("config.jackpot");
+        
+        // Do we have a jackpot economy account?
+        if(plugin.jackpotAccount != "" && Lottery.useiConomy == true) {
+            if(plugin.Method.hasAccount(plugin.jackpotAccount)) {
+                MethodAccount jackAccount = plugin.Method.getAccount( plugin.jackpotAccount );
+                amount += jackAccount.balance();
+            }
+        }else {
+            amount += config.getDouble("config.jackpot");
+        }
         
         // format it once again.
         amount = formatAmount(amount,Lottery.useiConomy);
@@ -615,7 +622,17 @@ public class Etc {
                 if(rand > players.size()-1) {
                     // No winner this time, pot goes on to jackpot!
                     Double jackpot = winningAmount();
-                    config.set("config.jackpot", jackpot);
+                    
+
+                    // Do we have a jackpot economy account?
+                    if(plugin.jackpotAccount != "" && Lottery.useiConomy == true) {
+                        plugin.Method.hasAccount(plugin.jackpotAccount);
+                        MethodAccount jackAccount = plugin.Method.getAccount( plugin.jackpotAccount );
+                        jackAccount.set(jackpot);
+                    } else {
+                        config.set("config.jackpot", jackpot);
+                    }
+                    
                     addToWinnerList("Jackpot", jackpot, Lottery.useiConomy ? 0 : Lottery.material);
                     config.set("config.lastwinner", "Jackpot");
                     config.set("config.lastwinneramount", jackpot);
@@ -680,7 +697,16 @@ public class Etc {
             // Add last winner to config.
             config.set("config.lastwinner", players.get(rand));
             config.set("config.lastwinneramount", amount);
-            config.set("config.jackpot", 0);
+            
+
+            // Do we have a jackpot economy account?
+            if(plugin.jackpotAccount != "" && Lottery.useiConomy == true) {
+                plugin.Method.hasAccount(plugin.jackpotAccount);
+                MethodAccount jackAccount = plugin.Method.getAccount( plugin.jackpotAccount );
+                jackAccount.set(0);
+            } else {
+                config.set("config.jackpot", 0);
+            }
 
             clearAfterGettingWinner();
         }
