@@ -101,7 +101,6 @@ public class LotteryConfig {
         if (config.getBoolean("config.debug") == true) {
             if (msg != null) {
                 Lottery.log.info(msg);
-                plugin.getServer().broadcastMessage(msg);
             }
         }
     }
