@@ -16,8 +16,6 @@ public class Etc {
             formatter = new DecimalFormat("0.00");
         }
         amount = Double.parseDouble(formatter.format(amount));
-
-
         return amount;
     }
 

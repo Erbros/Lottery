@@ -20,7 +20,7 @@ public class MainCommandExecutor implements CommandExecutor {
     private Lottery plugin;
     private LotteryConfig lConfig;
     private LotteryGame lGame;
-    
+
     public MainCommandExecutor(final Lottery plugin) {
         this.plugin = plugin;
         lConfig = plugin.getLotteryConfig();
@@ -95,6 +95,7 @@ public class MainCommandExecutor implements CommandExecutor {
 
         // Check if we got any money/items in the pot.
         final double amount = lGame.winningAmount();
+        lConfig.debugMsg("pot current total: " + amount);
         // Send some messages:
         player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
                 + ChatColor.WHITE + "Draw in: " + ChatColor.RED
@@ -204,19 +205,22 @@ public class MainCommandExecutor implements CommandExecutor {
         }
         final Player player = (Player) sender;
 
-        // How many tickets do the player want to buy?
-        int buyTickets = Etc.parseInt(args[1]);
-        
-        if (buyTickets < 1) {
-            buyTickets = 1;
+        int buyTickets = 1;
+        if (args.length > 1) {
+            // How many tickets do the player want to buy?
+            buyTickets = Etc.parseInt(args[1]);
+
+            if (buyTickets < 1) {
+                buyTickets = 1;
+            }
         }
-        
+
         final int allowedTickets = plugin.maxTicketsEachUser - lGame.playerInList(player);
-        
+
         if (buyTickets > allowedTickets && allowedTickets > 0) {
             buyTickets = allowedTickets;
         }
-        
+
         // Have the admin entered a max number of tickets in the lottery?
         if (plugin.TicketsAvailable > 0) {
             // If so, can this user buy the selected amount?
@@ -329,8 +333,13 @@ public class MainCommandExecutor implements CommandExecutor {
                     + "/lottery addtopot <number>");
             return;
         }
+
+        if (args.length < 2) {
+            sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Provide a number greater than zero (decimals accepted)");
+        }
+
         final double addToPot = Etc.parseDouble(args[1]);
-        
+
         if (addToPot == 0) {
             sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Provide a number greater than zero (decimals accepted)");
             return;
@@ -390,6 +399,4 @@ public class MainCommandExecutor implements CommandExecutor {
         lConfig.loadConfig();
         sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Config reloaded");
     }
-
-
 }

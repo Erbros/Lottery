@@ -31,12 +31,9 @@ public class LotteryGame {
         // Do the ticket cost money or item?
         if (Lottery.useiConomy == false) {
             // Do the user have the item
-            if (player.getInventory().contains(Lottery.material,
-                    (int) Lottery.cost * numberOfTickets)) {
+            if (player.getInventory().contains(Lottery.material, (int) Lottery.cost * numberOfTickets)) {
                 // Remove items.
-                player.getInventory().removeItem(
-                        new ItemStack(Lottery.material,
-                        (int) Lottery.cost * numberOfTickets));
+                player.getInventory().removeItem(new ItemStack(Lottery.material, (int) Lottery.cost * numberOfTickets));
             } else {
                 return false;
             }
@@ -54,6 +51,7 @@ public class LotteryGame {
             } else {
                 return false;
             }
+            lConfig.debugMsg("taking " + (Lottery.cost * numberOfTickets) + "from account");
 
         }
         // If the user paid, continue. Else we would already have sent return
@@ -113,6 +111,7 @@ public class LotteryGame {
         double amount = 0;
         ArrayList<String> players = playersInFile("lotteryPlayers.txt");
         amount = players.size() * Etc.formatAmount(Lottery.cost, Lottery.useiConomy);
+        lConfig.debugMsg("playerno: " + players.size() + " amount: " + amount);
         // Set the net payout as configured in the config.
         if (plugin.netPayout > 0) {
             amount = amount * plugin.netPayout / 100;
@@ -121,15 +120,9 @@ public class LotteryGame {
         amount += plugin.extraInPot;
         // Any money in jackpot?
 
-        // Do we have a jackpot economy account?
-        if (plugin.jackpotAccount != "" && Lottery.useiConomy == true) {
-            if (plugin.Method.hasAccount(plugin.jackpotAccount)) {
-                Method.MethodAccount jackAccount = plugin.Method.getAccount(plugin.jackpotAccount);
-                amount += jackAccount.balance();
-            }
-        } else {
-            amount += config.getDouble("config.jackpot");
-        }
+        lConfig.debugMsg("using config store: " + config.getDouble("config.jackpot"));
+        amount += config.getDouble("config.jackpot");
+
 
         // format it once again.
         amount = Etc.formatAmount(amount, Lottery.useiConomy);
@@ -338,14 +331,7 @@ public class LotteryGame {
                     Double jackpot = winningAmount();
 
 
-                    // Do we have a jackpot economy account?
-                    if (plugin.jackpotAccount != "" && Lottery.useiConomy == true) {
-                        plugin.Method.hasAccount(plugin.jackpotAccount);
-                        Method.MethodAccount jackAccount = plugin.Method.getAccount(plugin.jackpotAccount);
-                        jackAccount.set(jackpot);
-                    } else {
-                        config.set("config.jackpot", jackpot);
-                    }
+                    config.set("config.jackpot", jackpot);
 
                     addToWinnerList("Jackpot", jackpot, Lottery.useiConomy ? 0 : Lottery.material);
                     config.set("config.lastwinner", "Jackpot");
@@ -411,15 +397,7 @@ public class LotteryGame {
             config.set("config.lastwinner", players.get(rand));
             config.set("config.lastwinneramount", amount);
 
-
-            // Do we have a jackpot economy account?
-            if (plugin.jackpotAccount != "" && Lottery.useiConomy == true) {
-                plugin.Method.hasAccount(plugin.jackpotAccount);
-                Method.MethodAccount jackAccount = plugin.Method.getAccount(plugin.jackpotAccount);
-                jackAccount.set(0);
-            } else {
-                config.set("config.jackpot", 0);
-            }
+            config.set("config.jackpot", 0);
 
             clearAfterGettingWinner();
         }

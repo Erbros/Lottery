@@ -38,7 +38,6 @@ public class Lottery extends JavaPlugin {
     protected MainCommandExecutor mainExecutor;
     private LotteryConfig lConfig;
     private LotteryGame lGame;
-    public String jackpotAccount;
     // Doing some logging. Thanks cyklo
     protected static final Logger log = Logger.getLogger("Minecraft");
 
@@ -51,7 +50,7 @@ public class Lottery extends JavaPlugin {
         PluginDescriptionFile pdfFile = this.getDescription();
         System.out.println(pdfFile.getName() + " version "
                 + pdfFile.getVersion() + " has been unloaded.");
-        getLotteryConfig().debugMsg(getDescription().getName()
+        lConfig.debugMsg(getDescription().getName()
                 + ": has been disabled (including timers).");
     }
 
@@ -64,7 +63,7 @@ public class Lottery extends JavaPlugin {
         config = getConfig();
         config.options().copyDefaults(true);
         saveConfig();
-        getLotteryConfig().loadConfig();
+        lConfig.loadConfig();
 
         final PluginManager pm = getServer().getPluginManager();
 
@@ -148,7 +147,7 @@ public class Lottery extends JavaPlugin {
         // at once.
         if (extendtime <= 0) {
             extendtime = 1000;
-            getLotteryConfig().debugMsg("Seems we need to make a draw at once!");
+            lConfig.debugMsg("Seems we need to make a draw at once!");
         }
 
         // Is the drawAtOnce boolean set to true? In that case, do drawing in a
@@ -157,7 +156,7 @@ public class Lottery extends JavaPlugin {
             extendtime = 100;
             config.set("config.nextexec", System.currentTimeMillis() + 100);
             nextexec = System.currentTimeMillis() + 100;
-            getLotteryConfig().debugMsg("DRAW NOW");
+            lConfig.debugMsg("DRAW NOW");
         }
 
         // Delay in server ticks. 20 ticks = 1 second.
@@ -172,16 +171,16 @@ public class Lottery extends JavaPlugin {
     public void lotteryDraw() {
         // Cancel timer.
         // Get new config.
-        getLotteryConfig().debugMsg("Doing a lottery draw");
+        lConfig.debugMsg("Doing a lottery draw");
 
         nextexec = config.getLong("config.nextexec");
 
         if (nextexec > 0 && System.currentTimeMillis() + 1000 >= Lottery.nextexec) {
             // Get the winner, if any. And remove file so we are ready for
             // new round.
-            getLotteryConfig().debugMsg("Getting winner.");
+            lConfig.debugMsg("Getting winner.");
             if (!lGame.getWinner()) {
-                getLotteryConfig().debugMsg("Failed getting winner");
+                lConfig.debugMsg("Failed getting winner");
             }
             nextexec = System.currentTimeMillis() + extendTime();
 
@@ -234,7 +233,7 @@ public class Lottery extends JavaPlugin {
         hours = config.getDouble("config.hours");
         final double exacttime = hours * 60 * 60 * 1000;
         final long extendTime = (long) exacttime;
-        getLotteryConfig().debugMsg("extendTime: " + extendTime);
+        lConfig.debugMsg("extendTime: " + extendTime);
         return extendTime;
     }
 }

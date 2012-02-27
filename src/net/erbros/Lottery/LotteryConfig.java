@@ -74,9 +74,6 @@ public class LotteryConfig {
         plugin.jackpot = config.getDouble("config.jackpot", 0);
         Lottery.nextexec = config.getLong("config.nextexec");
         Lottery.cost = Etc.formatAmount(config.getDouble("config.cost", 5), Lottery.useiConomy);
-        plugin.jackpotAccount = config.getString("config.jackpotAccount", "");
-
-
 
         // Load messages?
         loadCustomMessages();
@@ -85,20 +82,17 @@ public class LotteryConfig {
     }
 
     public void loadCustomMessages() {
-
         plugin.msgWelcome = formatCustomMessage("message.welcome", "&6[LOTTERY] &fDraw in: &c%drawLong%");
-
     }
 
     public ArrayList<String> formatCustomMessage(String node, String def) {
-        ArrayList<String> fList = new ArrayList<String>();
+        final ArrayList<String> fList = new ArrayList<String>();
         // Lets find a msg.
-        String msg = config.getString(node, def);
+        final String msg = config.getString(node, def);
         config.set(node, msg);
 
         // Lets put this in a arrayList in case we want more than one line.
         Collections.addAll(fList, msg.split("%newline%"));
-
         return fList;
     }
 
