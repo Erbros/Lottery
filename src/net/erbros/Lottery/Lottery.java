@@ -1,13 +1,9 @@
 package net.erbros.Lottery;
 
-import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.List;
 import java.util.logging.Logger;
-
 import net.erbros.Lottery.register.payment.Method;
 import net.erbros.Lottery.register.payment.Methods;
-
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -19,7 +15,7 @@ public class Lottery extends JavaPlugin {
 
     protected static double cost;
     protected double hours;
-    protected static Long nextexec;
+    protected static long nextexec;
     public Method Method = null;
     public Methods Methods = null;
     public boolean timerStarted = false;
@@ -31,17 +27,17 @@ public class Lottery extends JavaPlugin {
     protected double netPayout;
     protected boolean clearExtraInPot;
     protected int maxTicketsEachUser;
-    protected int numberOfTicketsAvailable;
+    protected int TicketsAvailable;
     protected double jackpot;
-    protected ArrayList<String> msgWelcome;
+    protected List<String> msgWelcome;
     public FileConfiguration config;
     // Starting timer we are going to use for scheduling.
-    Timer timer;
     private static PlayerJoinListener PlayerListener = null;
     public PluginDescriptionFile info = null;
     protected static org.bukkit.Server server = null;
     protected MainCommandExecutor mainExecutor;
-    public Etc etc;
+    private LotteryConfig lConfig;
+    private LotteryGame lGame;
     public String jackpotAccount;
     // Doing some logging. Thanks cyklo
     protected static final Logger log = Logger.getLogger("Minecraft");
@@ -55,31 +51,30 @@ public class Lottery extends JavaPlugin {
         PluginDescriptionFile pdfFile = this.getDescription();
         System.out.println(pdfFile.getName() + " version "
                 + pdfFile.getVersion() + " has been unloaded.");
-        etc.debugMsg(getDescription().getName()
+        getLotteryConfig().debugMsg(getDescription().getName()
                 + ": has been disabled (including timers).");
     }
 
     @Override
     public void onEnable() {
 
-        etc = new Etc(this);
+        lConfig = new LotteryConfig(this);
+        lGame = new LotteryGame(this);
         // Lets find some configs
         config = getConfig();
-
         config.options().copyDefaults(true);
         saveConfig();
-
-        etc.loadConfig();
+        getLotteryConfig().loadConfig();
 
         final PluginManager pm = getServer().getPluginManager();
 
         server = getServer();
         // Do we need iConomy?
-        if (useiConomy == true) {
+        if (useiConomy) {
             // Event Registration
             pm.registerEvents(new PluginListener(this), this);
         }
-        if (welcomeMessage == true) {
+        if (welcomeMessage) {
             pm.registerEvents(new PlayerJoinListener(this), this);
         }
 
@@ -101,11 +96,7 @@ public class Lottery extends JavaPlugin {
         }
 
         // Start the timer for the first time.
-        StartTimerSchedule(false);
-
-        // This could, and should, probably be fixed nicer, but for now it'll
-        // have to do.
-        // Adding timer that waits the time between nextexec and time now.
+        startTimerSchedule(false);
 
     }
 
@@ -113,17 +104,30 @@ public class Lottery extends JavaPlugin {
         return server;
     }
 
-    void StartTimerSchedule(boolean drawAtOnce) {
+    public LotteryConfig getLotteryConfig() {
+        return lConfig;
+    }
 
+    public LotteryGame getLotteryGame() {
+        return lGame;
+    }
+
+    public boolean isLotteryDue() {
+        if (nextexec > 0 && System.currentTimeMillis() + 1000 >= Lottery.nextexec) {
+            return true;
+        }
+        return false;
+    }
+
+    void startTimerSchedule(boolean drawAtOnce) {
         long extendtime = 0;
         // Cancel any existing timers.
-        if (timerStarted == true) {
+        if (timerStarted) {
             // Let's try and stop any running threads.
             try {
                 Bukkit.getServer().getScheduler().cancelTasks((Plugin) this);
             } catch (ClassCastException exception) {
             }
-            ;
 
             extendtime = extendTime();
         } else {
@@ -144,7 +148,7 @@ public class Lottery extends JavaPlugin {
         // at once.
         if (extendtime <= 0) {
             extendtime = 1000;
-            etc.debugMsg("Seems we need to make a draw at once!");
+            getLotteryConfig().debugMsg("Seems we need to make a draw at once!");
         }
 
         // Is the drawAtOnce boolean set to true? In that case, do drawing in a
@@ -153,97 +157,84 @@ public class Lottery extends JavaPlugin {
             extendtime = 100;
             config.set("config.nextexec", System.currentTimeMillis() + 100);
             nextexec = System.currentTimeMillis() + 100;
-            etc.debugMsg("DRAW NOW");
+            getLotteryConfig().debugMsg("DRAW NOW");
         }
 
         // Delay in server ticks. 20 ticks = 1 second.
         extendtime = extendtime / 1000 * 20;
 
-        checkWhatMethodToUse(extendtime);
+        runDrawTimer(extendtime);
 
         // Timer is now started, let it know.
         timerStarted = true;
     }
 
-    class LotteryDraw extends TimerTask {
+    public void lotteryDraw() {
+        // Cancel timer.
+        // Get new config.
+        getLotteryConfig().debugMsg("Doing a lottery draw");
 
-        public void run() {
-            // Cancel timer.
-            // Get new config.
-            etc.debugMsg("Doing a lottery draw");
+        nextexec = config.getLong("config.nextexec");
 
-            Lottery.nextexec = config.getLong("config.nextexec");
-
-            if (Lottery.nextexec > 0
-                    && System.currentTimeMillis() + 1000 >= Lottery.nextexec) {
-                // Get the winner, if any. And remove file so we are ready for
-                // new round.
-                etc.debugMsg("Getting winner.");
-                if (etc.getWinner() == false) {
-                    etc.debugMsg("Failed getting winner");
-                }
-                Lottery.nextexec = System.currentTimeMillis() + extendTime();
-
-                config.set("config.nextexec", Lottery.nextexec);
-                saveConfig();
+        if (nextexec > 0 && System.currentTimeMillis() + 1000 >= Lottery.nextexec) {
+            // Get the winner, if any. And remove file so we are ready for
+            // new round.
+            getLotteryConfig().debugMsg("Getting winner.");
+            if (!lGame.getWinner()) {
+                getLotteryConfig().debugMsg("Failed getting winner");
             }
-            // Call a new timer.
-            StartTimerSchedule(false);
+            nextexec = System.currentTimeMillis() + extendTime();
+
+            config.set("config.nextexec", nextexec);
+            saveConfig();
         }
+        // Call a new timer.
+        startTimerSchedule(false);
     }
 
-    class extendLotteryDraw extends TimerTask {
-
-        public void run() {
-            // Cancel timer.
-            try {
-                Bukkit.getServer().getScheduler().cancelTasks((Plugin) this);
-            } catch (ClassCastException exception) {
-            }
-            ;
-
-            nextexec = config.getLong("config.nextexec");
-
-            long extendtime = 0;
-
-            // How much time left? Below 0?
-            if (nextexec < System.currentTimeMillis()) {
-                extendtime = 3000;
-            } else {
-                extendtime = nextexec - System.currentTimeMillis();
-            }
-            // Delay in server ticks. 20 ticks = 1 second.
-            extendtime = extendtime / 1000 * 20;
-
-            checkWhatMethodToUse(extendtime);
-
+    public void extendLotteryDraw() {
+        // Cancel timer.
+        try {
+            Bukkit.getServer().getScheduler().cancelTasks((Plugin) this);
+        } catch (ClassCastException exception) {
         }
+
+        nextexec = config.getLong("config.nextexec");
+        long extendtime = 0;
+
+        // How much time left? Below 0?
+        if (nextexec < System.currentTimeMillis()) {
+            extendtime = 3000;
+        } else {
+            extendtime = nextexec - System.currentTimeMillis();
+        }
+        // Delay in server ticks. 20 ticks = 1 second.
+        extendtime = extendtime / 1000 * 20;
+
+        runDrawTimer(extendtime);
     }
 
-    void checkWhatMethodToUse(long extendtime) {
+    private void runDrawTimer(final long extendtime) {
         // Is this very long until? On servers with lag and long between
         // restarts there might be a very long time between when server
         // should have drawn winner and when it will draw. Perhaps help the
         // server a bit by only scheduling for half the lengt at a time?
         // But only if its more than 5 seconds left.
         if (extendtime < 5 * 20) {
-            Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask((Plugin) this, new LotteryDraw(),
-                    extendtime);
-            etc.debugMsg("LotteryDraw() " + extendtime + 100);
+            server.getScheduler().scheduleSyncDelayedTask(this, new LotteryDraw(this, true), extendtime);
+            lConfig.debugMsg("LotteryDraw() " + extendtime + 100);
         } else {
-            extendtime = extendtime / 15;
-            Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask((Plugin) this,
-                    new extendLotteryDraw(), extendtime);
-            etc.debugMsg("extendLotteryDraw() " + extendtime);
+            final long newtime = extendtime / 15;
+            server.getScheduler().scheduleAsyncDelayedTask(this, new LotteryDraw(this, false), newtime);
+            lConfig.debugMsg("extendLotteryDraw() " + newtime);
         }
-        // For bugtesting:
     }
 
     public long extendTime() {
         hours = config.getDouble("config.hours");
-        double exacttime = hours * 60 * 60 * 1000;
-        Long extendTime = (long) exacttime;
-        etc.debugMsg("extendTime: " + extendTime);
+        final double exacttime = hours * 60 * 60 * 1000;
+        final long extendTime = (long) exacttime;
+        getLotteryConfig().debugMsg("extendTime: " + extendTime);
         return extendTime;
     }
 }

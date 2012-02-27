@@ -1,7 +1,6 @@
 package net.erbros.Lottery;
 
 import net.erbros.Lottery.register.payment.Methods;
-
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -20,9 +19,9 @@ public class PluginListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onPluginDisable(PluginDisableEvent event) {
+    public void onPluginDisable(final PluginDisableEvent event) {
         if (this.Methods != null && net.erbros.Lottery.register.payment.Methods.hasMethod()) {
-            Boolean check = net.erbros.Lottery.register.payment.Methods.checkDisabled(event.getPlugin());
+            final boolean check = net.erbros.Lottery.register.payment.Methods.checkDisabled(event.getPlugin());
 
             if (check) {
                 this.plugin.Method = null;
@@ -32,13 +31,9 @@ public class PluginListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onPluginEnable(PluginEnableEvent event) {
+    public void onPluginEnable(final PluginEnableEvent event) {
         if (!net.erbros.Lottery.register.payment.Methods.hasMethod()) {
             if (net.erbros.Lottery.register.payment.Methods.setMethod(Bukkit.getPluginManager())) {
-                // You might want to make this a public variable inside your
-                // MAIN class public Method Method = null;
-                // then reference it through this.plugin.Method so that way you
-                // can use it in the rest of your plugin ;)
                 this.plugin.Method = net.erbros.Lottery.register.payment.Methods.getMethod();
                 System.out.println("[Lottery] Payment method found ("
                         + this.plugin.Method.getName() + " version: "
