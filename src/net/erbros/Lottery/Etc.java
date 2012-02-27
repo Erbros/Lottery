@@ -23,88 +23,75 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class Etc {
+
     public Lottery plugin;
     public FileConfiguration config = null;
-    
+
     public Etc(Lottery plugin) {
         this.plugin = plugin;
         config = plugin.getConfig();
     }
-    
-    
-    
 
-
-    public void configReplacePath (String pathFrom, String pathReplace, boolean deleteFrom) {
-        if(config.contains(pathFrom)) {
+    public void configReplacePath(String pathFrom, String pathReplace, boolean deleteFrom) {
+        if (config.contains(pathFrom)) {
             // Let's check for booleans etc so we can save the objects correctly.
-            if(config.isBoolean(pathReplace) && config.isBoolean(pathFrom)) {
+            if (config.isBoolean(pathReplace) && config.isBoolean(pathFrom)) {
                 config.set(pathReplace, config.getBoolean(pathFrom));
                 debugMsg("Got value from old path: " + pathFrom + ", to new: " + pathReplace);
             } else {
                 debugMsg("isBoolean: " + pathReplace + "(" + config.isBoolean(pathReplace) + ") :: isBoolean: " + pathFrom + "(" + config.isBoolean(pathFrom) + ")");
             }
             // Int?
-            if(config.isInt(pathReplace) && config.isInt(pathFrom)) {
+            if (config.isInt(pathReplace) && config.isInt(pathFrom)) {
                 config.set(pathReplace, config.getInt(pathFrom));
                 debugMsg("Got value from old path: " + pathFrom + ", to new: " + pathReplace);
             } else {
                 debugMsg("isBoolean: " + pathReplace + "(" + config.isBoolean(pathReplace) + ") :: isBoolean: " + pathFrom + "(" + config.isBoolean(pathFrom) + ")");
             }
-            if(config.isLong(pathReplace) && config.isLong(pathFrom)) {
+            if (config.isLong(pathReplace) && config.isLong(pathFrom)) {
                 config.set(pathReplace, config.getLong(pathFrom));
                 debugMsg("Got value from old path: " + pathFrom + ", to new: " + pathReplace);
             } else {
                 debugMsg("isBoolean: " + pathReplace + "(" + config.isBoolean(pathReplace) + ") :: isBoolean: " + pathFrom + "(" + config.isBoolean(pathFrom) + ")");
             }
-            if(config.isBoolean(pathReplace) && config.isBoolean(pathFrom)) {
+            if (config.isBoolean(pathReplace) && config.isBoolean(pathFrom)) {
                 config.set(pathReplace, config.getBoolean(pathFrom));
                 debugMsg("Got value from old path: " + pathFrom + ", to new: " + pathReplace);
             } else {
                 debugMsg("isBoolean: " + pathReplace + "(" + config.isBoolean(pathReplace) + ") :: isBoolean: " + pathFrom + "(" + config.isBoolean(pathFrom) + ")");
             }
-            if(config.isString(pathReplace) && config.isString(pathFrom)) {
+            if (config.isString(pathReplace) && config.isString(pathFrom)) {
                 config.set(pathReplace, config.getString(pathFrom));
                 debugMsg("Got value from old path: " + pathFrom + ", to new: " + pathReplace);
             } else {
                 debugMsg("isBoolean: " + pathReplace + "(" + config.isBoolean(pathReplace) + ") :: isBoolean: " + pathFrom + "(" + config.isBoolean(pathFrom) + ")");
             }
-            
+
             // Should we remove the old path?
-            if(deleteFrom) config.set(pathFrom, null);
+            if (deleteFrom) {
+                config.set(pathFrom, null);
+            }
         }
     }
 
-    
     public void loadConfig() {
         /*
-        // lets check if there exist old config that needs to be loaded, then removed.
-        String oldConfigs[] = new String[] {"cost", 
-                "hours", 
-                "useiConomy", 
-                "material", 
-                "broadcastBuying", 
-                "welcomeMessage", 
-                "extraInPot", 
-                "clearExtraInPot", 
-                "netPayout", 
-                "maxTicketsEachUser", 
-                "numberOfTicketsEachUser",
-                "jackpot",
-                "nextexec",
-                "debug"};
-        
-        List<String> oldConfigList = Arrays.asList(oldConfigs);
-        
-        for (String current : oldConfigList) {
-            configReplacePath(current, "config." + current, true);
-        }
-        */
-        
+         * // lets check if there exist old config that needs to be loaded, then
+         * removed. String oldConfigs[] = new String[] {"cost", "hours",
+         * "useiConomy", "material", "broadcastBuying", "welcomeMessage",
+         * "extraInPot", "clearExtraInPot", "netPayout", "maxTicketsEachUser",
+         * "numberOfTicketsEachUser", "jackpot", "nextexec", "debug"};
+         *
+         * List<String> oldConfigList = Arrays.asList(oldConfigs);
+         *
+         * for (String current : oldConfigList) { configReplacePath(current,
+         * "config." + current, true); }
+         */
+
         plugin.reloadConfig();
-        
+
         debugMsg("Loading Lottery configuration");
-        
+
         plugin.hours = config.getDouble("config.hours", 24);
         Lottery.useiConomy = config.getBoolean("config.useiConomy", true);
         Lottery.material = config.getInt("config.material", 266);
@@ -117,37 +104,36 @@ public class Etc {
         plugin.numberOfTicketsAvailable = config.getInt("config.numberOfTicketsAvailable", 0);
         plugin.jackpot = config.getDouble("config.jackpot", 0);
         Lottery.nextexec = config.getLong("config.nextexec");
-        Lottery.cost = formatAmount(config.getDouble("config.cost", 5),Lottery.useiConomy);
-        plugin.jackpotAccount = config.getString("config.jackpotAccount","");
-        
-        
+        Lottery.cost = formatAmount(config.getDouble("config.cost", 5), Lottery.useiConomy);
+        plugin.jackpotAccount = config.getString("config.jackpotAccount", "");
+
+
 
         // Load messages?
         loadCustomMessages();
         // Then lets save this stuff :)
         plugin.saveConfig();
     }
-    
-    
+
     public void loadCustomMessages() {
 
         plugin.msgWelcome = formatCustomMessage("message.welcome", "&6[LOTTERY] &fDraw in: &c%drawLong%");
-        
+
     }
-    
-    public ArrayList<String> formatCustomMessage (String node, String def) {
+
+    public ArrayList<String> formatCustomMessage(String node, String def) {
         ArrayList<String> fList = new ArrayList<String>();
         // Lets find a msg.
         String msg = config.getString(node, def);
         config.set(node, msg);
-        
+
         // Lets put this in a arrayList in case we want more than one line.
         Collections.addAll(fList, msg.split("%newline%"));
-        
+
         return fList;
     }
-    
-    public String formatCustomMessageLive (String msg, Player player) {
+
+    public String formatCustomMessageLive(String msg, Player player) {
         //Lets give timeLeft back if user provie %draw%
         msg = msg.replaceAll("%draw%", timeUntil(Lottery.nextexec, true));
         //Lets give timeLeft with full words back if user provie %drawLong%
@@ -155,19 +141,18 @@ public class Etc {
         // If %player% = Player name
         msg = msg.replaceAll("%player%", player.getDisplayName());
         // %cost% = cost
-        if(Lottery.useiConomy) {
-            msg = msg.replaceAll("%cost%", String.valueOf( formatAmount(Lottery.cost,Lottery.useiConomy)));
+        if (Lottery.useiConomy) {
+            msg = msg.replaceAll("%cost%", String.valueOf(formatAmount(Lottery.cost, Lottery.useiConomy)));
         } else {
-            msg = msg.replaceAll("%cost%", String.valueOf( (int) formatAmount(Lottery.cost,Lottery.useiConomy)));
+            msg = msg.replaceAll("%cost%", String.valueOf((int) formatAmount(Lottery.cost, Lottery.useiConomy)));
         }
-        
+
         // %pot%
         msg = msg.replaceAll("%pot%", Double.toString(winningAmount()));
         // Lets get some colors on this, shall we?
         msg = msg.replaceAll("(&([a-f0-9]))", "\u00A7$2");
         return msg;
     }
-
 
     public ArrayList<String> playersInFile(String file) {
         ArrayList<String> players = new ArrayList<String>();
@@ -199,8 +184,8 @@ public class Etc {
                     (int) Lottery.cost * numberOfTickets)) {
                 // Remove items.
                 player.getInventory().removeItem(
-                        new ItemStack(Lottery.material, 
-                                (int) Lottery.cost * numberOfTickets));
+                        new ItemStack(Lottery.material,
+                        (int) Lottery.cost * numberOfTickets));
             } else {
                 return false;
             }
@@ -209,9 +194,7 @@ public class Etc {
             // First checking if the player got an account, if not let's create
             // it.
             plugin.Method.hasAccount(player.getName());
-                        Method.
-
-            MethodAccount account = plugin.Method.getAccount(player.getName());
+            Method.MethodAccount account = plugin.Method.getAccount(player.getName());
 
             // And lets withdraw some money
             if (account.hasOver(Lottery.cost * numberOfTickets)) {
@@ -262,7 +245,7 @@ public class Etc {
     public double winningAmount() {
         double amount = 0;
         ArrayList<String> players = playersInFile("lotteryPlayers.txt");
-        amount = players.size() * formatAmount(Lottery.cost,Lottery.useiConomy);
+        amount = players.size() * formatAmount(Lottery.cost, Lottery.useiConomy);
         // Set the net payout as configured in the config.
         if (plugin.netPayout > 0) {
             amount = amount * plugin.netPayout / 100;
@@ -270,37 +253,37 @@ public class Etc {
         // Add extra money added by admins and mods?
         amount += plugin.extraInPot;
         // Any money in jackpot?
-        
+
         // Do we have a jackpot economy account?
-        if(plugin.jackpotAccount != "" && Lottery.useiConomy == true) {
-            if(plugin.Method.hasAccount(plugin.jackpotAccount)) {
-                MethodAccount jackAccount = plugin.Method.getAccount( plugin.jackpotAccount );
+        if (plugin.jackpotAccount != "" && Lottery.useiConomy == true) {
+            if (plugin.Method.hasAccount(plugin.jackpotAccount)) {
+                MethodAccount jackAccount = plugin.Method.getAccount(plugin.jackpotAccount);
                 amount += jackAccount.balance();
             }
-        }else {
+        } else {
             amount += config.getDouble("config.jackpot");
         }
-        
+
         // format it once again.
-        amount = formatAmount(amount,Lottery.useiConomy);
-        
+        amount = formatAmount(amount, Lottery.useiConomy);
+
         return amount;
     }
-    
-    public double formatAmount (double amount, boolean usingiConomy) {
+
+    public double formatAmount(double amount, boolean usingiConomy) {
         // Okay, if this is a material it's really simple. Just floor it.
         DecimalFormat formatter = null;
-        if(!usingiConomy) {
+        if (!usingiConomy) {
             formatter = new DecimalFormat("0");
         } else {
             formatter = new DecimalFormat("0.00");
         }
         amount = Double.parseDouble(formatter.format(amount));
-        
-        
+
+
         return amount;
     }
-    
+
     public int ticketsSold() {
         int sold = 0;
         ArrayList<String> players = playersInFile("lotteryPlayers.txt");
@@ -313,8 +296,7 @@ public class Etc {
         String rawMaterialName = Material.getMaterial(materialId).toString();
         rawMaterialName = rawMaterialName.toLowerCase();
         // Large first letter.
-        String firstLetterCapital = rawMaterialName.substring(0, 1)
-                .toUpperCase();
+        String firstLetterCapital = rawMaterialName.substring(0, 1).toUpperCase();
         rawMaterialName = firstLetterCapital
                 + rawMaterialName.substring(1, rawMaterialName.length());
         returnMaterialName = rawMaterialName.replace("_", " ");
@@ -382,7 +364,7 @@ public class Etc {
         try {
             BufferedWriter out = new BufferedWriter(
                     new FileWriter(plugin.getDataFolder() + File.separator
-                            + "lotteryClaim.txt", true));
+                    + "lotteryClaim.txt", true));
             out.write(playerName + ":" + winningAmount + ":" + winningMaterial);
             out.newLine();
             out.close();
@@ -432,23 +414,22 @@ public class Etc {
 
     public String timeUntil(long time, boolean mini) {
 
-        double timeLeft = Double.parseDouble(Long.toString(((time - System
-                .currentTimeMillis()) / 1000)));
+        double timeLeft = Double.parseDouble(Long.toString(((time - System.currentTimeMillis()) / 1000)));
         // If negative number, just tell them its DRAW TIME!
         if (timeLeft < 0) {
-                    // Lets make it draw at once.. ;)
-                    plugin.StartTimerSchedule(true);
-                    // And return some string to let the user know we are doing our best ;)
-                    if(mini) {
-                        return "Soon";
-                    }
-                    return "Draw will occur soon!";
+            // Lets make it draw at once.. ;)
+            plugin.StartTimerSchedule(true);
+            // And return some string to let the user know we are doing our best ;)
+            if (mini) {
+                return "Soon";
+            }
+            return "Draw will occur soon!";
 
         }
 
         // How many days left?
         String stringTimeLeft = "";
-        
+
         if (timeLeft >= 60 * 60 * 24) {
             int days = (int) Math.floor(timeLeft / (60 * 60 * 24));
             timeLeft -= 60 * 60 * 24 * days;
@@ -488,42 +469,29 @@ public class Etc {
             stringTimeLeft += "and ";
         }
         if (!mini) {
-                    stringTimeLeft += Integer.toString(secs) + " " + pluralWording("second", secs);
-                } else {
-                    stringTimeLeft += secs + "s";
+            stringTimeLeft += Integer.toString(secs) + " " + pluralWording("second", secs);
+        } else {
+            stringTimeLeft += secs + "s";
         }
 
         return stringTimeLeft;
     }
 
     /*
-    // Stolen from ltguide! Thank you so much :)
-    public Boolean hasPermission(CommandSender sender, String node,
-            Boolean needOp) {
-        if (!(sender instanceof Player))
-            return true;
-
-        Player player = (Player) sender;
-        if (Permissions != null)
-            return Permissions.has(player, node);
-        else {
-            Plugin test = getServer().getPluginManager().getPlugin(
-                    "Permissions");
-            if (test != null) {
-                Permissions = ((Permissions) test).getHandler();
-                return Permissions.has(player, node);
-            }
-        }
-        
-        
-        
-        if (needOp) {
-            return player.isOp();
-        }
-        return true;
-    }
-    */
-
+     * // Stolen from ltguide! Thank you so much :) public Boolean
+     * hasPermission(CommandSender sender, String node, Boolean needOp) { if
+     * (!(sender instanceof Player)) return true;
+     *
+     * Player player = (Player) sender; if (Permissions != null) return
+     * Permissions.has(player, node); else { Plugin test =
+     * getServer().getPluginManager().getPlugin( "Permissions"); if (test !=
+     * null) { Permissions = ((Permissions) test).getHandler(); return
+     * Permissions.has(player, node); } }
+     *
+     *
+     *
+     * if (needOp) { return player.isOp(); } return true; }
+     */
     public static String pluralWording(String word, Integer number) {
         // Start
         if (word.equalsIgnoreCase("ticket")) {
@@ -576,11 +544,11 @@ public class Etc {
         // Next
         return "i don't know that word";
     }
-    
+
     // Enable some debugging?
     public void debugMsg(String msg) {
-        if(config.getBoolean("config.debug") == true) {
-            if(msg != null) {
+        if (config.getBoolean("config.debug") == true) {
+            if (msg != null) {
                 Lottery.log.info(msg);
                 plugin.getServer().broadcastMessage(msg);
             }
@@ -601,48 +569,47 @@ public class Etc {
         }
         return playerList;
     }
-    
 
     public boolean getWinner() {
         ArrayList<String> players = playersInFile("lotteryPlayers.txt");
 
         if (players.isEmpty() == true) {
             Bukkit.broadcastMessage(ChatColor.GOLD + "[LOTTERY] "
-                + ChatColor.WHITE
-                + "No tickets sold this round. Thats a shame.");
+                    + ChatColor.WHITE
+                    + "No tickets sold this round. Thats a shame.");
             return false;
         } else {
             // Find rand. Do minus 1 since its a zero based array.
             int rand = 0;
 
             // is max number of tickets 0? If not, include empty tickets not sold.
-            if(plugin.numberOfTicketsAvailable > 0 && ticketsSold() < plugin.numberOfTicketsAvailable) {
+            if (plugin.numberOfTicketsAvailable > 0 && ticketsSold() < plugin.numberOfTicketsAvailable) {
                 rand = new Random().nextInt(plugin.numberOfTicketsAvailable);
                 // If it wasn't a player winning, then do some stuff. If it was a player, just continue below.
-                if(rand > players.size()-1) {
+                if (rand > players.size() - 1) {
                     // No winner this time, pot goes on to jackpot!
                     Double jackpot = winningAmount();
-                    
+
 
                     // Do we have a jackpot economy account?
-                    if(plugin.jackpotAccount != "" && Lottery.useiConomy == true) {
+                    if (plugin.jackpotAccount != "" && Lottery.useiConomy == true) {
                         plugin.Method.hasAccount(plugin.jackpotAccount);
-                        MethodAccount jackAccount = plugin.Method.getAccount( plugin.jackpotAccount );
+                        MethodAccount jackAccount = plugin.Method.getAccount(plugin.jackpotAccount);
                         jackAccount.set(jackpot);
                     } else {
                         config.set("config.jackpot", jackpot);
                     }
-                    
+
                     addToWinnerList("Jackpot", jackpot, Lottery.useiConomy ? 0 : Lottery.material);
                     config.set("config.lastwinner", "Jackpot");
                     config.set("config.lastwinneramount", jackpot);
                     Bukkit.broadcastMessage(ChatColor.GOLD + "[LOTTERY] "
-                        + ChatColor.WHITE
-                        + "No winner, we have a rollover! "
-                        + ChatColor.GREEN
-                        + ((Lottery.useiConomy)? plugin.Method.format(jackpot) :  + jackpot + " " + formatMaterialName(Lottery.material))
-                        + ChatColor.WHITE
-                        + " went to jackpot!");
+                            + ChatColor.WHITE
+                            + "No winner, we have a rollover! "
+                            + ChatColor.GREEN
+                            + ((Lottery.useiConomy) ? plugin.Method.format(jackpot) : +jackpot + " " + formatMaterialName(Lottery.material))
+                            + ChatColor.WHITE
+                            + " went to jackpot!");
                     clearAfterGettingWinner();
                     return true;
                 }
@@ -650,7 +617,7 @@ public class Etc {
                 // Else just continue
                 rand = new Random().nextInt(players.size());
             }
-            
+
 
             debugMsg("Rand: " + Integer.toString(rand));
             double amount = winningAmount();
@@ -670,7 +637,7 @@ public class Etc {
                 addToWinnerList(players.get(rand), amount, 0);
             } else {
                 // let's throw it to an int.
-                int matAmount = (int) formatAmount(amount,Lottery.useiConomy);
+                int matAmount = (int) formatAmount(amount, Lottery.useiConomy);
                 amount = (double) matAmount;
                 Bukkit.broadcastMessage(ChatColor.GOLD + "[LOTTERY] "
                         + ChatColor.WHITE + "Congratulations to "
@@ -690,19 +657,18 @@ public class Etc {
                     + "There was in total "
                     + realPlayersFromList(players).size()
                     + " "
-                    + pluralWording("player", realPlayersFromList(players)
-                            .size()) + " buying " + players.size() + " "
+                    + pluralWording("player", realPlayersFromList(players).size()) + " buying " + players.size() + " "
                     + pluralWording("ticket", players.size()));
 
             // Add last winner to config.
             config.set("config.lastwinner", players.get(rand));
             config.set("config.lastwinneramount", amount);
-            
+
 
             // Do we have a jackpot economy account?
-            if(plugin.jackpotAccount != "" && Lottery.useiConomy == true) {
+            if (plugin.jackpotAccount != "" && Lottery.useiConomy == true) {
                 plugin.Method.hasAccount(plugin.jackpotAccount);
-                MethodAccount jackAccount = plugin.Method.getAccount( plugin.jackpotAccount );
+                MethodAccount jackAccount = plugin.Method.getAccount(plugin.jackpotAccount);
                 jackAccount.set(0);
             } else {
                 config.set("config.jackpot", 0);
@@ -712,7 +678,7 @@ public class Etc {
         }
         return true;
     }
-    
+
     public void clearAfterGettingWinner() {
 
         // extra money in pot added by admins and mods?
@@ -722,33 +688,34 @@ public class Etc {
             plugin.extraInPot = (double) 0;
         }
         // Clear file.
-                    try {
-                        BufferedWriter out = new BufferedWriter(
-                                new FileWriter(plugin.getDataFolder() + File.separator
-                                        + "lotteryPlayers.txt", false));
-                        out.write("");
-                        out.close();
+        try {
+            BufferedWriter out = new BufferedWriter(
+                    new FileWriter(plugin.getDataFolder() + File.separator
+                    + "lotteryPlayers.txt", false));
+            out.write("");
+            out.close();
 
-                    } catch (IOException e) {
-                    }
+        } catch (IOException e) {
+        }
     }
-    
+
     // Not in use at the moment
-    public ChangeConfig setConfig (String node, int value) {
-        
+    public ChangeConfig setConfig(String node, int value) {
+
         config.set(node, value);
-        
-        ChangeConfig change = new ChangeConfig(true,"String");
+
+        ChangeConfig change = new ChangeConfig(true, "String");
         return change;
     }
     //Not in use at the moment
-    public boolean isCorrectType (Object obj, Object typeRequested) {
-        
+
+    public boolean isCorrectType(Object obj, Object typeRequested) {
+
         // Okay, let's see if object is the same type as typerequested.
-        if(obj.getClass() == typeRequested.getClass()) {
+        if (obj.getClass() == typeRequested.getClass()) {
             return true;
         }
-        
+
         return false;
     }
 }

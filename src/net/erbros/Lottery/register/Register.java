@@ -13,14 +13,13 @@ import org.bukkit.event.Event.Type;
 /**
  * Register
  *
- * Initializes on startup and attaches to preferred method or
- * first found method.
+ * Initializes on startup and attaches to preferred method or first found
+ * method.
  *
  * @author Nijikokun <nijikokun@shortmail.com> (@nijikokun)
  * @author LRFLEW
- * @author Spice-King
- * @copyright (c) 2011
- * @license AOL license <http://aol.nexua.org>
+ * @author Spice-King @copyright (c) 2011 @license AOL license
+ * <http://aol.nexua.org>
  */
 public class Register extends JavaPlugin {
 
@@ -61,12 +60,13 @@ public class Register extends JavaPlugin {
             Methods.setMethod(this.getServer().getPluginManager());
         }
 
-        if (Methods.getMethod() == null)
+        if (Methods.getMethod() == null) {
             System.out.println("[" + info.getName() + "] No payment method found, economy based plugins may not work.");
-        else
+        } else {
             System.out.println("[" + info.getName() + "] Payment method found (" + Methods.getMethod().getName() + " version: " + Methods.getMethod().getVersion() + ")");
+        }
 
-        System.out.print("[" + info.getName() + "] version " + info.getVersion()+ " is enabled.");
+        System.out.print("[" + info.getName() + "] version " + info.getVersion() + " is enabled.");
     }
 
     @Override
