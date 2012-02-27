@@ -3,11 +3,13 @@ package net.erbros.Lottery;
 import net.erbros.Lottery.register.payment.Methods;
 
 import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
-import org.bukkit.event.server.ServerListener;
 
-public class PluginListener extends ServerListener {
+public class PluginListener implements Listener {
 
     private Lottery plugin;
     private Methods Methods = null;
@@ -17,7 +19,7 @@ public class PluginListener extends ServerListener {
         this.Methods = new Methods();
     }
 
-    @Override
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPluginDisable(PluginDisableEvent event) {
         if (this.Methods != null && net.erbros.Lottery.register.payment.Methods.hasMethod()) {
             Boolean check = net.erbros.Lottery.register.payment.Methods.checkDisabled(event.getPlugin());
@@ -29,7 +31,7 @@ public class PluginListener extends ServerListener {
         }
     }
 
-    @Override
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPluginEnable(PluginEnableEvent event) {
         if (!net.erbros.Lottery.register.payment.Methods.hasMethod()) {
             if (net.erbros.Lottery.register.payment.Methods.setMethod(Bukkit.getPluginManager())) {

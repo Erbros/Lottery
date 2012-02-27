@@ -1,9 +1,11 @@
 package net.erbros.Lottery;
 
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerListener;
 
-public class PlayerJoinListener extends PlayerListener {
+public class PlayerJoinListener implements Listener {
 
     private Lottery plugin;
     private Etc etc;
@@ -13,7 +15,7 @@ public class PlayerJoinListener extends PlayerListener {
         this.etc = plugin.etc;
     }
 
-    @Override
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event) {
         // Send the player some info about time until lottery draw?
 

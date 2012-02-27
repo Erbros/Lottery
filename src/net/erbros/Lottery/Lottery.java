@@ -10,10 +10,9 @@ import net.erbros.Lottery.register.payment.Methods;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.event.Event;
-import org.bukkit.event.Event.Priority;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Lottery extends JavaPlugin {
@@ -47,9 +46,7 @@ public class Lottery extends JavaPlugin {
     // Doing some logging. Thanks cyklo
     protected static final Logger log = Logger.getLogger("Minecraft");
 
-    ;
-
-	@Override
+    @Override
     public void onDisable() {
         // Disable all running timers.
         Bukkit.getServer().getScheduler().cancelTasks(this);
@@ -65,11 +62,6 @@ public class Lottery extends JavaPlugin {
     @Override
     public void onEnable() {
 
-
-        // Gets version number and writes out starting line to console.
-        PluginDescriptionFile pdfFile = this.getDescription();
-        System.out.println(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled");
-
         etc = new Etc(this);
         // Lets find some configs
         config = getConfig();
@@ -79,23 +71,16 @@ public class Lottery extends JavaPlugin {
 
         etc.loadConfig();
 
+        final PluginManager pm = getServer().getPluginManager();
 
         server = getServer();
         // Do we need iConomy?
         if (useiConomy == true) {
             // Event Registration
-            getServer().getPluginManager().registerEvent(
-                    Event.Type.PLUGIN_ENABLE, new PluginListener(this),
-                    Priority.Monitor, this);
-            getServer().getPluginManager().registerEvent(
-                    Event.Type.PLUGIN_DISABLE, new PluginListener(this),
-                    Priority.Monitor, this);
+            pm.registerEvents(new PluginListener(this), this);
         }
         if (welcomeMessage == true) {
-            PlayerListener = new PlayerJoinListener(this);
-            getServer().getPluginManager().registerEvent(
-                    Event.Type.PLAYER_JOIN, PlayerListener, Priority.Monitor,
-                    this);
+            pm.registerEvents(new PlayerJoinListener(this), this);
         }
 
         // Listen for some player interaction perhaps? Thanks to cyklo :)
