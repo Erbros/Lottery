@@ -14,12 +14,10 @@ public class LotteryGame {
 
     private Lottery plugin;
     private LotteryConfig lConfig;
-    private FileConfiguration config = null;
 
     public LotteryGame(final Lottery plugin) {
         this.plugin = plugin;
         lConfig = plugin.getLotteryConfig();
-        config = plugin.getConfig();
     }
 
     public boolean addPlayer(Player player, Integer maxAmountOfTickets, Integer numberOfTickets) {
@@ -29,11 +27,11 @@ public class LotteryGame {
         }
 
         // Do the ticket cost money or item?
-        if (Lottery.useiConomy == false) {
+        if (lConfig.useiConomy() == false) {
             // Do the user have the item
-            if (player.getInventory().contains(Lottery.material, (int) Lottery.cost * numberOfTickets)) {
+            if (player.getInventory().contains(lConfig.getMaterial(), (int) lConfig.getCost() * numberOfTickets)) {
                 // Remove items.
-                player.getInventory().removeItem(new ItemStack(Lottery.material, (int) Lottery.cost * numberOfTickets));
+                player.getInventory().removeItem(new ItemStack(lConfig.getMaterial(), (int) lConfig.getCost() * numberOfTickets));
             } else {
                 return false;
             }
@@ -45,13 +43,13 @@ public class LotteryGame {
             Method.MethodAccount account = plugin.Method.getAccount(player.getName());
 
             // And lets withdraw some money
-            if (account.hasOver(Lottery.cost * numberOfTickets)) {
+            if (account.hasOver(lConfig.getCost() * numberOfTickets)) {
                 // Removing coins from players account.
-                account.subtract(Lottery.cost * numberOfTickets);
+                account.subtract(lConfig.getCost() * numberOfTickets);
             } else {
                 return false;
             }
-            lConfig.debugMsg("taking " + (Lottery.cost * numberOfTickets) + "from account");
+            lConfig.debugMsg("taking " + (lConfig.getCost() * numberOfTickets) + "from account");
 
         }
         // If the user paid, continue. Else we would already have sent return
@@ -110,22 +108,22 @@ public class LotteryGame {
     public double winningAmount() {
         double amount = 0;
         ArrayList<String> players = playersInFile("lotteryPlayers.txt");
-        amount = players.size() * Etc.formatAmount(Lottery.cost, Lottery.useiConomy);
+        amount = players.size() * Etc.formatAmount(lConfig.getCost(), lConfig.useiConomy());
         lConfig.debugMsg("playerno: " + players.size() + " amount: " + amount);
         // Set the net payout as configured in the config.
-        if (plugin.netPayout > 0) {
-            amount = amount * plugin.netPayout / 100;
+        if (lConfig.getNetPayout() > 0) {
+            amount = amount * lConfig.getNetPayout() / 100;
         }
         // Add extra money added by admins and mods?
-        amount += plugin.extraInPot;
+        amount += lConfig.getExtraInPot();
         // Any money in jackpot?
 
-        lConfig.debugMsg("using config store: " + config.getDouble("config.jackpot"));
-        amount += config.getDouble("config.jackpot");
+        lConfig.debugMsg("using config store: " + lConfig.getJackpot());
+        amount += lConfig.getJackpot();
 
 
         // format it once again.
-        amount = Etc.formatAmount(amount, Lottery.useiConomy);
+        amount = Etc.formatAmount(amount, lConfig.useiConomy());
 
         return amount;
     }
@@ -323,24 +321,23 @@ public class LotteryGame {
             int rand = 0;
 
             // is max number of tickets 0? If not, include empty tickets not sold.
-            if (plugin.TicketsAvailable > 0 && ticketsSold() < plugin.TicketsAvailable) {
-                rand = new Random().nextInt(plugin.TicketsAvailable);
+            if (lConfig.getTicketsAvailable() > 0 && ticketsSold() < lConfig.getTicketsAvailable()) {
+                rand = new Random().nextInt(lConfig.getTicketsAvailable());
                 // If it wasn't a player winning, then do some stuff. If it was a player, just continue below.
                 if (rand > players.size() - 1) {
                     // No winner this time, pot goes on to jackpot!
                     Double jackpot = winningAmount();
 
+                    lConfig.setJackpot(jackpot);
 
-                    config.set("config.jackpot", jackpot);
-
-                    addToWinnerList("Jackpot", jackpot, Lottery.useiConomy ? 0 : Lottery.material);
-                    config.set("config.lastwinner", "Jackpot");
-                    config.set("config.lastwinneramount", jackpot);
+                    addToWinnerList("Jackpot", jackpot, lConfig.useiConomy() ? 0 : lConfig.getMaterial());
+                    lConfig.setLastwinner("Jackpot");
+                    lConfig.setLastwinneramount(jackpot);                    
                     Bukkit.broadcastMessage(ChatColor.GOLD + "[LOTTERY] "
                             + ChatColor.WHITE
                             + "No winner, we have a rollover! "
                             + ChatColor.GREEN
-                            + ((Lottery.useiConomy) ? plugin.Method.format(jackpot) : +jackpot + " " + Etc.formatMaterialName(Lottery.material))
+                            + ((lConfig.useiConomy()) ? plugin.Method.format(jackpot) : +jackpot + " " + Etc.formatMaterialName(lConfig.getMaterial()))
                             + ChatColor.WHITE
                             + " went to jackpot!");
                     clearAfterGettingWinner();
@@ -354,7 +351,7 @@ public class LotteryGame {
 
             lConfig.debugMsg("Rand: " + Integer.toString(rand));
             double amount = winningAmount();
-            if (Lottery.useiConomy == true) {
+            if (lConfig.useiConomy() == true) {
                 plugin.Method.hasAccount(players.get(rand));
                 Method.MethodAccount account = plugin.Method.getAccount(players.get(rand));
 
@@ -370,19 +367,19 @@ public class LotteryGame {
                 addToWinnerList(players.get(rand), amount, 0);
             } else {
                 // let's throw it to an int.
-                int matAmount = (int) Etc.formatAmount(amount, Lottery.useiConomy);
+                int matAmount = (int) Etc.formatAmount(amount, lConfig.useiConomy());
                 amount = (double) matAmount;
                 Bukkit.broadcastMessage(ChatColor.GOLD + "[LOTTERY] "
                         + ChatColor.WHITE + "Congratulations to "
                         + players.get(rand) + " for winning " + ChatColor.RED
-                        + matAmount + " " + Etc.formatMaterialName(Lottery.material) + ".");
+                        + matAmount + " " + Etc.formatMaterialName(lConfig.getMaterial()) + ".");
                 Bukkit.broadcastMessage(ChatColor.GOLD + "[LOTTERY] "
                         + ChatColor.WHITE + "Use " + ChatColor.RED
                         + "/lottery claim" + ChatColor.WHITE
                         + " to claim the winnings.");
-                addToWinnerList(players.get(rand), amount, Lottery.material);
+                addToWinnerList(players.get(rand), amount, lConfig.getMaterial());
 
-                addToClaimList(players.get(rand), matAmount, Lottery.material);
+                addToClaimList(players.get(rand), matAmount, lConfig.getMaterial());
             }
             Bukkit.broadcastMessage(ChatColor.GOLD
                     + "[LOTTERY] "
@@ -394,10 +391,11 @@ public class LotteryGame {
                     + Etc.pluralWording("ticket", players.size()));
 
             // Add last winner to config.
-            config.set("config.lastwinner", players.get(rand));
-            config.set("config.lastwinneramount", amount);
+            lConfig.setLastwinner(players.get(rand));
+            lConfig.setLastwinneramount(amount);
+            
+            lConfig.setJackpot(0);
 
-            config.set("config.jackpot", 0);
 
             clearAfterGettingWinner();
         }
@@ -408,9 +406,8 @@ public class LotteryGame {
 
         // extra money in pot added by admins and mods?
         // Should this be removed?
-        if (plugin.clearExtraInPot == true) {
-            config.set("extraInPot", 0);
-            plugin.extraInPot = (double) 0;
+        if (lConfig.clearExtraInPot()) {            
+            lConfig.setExtraInPot(0);
         }
         // Clear file.
         try {
@@ -426,16 +423,16 @@ public class LotteryGame {
 
     public String formatCustomMessageLive(String msg, Player player) {
         //Lets give timeLeft back if user provie %draw%
-        msg = msg.replaceAll("%draw%", timeUntil(Lottery.nextexec, true));
+        msg = msg.replaceAll("%draw%", timeUntil(lConfig.getNextexec(), true));
         //Lets give timeLeft with full words back if user provie %drawLong%
-        msg = msg.replaceAll("%drawLong%", timeUntil(Lottery.nextexec, false));
+        msg = msg.replaceAll("%drawLong%", timeUntil(lConfig.getNextexec(), false));
         // If %player% = Player name
         msg = msg.replaceAll("%player%", player.getDisplayName());
         // %cost% = cost
-        if (Lottery.useiConomy) {
-            msg = msg.replaceAll("%cost%", String.valueOf(Etc.formatAmount(Lottery.cost, Lottery.useiConomy)));
+        if (lConfig.useiConomy()) {
+            msg = msg.replaceAll("%cost%", String.valueOf(Etc.formatAmount(lConfig.getCost(), lConfig.useiConomy())));
         } else {
-            msg = msg.replaceAll("%cost%", String.valueOf((int) Etc.formatAmount(Lottery.cost, Lottery.useiConomy)));
+            msg = msg.replaceAll("%cost%", String.valueOf((int) Etc.formatAmount(lConfig.getCost(), lConfig.useiConomy())));
         }
 
         // %pot%

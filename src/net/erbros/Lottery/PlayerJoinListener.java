@@ -21,7 +21,7 @@ public class PlayerJoinListener implements Listener {
     public void onPlayerJoin(final PlayerJoinEvent event) {
         // Send the player some info about time until lottery draw?
 
-        for (String msg : plugin.msgWelcome) {
+        for (String msg : lConfig.getMsgWelcome()) {
             event.getPlayer().sendMessage(lGame.formatCustomMessageLive(msg, event.getPlayer()));
             lConfig.debugMsg("Welcome msg sent: " + msg);
         }

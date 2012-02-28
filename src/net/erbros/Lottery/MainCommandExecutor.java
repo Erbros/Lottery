@@ -31,7 +31,7 @@ public class MainCommandExecutor implements CommandExecutor {
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
 
         // Lets check if we have found a plugin for money.
-        if (!Methods.hasMethod() && Lottery.useiConomy) {
+        if (!Methods.hasMethod() && lConfig.useiConomy()) {
             lConfig.debugMsg("No money plugin found yet.");
             sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Sorry, we haven't found a money plugin yet..");
             return true;
@@ -88,7 +88,7 @@ public class MainCommandExecutor implements CommandExecutor {
             sender.sendMessage("Hi Console - The Lottery plugin is running");
             sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
                     + ChatColor.WHITE + "Draw in: " + ChatColor.RED
-                    + lGame.timeUntil(Lottery.nextexec, false));
+                    + lGame.timeUntil(lConfig.getNextexec(), false));
             return;
         }
         final Player player = (Player) sender;
@@ -99,11 +99,11 @@ public class MainCommandExecutor implements CommandExecutor {
         // Send some messages:
         player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
                 + ChatColor.WHITE + "Draw in: " + ChatColor.RED
-                + lGame.timeUntil(Lottery.nextexec, false));
-        if (Lottery.useiConomy) {
+                + lGame.timeUntil(lConfig.getNextexec(), false));
+        if (lConfig.useiConomy()) {
             player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
                     + ChatColor.WHITE + "Buy a ticket for "
-                    + ChatColor.RED + plugin.Method.format(Lottery.cost)
+                    + ChatColor.RED + plugin.Method.format(lConfig.getCost())
                     + ChatColor.WHITE + " with " + ChatColor.RED
                     + "/lottery buy");
             player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
@@ -113,17 +113,17 @@ public class MainCommandExecutor implements CommandExecutor {
         } else {
             player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
                     + ChatColor.WHITE + "Buy a ticket for "
-                    + ChatColor.RED + Lottery.cost + " "
-                    + Etc.formatMaterialName(Lottery.material)
+                    + ChatColor.RED + lConfig.getCost() + " "
+                    + Etc.formatMaterialName(lConfig.getMaterial())
                     + ChatColor.WHITE + " with " + ChatColor.RED
                     + "/lottery buy");
             player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
                     + ChatColor.WHITE + "There is currently "
                     + ChatColor.GREEN + amount + " "
-                    + Etc.formatMaterialName(Lottery.material)
+                    + Etc.formatMaterialName(lConfig.getMaterial())
                     + ChatColor.WHITE + " in the pot.");
         }
-        if (plugin.maxTicketsEachUser > 1) {
+        if (lConfig.getMaxTicketsEachUser() > 1) {
             player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
                     + ChatColor.WHITE + "You got "
                     + ChatColor.RED + lGame.playerInList((Player) sender)
@@ -131,12 +131,12 @@ public class MainCommandExecutor implements CommandExecutor {
                     lGame.playerInList((Player) sender)));
         }
         // Number of tickets available?
-        if (plugin.TicketsAvailable > 0) {
+        if (lConfig.getTicketsAvailable() > 0) {
             player.sendMessage(ChatColor.GOLD + "[LOTTERY]"
                     + ChatColor.WHITE + " There is "
-                    + ChatColor.RED + (plugin.TicketsAvailable - lGame.ticketsSold())
+                    + ChatColor.RED + (lConfig.getTicketsAvailable() - lGame.ticketsSold())
                     + ChatColor.WHITE + " "
-                    + Etc.pluralWording("ticket", plugin.TicketsAvailable - lGame.ticketsSold()) + " left.");
+                    + Etc.pluralWording("ticket", lConfig.getTicketsAvailable() - lGame.ticketsSold()) + " left.");
         }
         player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
                 + ChatColor.RED + "/lottery help" + ChatColor.WHITE
@@ -144,23 +144,23 @@ public class MainCommandExecutor implements CommandExecutor {
         // Does lastwinner exist and != null? Show.
         // Show different things if we are using iConomy over
         // material.
-        if (plugin.config.getString("config.lastwinner") != null) {
-            if (Lottery.useiConomy) {
+        if (lConfig.getLastwinner() != null) {
+            if (lConfig.useiConomy()) {
                 player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
                         + ChatColor.WHITE + "Last winner: "
-                        + plugin.config.getString("config.lastwinner")
-                        + " (" + plugin.Method.format(plugin.config.getInt("config.lastwinneramount")) + ")");
+                        + lConfig.getLastwinner()
+                        + " (" + plugin.Method.format(lConfig.getLastwinneramount()) + ")");
             } else {
                 player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
                         + ChatColor.WHITE + "Last winner: "
-                        + plugin.config.getString("config.lastwinner")
-                        + " (" + plugin.config.getInt("config.lastwinneramount")
-                        + " " + Etc.formatMaterialName(Lottery.material) + ")");
+                        + lConfig.getLastwinner()
+                        + " (" + lConfig.getLastwinneramount()
+                        + " " + Etc.formatMaterialName(lConfig.getMaterial()) + ")");
             }
         }
 
         // if not iConomy, make players check for claims.
-        if (!Lottery.useiConomy) {
+        if (!lConfig.useiConomy()) {
             player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
                     + ChatColor.WHITE
                     + "Check if you have won with " + ChatColor.RED
@@ -215,49 +215,49 @@ public class MainCommandExecutor implements CommandExecutor {
             }
         }
 
-        final int allowedTickets = plugin.maxTicketsEachUser - lGame.playerInList(player);
+        final int allowedTickets = lConfig.getMaxTicketsEachUser() - lGame.playerInList(player);
 
         if (buyTickets > allowedTickets && allowedTickets > 0) {
             buyTickets = allowedTickets;
         }
 
         // Have the admin entered a max number of tickets in the lottery?
-        if (plugin.TicketsAvailable > 0) {
+        if (lConfig.getTicketsAvailable() > 0) {
             // If so, can this user buy the selected amount?
-            if (lGame.ticketsSold() + buyTickets > plugin.TicketsAvailable) {
-                if (lGame.ticketsSold() >= plugin.TicketsAvailable) {
+            if (lGame.ticketsSold() + buyTickets > lConfig.getTicketsAvailable()) {
+                if (lGame.ticketsSold() >= lConfig.getTicketsAvailable()) {
                     player.sendMessage(ChatColor.GOLD
                             + "[LOTTERY] " + ChatColor.WHITE
                             + "There are no more tickets available");
                     return;
                 } else {
-                    buyTickets = plugin.TicketsAvailable - lGame.ticketsSold();
+                    buyTickets = lConfig.getTicketsAvailable() - lGame.ticketsSold();
                 }
             }
         }
 
-        if (lGame.addPlayer(player, plugin.maxTicketsEachUser, buyTickets)) {
+        if (lGame.addPlayer(player, lConfig.getMaxTicketsEachUser(), buyTickets)) {
             // You got your ticket.
-            if (Lottery.useiConomy) {
+            if (lConfig.useiConomy()) {
                 player.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE
                         + "You got " + buyTickets + " " + Etc.pluralWording("ticket", buyTickets)
                         + " for " + ChatColor.RED
-                        + plugin.Method.format(Lottery.cost * buyTickets));
+                        + plugin.Method.format(lConfig.getCost() * buyTickets));
             } else {
                 player.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE
                         + "You got " + buyTickets + " " + Etc.pluralWording("ticket", buyTickets)
-                        + " for " + ChatColor.RED + Lottery.cost * buyTickets + " "
-                        + Etc.formatMaterialName(Lottery.material));
+                        + " for " + ChatColor.RED + lConfig.getCost() * buyTickets + " "
+                        + Etc.formatMaterialName(lConfig.getMaterial()));
             }
             // Can a user buy more than one ticket? How many
             // tickets have he bought now?
-            if (plugin.maxTicketsEachUser > 1) {
+            if (lConfig.getMaxTicketsEachUser() > 1) {
                 player.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE
                         + "You now have " + ChatColor.RED + lGame.playerInList(player)
                         + " " + ChatColor.WHITE + Etc.pluralWording("ticket",
                         lGame.playerInList(player)));
             }
-            if (plugin.broadcastBuying) {
+            if (lConfig.useBroadcastBuying()) {
                 Bukkit.broadcastMessage(ChatColor.GOLD
                         + "[LOTTERY] " + ChatColor.WHITE
                         + player.getDisplayName()
@@ -270,7 +270,7 @@ public class MainCommandExecutor implements CommandExecutor {
             player.sendMessage(ChatColor.GOLD
                     + "[LOTTERY] "
                     + ChatColor.WHITE
-                    + "Either you can't afford a ticket, or you got " + plugin.maxTicketsEachUser + " " + Etc.pluralWording("ticket", plugin.maxTicketsEachUser) + " already.");
+                    + "Either you can't afford a ticket, or you got " + lConfig.getMaxTicketsEachUser() + " " + Etc.pluralWording("ticket", lConfig.getMaxTicketsEachUser()) + " already.");
         }
     }
 
@@ -344,16 +344,14 @@ public class MainCommandExecutor implements CommandExecutor {
             sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Provide a number greater than zero (decimals accepted)");
             return;
         }
-        plugin.extraInPot += addToPot;
-        plugin.config.set("extraInPot", plugin.extraInPot);
-        plugin.saveConfig();
+        lConfig.addExtraInPot(addToPot);
 
         sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
                 + ChatColor.WHITE + "Added "
                 + ChatColor.GREEN + addToPot
                 + ChatColor.WHITE
                 + " to pot. Extra total is "
-                + ChatColor.GREEN + plugin.extraInPot);
+                + ChatColor.GREEN + lConfig.getExtraInPot());
     }
 
     public void commandConfig(final CommandSender sender, final String[] args) {
@@ -371,8 +369,7 @@ public class MainCommandExecutor implements CommandExecutor {
                     sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Provide a number greater than zero (decimals accepted)");
                 } else {
                     sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Cost changed to " + ChatColor.RED + newCoin);
-                    plugin.config.set("config.cost", newCoin);
-                    plugin.saveConfig();
+                    lConfig.setCost(newCoin);
                 }
             } else if (args[1].equalsIgnoreCase("hours")) {
                 final double newHours = Etc.parseDouble(args[2]);
@@ -382,8 +379,7 @@ public class MainCommandExecutor implements CommandExecutor {
                     sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
                             + ChatColor.WHITE + "Hours changed to "
                             + ChatColor.RED + newHours);
-                    plugin.config.set("config.hours", newHours);
-                    plugin.saveConfig();
+                    lConfig.setHours(newHours);
                 }
 
             } else if (args[1].equalsIgnoreCase("maxTicketsEachUser") || args[1].equalsIgnoreCase("max")) {
@@ -391,8 +387,7 @@ public class MainCommandExecutor implements CommandExecutor {
                 sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
                         + ChatColor.WHITE + "Max amount of tickets changed to "
                         + ChatColor.RED + newMaxTicketsEachUser);
-                plugin.config.set("config.maxTicketsEachUser", newMaxTicketsEachUser);
-                plugin.saveConfig();
+                lConfig.setMaxTicketsEachUser(newMaxTicketsEachUser);
             }
         }
         // Lets just reload the config.
