@@ -1,30 +1,32 @@
-package net.erbros.Lottery;
+package net.erbros.lottery;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import org.bukkit.Material;
 
 public class Etc {
 
-    public static double formatAmount(double amount, boolean usingiConomy) {
+    public static double formatAmount(double amount, final boolean usingiConomy) {
         // Okay, if this is a material it's really simple. Just floor it.
         DecimalFormat formatter = null;
-        if (!usingiConomy) {
-            formatter = new DecimalFormat("0");
-        } else {
+        if (usingiConomy) {
             formatter = new DecimalFormat("0.00");
+        } else {
+            formatter = new DecimalFormat("0");
         }
         amount = Double.parseDouble(formatter.format(amount));
         return amount;
     }
 
-    public static String formatMaterialName(int materialId) {
+    public static String formatMaterialName(final int materialId) {
         String returnMaterialName = "";
         String rawMaterialName = Material.getMaterial(materialId).toString();
-        rawMaterialName = rawMaterialName.toLowerCase();
+        rawMaterialName = rawMaterialName.toLowerCase(Locale.ENGLISH);
         // Large first letter.
-        String firstLetterCapital = rawMaterialName.substring(0, 1).toUpperCase();
+        final String firstLetterCapital = rawMaterialName.substring(0, 1).toUpperCase();
         rawMaterialName = firstLetterCapital
                 + rawMaterialName.substring(1, rawMaterialName.length());
         returnMaterialName = rawMaterialName.replace("_", " ");
@@ -32,7 +34,7 @@ public class Etc {
         return returnMaterialName;
     }
 
-    public static String pluralWording(String word, Integer number) {
+    public static String pluralWording(final String word, final Integer number) {
         // Start
         if (word.equalsIgnoreCase("ticket")) {
             if (number == 1) {
@@ -85,9 +87,9 @@ public class Etc {
         return "i don't know that word";
     }
 
-    public static Hashtable<String, Integer> realPlayersFromList(ArrayList<String> ticketList) {
-        Hashtable<String, Integer> playerList = new Hashtable<String, Integer>();
-        int value = 0;
+    public static Map<String, Integer> realPlayersFromList(final List<String> ticketList) {
+        final Map<String, Integer> playerList = new HashMap<String, Integer>();
+        int value;
         for (String check : ticketList) {
             if (playerList.containsKey(check)) {
                 value = Integer.parseInt(playerList.get(check).toString()) + 1;

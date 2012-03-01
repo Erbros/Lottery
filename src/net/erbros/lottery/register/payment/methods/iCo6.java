@@ -1,6 +1,6 @@
-package net.erbros.Lottery.register.payment.methods;
+package net.erbros.lottery.register.payment.methods;
 
-import net.erbros.Lottery.register.payment.Method;
+import net.erbros.lottery.register.payment.Method;
 import com.iCo6.iConomy;
 import com.iCo6.system.Account;
 import com.iCo6.system.Accounts;

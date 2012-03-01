@@ -1,18 +1,18 @@
-package net.erbros.Lottery;
+package net.erbros.lottery;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class LotteryConfig {
 
-    private Lottery plugin;
-    private FileConfiguration config = null;
-    
+    final private Lottery plugin;
+    final private FileConfiguration config;
     private double cost;
     private double hours;
-    private long nextexec;  
+    private long nextexec;
     private boolean useiConomy;
     private int material;
     private double extraInPot;
@@ -26,14 +26,13 @@ public class LotteryConfig {
     private String lastwinner;
     private double lastwinneramount;
     private List<String> msgWelcome;
-    
 
     public LotteryConfig(final Lottery plugin) {
         this.plugin = plugin;
-        config = plugin.getConfig();
+        this.config = plugin.getConfig();
     }
 
-    public void configReplacePath(String pathFrom, String pathReplace, boolean deleteFrom) {
+    public void configReplacePath(final String pathFrom, final String pathReplace, final boolean deleteFrom) {
         if (config.contains(pathFrom)) {
             // Let's check for booleans etc so we can save the objects correctly.
             if (config.isBoolean(pathReplace) && config.isBoolean(pathFrom)) {
@@ -106,8 +105,8 @@ public class LotteryConfig {
         msgWelcome = formatCustomMessage("message.welcome", "&6[LOTTERY] &fDraw in: &c%drawLong%");
     }
 
-    public ArrayList<String> formatCustomMessage(String node, String def) {
-        final ArrayList<String> fList = new ArrayList<String>();
+    public List<String> formatCustomMessage(final String node, final String def) {
+        final List<String> fList = new ArrayList<String>();
         // Lets find a msg.
         final String msg = config.getString(node, def);
         config.set(node, msg);
@@ -118,11 +117,9 @@ public class LotteryConfig {
     }
 
     // Enable some debugging?
-    public void debugMsg(String msg) {
-        if (config.getBoolean("config.debug") == true) {
-            if (msg != null) {
-                Lottery.log.info(msg);
-            }
+    public void debugMsg(final String msg) {
+        if (config.getBoolean("config.debug") && msg != null) {
+            plugin.getLogger().log(Level.INFO, msg);
         }
     }
 
@@ -130,7 +127,7 @@ public class LotteryConfig {
         return cost;
     }
 
-    public void setCost(double cost) {
+    public void setCost(final double cost) {
         this.cost = cost;
         config.set("config.cost", cost);
     }
@@ -139,7 +136,7 @@ public class LotteryConfig {
         return hours;
     }
 
-    public void setHours(double hours) {
+    public void setHours(final double hours) {
         this.hours = hours;
         config.set("config.hours", hours);
     }
@@ -148,7 +145,7 @@ public class LotteryConfig {
         return nextexec;
     }
 
-    public void setNextexec(long nextexec) {
+    public void setNextexec(final long nextexec) {
         this.nextexec = nextexec;
         config.set("config.nextexec", nextexec);
     }
@@ -165,12 +162,12 @@ public class LotteryConfig {
         return extraInPot;
     }
 
-    public void setExtraInPot(double extraInPot) {
+    public void setExtraInPot(final double extraInPot) {
         this.extraInPot = extraInPot;
         config.set("config.extraInPot", extraInPot);
     }
-    
-    public void addExtraInPot(double extra) {
+
+    public void addExtraInPot(final double extra) {
         extraInPot += extra;
         config.set("config.extraInPot", extraInPot);
     }
@@ -187,7 +184,7 @@ public class LotteryConfig {
         return netPayout;
     }
 
-    public void setNetPayout(double netPayout) {
+    public void setNetPayout(final double netPayout) {
         this.netPayout = netPayout;
         config.set("config.netPayout", netPayout);
     }
@@ -199,8 +196,8 @@ public class LotteryConfig {
     public int getMaxTicketsEachUser() {
         return maxTicketsEachUser;
     }
-    
-    public void setMaxTicketsEachUser(int maxTicketsEachUser) {
+
+    public void setMaxTicketsEachUser(final int maxTicketsEachUser) {
         this.maxTicketsEachUser = maxTicketsEachUser;
         config.set("config.maxTicketsEachUser", maxTicketsEachUser);
     }
@@ -213,30 +210,30 @@ public class LotteryConfig {
         return jackpot;
     }
 
-    public void setJackpot(double jackpot) {
-        this.jackpot = jackpot;        
-        config.set("config.jackpot", jackpot);        
+    public void setJackpot(final double jackpot) {
+        this.jackpot = jackpot;
+        config.set("config.jackpot", jackpot);
     }
 
     public List<String> getMsgWelcome() {
-        return msgWelcome;
+        return Collections.unmodifiableList(msgWelcome);
     }
 
     public String getLastwinner() {
         return lastwinner;
     }
 
-    public void setLastwinner(String lastwinner) {
+    public void setLastwinner(final String lastwinner) {
         this.lastwinner = lastwinner;
-        config.set("config.lastwinner", lastwinner);     
+        config.set("config.lastwinner", lastwinner);
     }
 
     public double getLastwinneramount() {
         return lastwinneramount;
     }
 
-    public void setLastwinneramount(double lastwinneramount) {
+    public void setLastwinneramount(final double lastwinneramount) {
         this.lastwinneramount = lastwinneramount;
-        config.set("config.lastwinneramount", lastwinneramount);     
+        config.set("config.lastwinneramount", lastwinneramount);
     }
 }

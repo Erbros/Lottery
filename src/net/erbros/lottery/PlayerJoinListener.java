@@ -1,4 +1,4 @@
-package net.erbros.Lottery;
+package net.erbros.lottery;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;

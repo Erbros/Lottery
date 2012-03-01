@@ -1,4 +1,4 @@
-package net.erbros.Lottery.register.payment;
+package net.erbros.lottery.register.payment;
 
 import org.bukkit.plugin.Plugin;
 

@@ -1,6 +1,6 @@
-package net.erbros.Lottery.register.payment.methods;
+package net.erbros.lottery.register.payment.methods;
 
-import net.erbros.Lottery.register.payment.Method;
+import net.erbros.lottery.register.payment.Method;
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.api.Economy;
 import com.earth2me.essentials.api.NoLoanPermittedException;

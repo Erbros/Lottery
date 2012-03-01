@@ -1,6 +1,6 @@
-package net.erbros.Lottery;
+package net.erbros.lottery;
 
-import net.erbros.Lottery.register.payment.Methods;
+import net.erbros.lottery.register.payment.Methods;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -10,18 +10,18 @@ import org.bukkit.event.server.PluginEnableEvent;
 
 public class PluginListener implements Listener {
 
-    private Lottery plugin;
-    private Methods Methods = null;
+    final private Lottery plugin;
+    final private Methods Methods;
 
-    public PluginListener(Lottery plugin) {
+    public PluginListener(final Lottery plugin) {
         this.plugin = plugin;
         this.Methods = new Methods();
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPluginDisable(final PluginDisableEvent event) {
-        if (this.Methods != null && net.erbros.Lottery.register.payment.Methods.hasMethod()) {
-            final boolean check = net.erbros.Lottery.register.payment.Methods.checkDisabled(event.getPlugin());
+        if (this.Methods != null && Methods.hasMethod()) {
+            final boolean check = Methods.checkDisabled(event.getPlugin());
 
             if (check) {
                 this.plugin.Method = null;
@@ -32,9 +32,9 @@ public class PluginListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPluginEnable(final PluginEnableEvent event) {
-        if (!net.erbros.Lottery.register.payment.Methods.hasMethod()) {
-            if (net.erbros.Lottery.register.payment.Methods.setMethod(Bukkit.getPluginManager())) {
-                this.plugin.Method = net.erbros.Lottery.register.payment.Methods.getMethod();
+        if (!Methods.hasMethod()) {
+            if (Methods.setMethod(Bukkit.getPluginManager())) {
+                this.plugin.Method = Methods.getMethod();
                 System.out.println("[Lottery] Payment method found ("
                         + this.plugin.Method.getName() + " version: "
                         + this.plugin.Method.getVersion() + ")");

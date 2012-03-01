@@ -1,5 +1,5 @@
 name: Lottery
-main: net.erbros.Lottery.Lottery
+main: net.erbros.lottery.Lottery
 version: 0.7.5
 authors:
   - Erbros

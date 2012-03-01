@@ -1,14 +1,11 @@
-package net.erbros.Lottery;
+package net.erbros.lottery;
 
-import java.util.List;
-import java.util.logging.Logger;
-import net.erbros.Lottery.register.payment.Method;
-import net.erbros.Lottery.register.payment.Methods;
+import net.erbros.lottery.register.payment.Method;
+import net.erbros.lottery.register.payment.Methods;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -18,28 +15,21 @@ public class Lottery extends JavaPlugin {
     public Methods Methods = null;
     public boolean timerStarted = false;
     private Server server = null;
-    private FileConfiguration config;
-    private MainCommandExecutor mainExecutor;
     private LotteryConfig lConfig;
     private LotteryGame lGame;
-    // Doing some logging. Thanks cyklo
-    protected static final Logger log = Logger.getLogger("Minecraft");
 
     @Override
     public void onDisable() {
         // Disable all running timers.
         Bukkit.getServer().getScheduler().cancelTasks(this);
 
-        PluginDescriptionFile pdfFile = this.getDescription();
-        System.out.println(pdfFile.getName() + " version "
-                + pdfFile.getVersion() + " has been unloaded.");
-        lConfig.debugMsg(getDescription().getName()
-                + ": has been disabled (including timers).");
+        lConfig.debugMsg("[Lottery]: has been disabled (including timers).");
     }
 
     @Override
     public void onEnable() {
 
+        FileConfiguration config;
         lConfig = new LotteryConfig(this);
         lGame = new LotteryGame(this);
         // Lets find some configs
@@ -60,15 +50,13 @@ public class Lottery extends JavaPlugin {
             pm.registerEvents(new PlayerJoinListener(this), this);
         }
 
-        // Listen for some player interaction perhaps? Thanks to cyklo :)
-        mainExecutor = new MainCommandExecutor(this);
-        getCommand("lottery").setExecutor(mainExecutor);
+        getCommand("lottery").setExecutor(new MainCommandExecutor(this));
 
         // Is the date we are going to draw the lottery set? If not, we should
         // do it.
         if (getNextexec() == 0) {
             // Set first time to be config hours later? Millisecs, * 1000.
-            setNextexec(System.currentTimeMillis() + extendTime());            
+            setNextexec(System.currentTimeMillis() + extendTime());
         } else {
             setNextexec(config.getLong("config.nextexec"));
         }
@@ -94,7 +82,7 @@ public class Lottery extends JavaPlugin {
         return lConfig.getNextexec();
     }
 
-    protected void setNextexec(long aNextexec) {
+    protected void setNextexec(final long aNextexec) {
         lConfig.setNextexec(aNextexec);
     }
 
@@ -105,7 +93,7 @@ public class Lottery extends JavaPlugin {
         return false;
     }
 
-    void startTimerSchedule(boolean drawAtOnce) {
+    public void startTimerSchedule(final boolean drawAtOnce) {
         long extendtime = 0;
         // Cancel any existing timers.
         if (timerStarted) {
@@ -173,7 +161,7 @@ public class Lottery extends JavaPlugin {
         } catch (ClassCastException exception) {
         }
 
-        long extendtime = 0;
+        long extendtime;
 
         // How much time left? Below 0?
         if (getNextexec() < System.currentTimeMillis()) {

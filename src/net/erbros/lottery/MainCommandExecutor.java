@@ -1,4 +1,4 @@
-package net.erbros.Lottery;
+package net.erbros.lottery;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -6,7 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import net.erbros.Lottery.register.payment.Methods;
+import net.erbros.lottery.register.payment.Methods;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -17,9 +17,9 @@ import org.bukkit.entity.Player;
 
 public class MainCommandExecutor implements CommandExecutor {
 
-    private Lottery plugin;
-    private LotteryConfig lConfig;
-    private LotteryGame lGame;
+    final private Lottery plugin;
+    final private LotteryConfig lConfig;
+    final private LotteryGame lGame;
 
     public MainCommandExecutor(final Lottery plugin) {
         this.plugin = plugin;
@@ -298,7 +298,7 @@ public class MainCommandExecutor implements CommandExecutor {
         // Get the winners.
         final ArrayList<String> winnerArray = new ArrayList<String>();
         try {
-            BufferedReader in = new BufferedReader(
+            final BufferedReader in = new BufferedReader(
                     new FileReader(plugin.getDataFolder()
                     + File.separator
                     + "lotteryWinners.txt"));
