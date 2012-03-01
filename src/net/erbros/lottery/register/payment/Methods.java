@@ -51,6 +51,7 @@ public class Methods {
         addMethod("Essentials", new net.erbros.lottery.register.payment.methods.EE17());
         addMethod("Currency", new net.erbros.lottery.register.payment.methods.MCUR());
         Dependencies.add("MultiCurrency");
+        addMethod("Vault", new net.erbros.lottery.register.payment.methods.VaultEco());
     }
 
     /**
