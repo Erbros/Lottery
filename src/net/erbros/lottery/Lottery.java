@@ -41,11 +41,8 @@ public class Lottery extends JavaPlugin {
         final PluginManager pm = getServer().getPluginManager();
 
         server = getServer();
-        // Do we need iConomy?
-        if (lConfig.useiConomy()) {
-            // Event Registration
-            pm.registerEvents(new PluginListener(this), this);
-        }
+
+        pm.registerEvents(new PluginListener(this), this);
         if (lConfig.useWelcomeMessage()) {
             pm.registerEvents(new PlayerJoinListener(this), this);
         }
@@ -57,8 +54,6 @@ public class Lottery extends JavaPlugin {
         if (getNextexec() == 0) {
             // Set first time to be config hours later? Millisecs, * 1000.
             setNextexec(System.currentTimeMillis() + extendTime());
-        } else {
-            setNextexec(config.getLong("config.nextexec"));
         }
 
         // Start the timer for the first time.

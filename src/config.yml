@@ -1,16 +1,29 @@
 config:
-    cost: 5
-    hours: 24
-    nextexec: 0
-    material: 266
+  # Set this option to true if your using ANY supported economy system
     useiConomy: false
-    broadcastBuying: true
+  # Cost per ticket     
+    cost: 5
+  # If you aren't using an economy system, which item is used for currency
+    material: 266
+    
+  # How long between draws  
+    hours: 2   
+  # Should we publically broadcast when someone buys a ticket?
+    broadcastBuying: true  
+  # Should we show lottery status on player join?  
     welcomeMessage: true
-    extraInPot: 0
-    clearExtraInPot: true
+    
+  # Should we clear 'extra' amount each draw
+    clearExtraInPot: true    
+  # What percentage of ticket sales is the winner awarded
     netPayout: 100
+  # How many tickets can each player buy? 
     maxTicketsEachUser: 1
+  # Use this option to enable fixed ticket mode.  Setting this will cause rollovers.  
     numberOfTicketsAvailable: 0
+    
+    nextexec: 0
+    extraInPot: 0
     jackpot: 0
     debug: false
 message:

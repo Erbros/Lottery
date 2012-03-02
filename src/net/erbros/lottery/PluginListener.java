@@ -35,9 +35,8 @@ public class PluginListener implements Listener {
         if (!Methods.hasMethod()) {
             if (Methods.setMethod(Bukkit.getPluginManager())) {
                 this.plugin.Method = Methods.getMethod();
-                System.out.println("[Lottery] Payment method found ("
-                        + this.plugin.Method.getName() + " version: "
-                        + this.plugin.Method.getVersion() + ")");
+                System.out.println("[Lottery] Payment method found (" + this.plugin.Method.getName() 
+                        + " version: " + this.plugin.Method.getVersion() + ")");
             }
         }
     }

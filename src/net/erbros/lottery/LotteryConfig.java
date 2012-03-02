@@ -9,7 +9,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 public class LotteryConfig {
 
     final private Lottery plugin;
-    final private FileConfiguration config;
+    private FileConfiguration config;
     private double cost;
     private double hours;
     private long nextexec;
@@ -32,54 +32,14 @@ public class LotteryConfig {
         this.config = plugin.getConfig();
     }
 
-    public void configReplacePath(final String pathFrom, final String pathReplace, final boolean deleteFrom) {
-        if (config.contains(pathFrom)) {
-            // Let's check for booleans etc so we can save the objects correctly.
-            if (config.isBoolean(pathReplace) && config.isBoolean(pathFrom)) {
-                config.set(pathReplace, config.getBoolean(pathFrom));
-                debugMsg("Got value from old path: " + pathFrom + ", to new: " + pathReplace);
-            } else {
-                debugMsg("isBoolean: " + pathReplace + "(" + config.isBoolean(pathReplace) + ") :: isBoolean: " + pathFrom + "(" + config.isBoolean(pathFrom) + ")");
-            }
-            // Int?
-            if (config.isInt(pathReplace) && config.isInt(pathFrom)) {
-                config.set(pathReplace, config.getInt(pathFrom));
-                debugMsg("Got value from old path: " + pathFrom + ", to new: " + pathReplace);
-            } else {
-                debugMsg("isBoolean: " + pathReplace + "(" + config.isBoolean(pathReplace) + ") :: isBoolean: " + pathFrom + "(" + config.isBoolean(pathFrom) + ")");
-            }
-            if (config.isLong(pathReplace) && config.isLong(pathFrom)) {
-                config.set(pathReplace, config.getLong(pathFrom));
-                debugMsg("Got value from old path: " + pathFrom + ", to new: " + pathReplace);
-            } else {
-                debugMsg("isBoolean: " + pathReplace + "(" + config.isBoolean(pathReplace) + ") :: isBoolean: " + pathFrom + "(" + config.isBoolean(pathFrom) + ")");
-            }
-            if (config.isBoolean(pathReplace) && config.isBoolean(pathFrom)) {
-                config.set(pathReplace, config.getBoolean(pathFrom));
-                debugMsg("Got value from old path: " + pathFrom + ", to new: " + pathReplace);
-            } else {
-                debugMsg("isBoolean: " + pathReplace + "(" + config.isBoolean(pathReplace) + ") :: isBoolean: " + pathFrom + "(" + config.isBoolean(pathFrom) + ")");
-            }
-            if (config.isString(pathReplace) && config.isString(pathFrom)) {
-                config.set(pathReplace, config.getString(pathFrom));
-                debugMsg("Got value from old path: " + pathFrom + ", to new: " + pathReplace);
-            } else {
-                debugMsg("isBoolean: " + pathReplace + "(" + config.isBoolean(pathReplace) + ") :: isBoolean: " + pathFrom + "(" + config.isBoolean(pathFrom) + ")");
-            }
-
-            // Should we remove the old path?
-            if (deleteFrom) {
-                config.set(pathFrom, null);
-            }
-        }
-    }
-
     public void loadConfig() {
         plugin.reloadConfig();
-
+        config = plugin.getConfig();
+    
         debugMsg("Loading Lottery configuration");
 
         hours = config.getDouble("config.hours", 24);
+        
         useiConomy = config.getBoolean("config.useiConomy", true);
         material = config.getInt("config.material", 266);
         broadcastBuying = config.getBoolean("config.broadcastBuying", true);
@@ -100,6 +60,12 @@ public class LotteryConfig {
         // Then lets save this stuff :)
         plugin.saveConfig();
     }
+    
+    public void set(final String path, final Object value) {
+        config.set(path, value);
+        plugin.saveConfig();
+    }
+      
 
     public void loadCustomMessages() {
         msgWelcome = formatCustomMessage("message.welcome", "&6[LOTTERY] &fDraw in: &c%drawLong%");
@@ -129,7 +95,7 @@ public class LotteryConfig {
 
     public void setCost(final double cost) {
         this.cost = cost;
-        config.set("config.cost", cost);
+        set("config.cost", cost);
     }
 
     public double getHours() {
@@ -138,7 +104,7 @@ public class LotteryConfig {
 
     public void setHours(final double hours) {
         this.hours = hours;
-        config.set("config.hours", hours);
+        set("config.hours", hours);
     }
 
     public long getNextexec() {
@@ -147,7 +113,7 @@ public class LotteryConfig {
 
     public void setNextexec(final long nextexec) {
         this.nextexec = nextexec;
-        config.set("config.nextexec", nextexec);
+        set("config.nextexec", nextexec);
     }
 
     public boolean useiConomy() {
@@ -164,12 +130,12 @@ public class LotteryConfig {
 
     public void setExtraInPot(final double extraInPot) {
         this.extraInPot = extraInPot;
-        config.set("config.extraInPot", extraInPot);
+        set("config.extraInPot", extraInPot);
     }
 
     public void addExtraInPot(final double extra) {
         extraInPot += extra;
-        config.set("config.extraInPot", extraInPot);
+        setExtraInPot(extraInPot);
     }
 
     public boolean useBroadcastBuying() {
@@ -186,7 +152,7 @@ public class LotteryConfig {
 
     public void setNetPayout(final double netPayout) {
         this.netPayout = netPayout;
-        config.set("config.netPayout", netPayout);
+        set("config.netPayout", netPayout);
     }
 
     public boolean clearExtraInPot() {
@@ -199,7 +165,7 @@ public class LotteryConfig {
 
     public void setMaxTicketsEachUser(final int maxTicketsEachUser) {
         this.maxTicketsEachUser = maxTicketsEachUser;
-        config.set("config.maxTicketsEachUser", maxTicketsEachUser);
+        set("config.maxTicketsEachUser", maxTicketsEachUser);
     }
 
     public int getTicketsAvailable() {
@@ -212,7 +178,7 @@ public class LotteryConfig {
 
     public void setJackpot(final double jackpot) {
         this.jackpot = jackpot;
-        config.set("config.jackpot", jackpot);
+        set("config.jackpot", jackpot);
     }
 
     public List<String> getMsgWelcome() {
@@ -225,7 +191,7 @@ public class LotteryConfig {
 
     public void setLastwinner(final String lastwinner) {
         this.lastwinner = lastwinner;
-        config.set("config.lastwinner", lastwinner);
+        set("config.lastwinner", lastwinner);
     }
 
     public double getLastwinneramount() {
@@ -234,6 +200,6 @@ public class LotteryConfig {
 
     public void setLastwinneramount(final double lastwinneramount) {
         this.lastwinneramount = lastwinneramount;
-        config.set("config.lastwinneramount", lastwinneramount);
+        set("config.lastwinneramount", lastwinneramount);
     }
 }
