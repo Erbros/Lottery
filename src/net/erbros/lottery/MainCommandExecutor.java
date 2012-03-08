@@ -238,6 +238,7 @@ public class MainCommandExecutor implements CommandExecutor {
 
         if (lConfig.getMaxTicketsEachUser() > 0 && lGame.playerInList(player) + buyTickets > lConfig.getMaxTicketsEachUser()) {
             player.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "You already have the maximum of " + lConfig.getMaxTicketsEachUser() + " " + Etc.pluralWording("ticket", lConfig.getMaxTicketsEachUser()) + " already.");
+            return;
         }
 
         if (lGame.addPlayer(player, lConfig.getMaxTicketsEachUser(), buyTickets)) {
