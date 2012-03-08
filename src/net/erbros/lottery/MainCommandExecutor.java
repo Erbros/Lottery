@@ -88,7 +88,7 @@ public class MainCommandExecutor implements CommandExecutor {
             sender.sendMessage("Hi Console - The Lottery plugin is running");
             sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
                     + ChatColor.WHITE + "Draw in: " + ChatColor.RED
-                    + lGame.timeUntil(lConfig.getNextexec(), false));
+                    + lGame.timeUntil(false));
             return;
         }
         final Player player = (Player) sender;
@@ -99,7 +99,7 @@ public class MainCommandExecutor implements CommandExecutor {
         // Send some messages:
         player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
                 + ChatColor.WHITE + "Draw in: " + ChatColor.RED
-                + lGame.timeUntil(lConfig.getNextexec(), false));
+                + lGame.timeUntil(false));
         if (lConfig.useiConomy()) {
             player.sendMessage(ChatColor.GOLD + "[LOTTERY] "
                     + ChatColor.WHITE + "Buy a ticket for "
@@ -236,6 +236,10 @@ public class MainCommandExecutor implements CommandExecutor {
             }
         }
 
+        if (lConfig.getMaxTicketsEachUser() > 0 && lGame.playerInList(player) + buyTickets > lConfig.getMaxTicketsEachUser()) {
+            player.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "You already have the maximum of " + lConfig.getMaxTicketsEachUser() + " " + Etc.pluralWording("ticket", lConfig.getMaxTicketsEachUser()) + " already.");
+        }
+
         if (lGame.addPlayer(player, lConfig.getMaxTicketsEachUser(), buyTickets)) {
             // You got your ticket.
             if (lConfig.useiConomy()) {
@@ -257,20 +261,31 @@ public class MainCommandExecutor implements CommandExecutor {
                         + " " + ChatColor.WHITE + Etc.pluralWording("ticket",
                         lGame.playerInList(player)));
             }
+            if (lConfig.isBuyingExtendsDeadline() && lGame.timeUntil() < 30) {
+                long timeBonus = (long) (15 + (1.5 * Math.sqrt(buyTickets)));
+                lConfig.setNextexec(lConfig.getNextexec() + (timeBonus * 1000));
+            }
             if (lConfig.useBroadcastBuying()) {
-                Bukkit.broadcastMessage(ChatColor.GOLD
-                        + "[LOTTERY] " + ChatColor.WHITE
-                        + player.getDisplayName()
-                        + " just bought " + buyTickets + " "
-                        + Etc.pluralWording("ticket", buyTickets));
+                if (lGame.timeUntil() < 120) {
+                    Bukkit.broadcastMessage(ChatColor.GOLD
+                            + "[LOTTERY] " + ChatColor.WHITE
+                            + player.getDisplayName() + ChatColor.WHITE
+                            + " just bought " + buyTickets + " "
+                            + Etc.pluralWording("ticket", buyTickets)
+                            + "! Draw in " + lGame.timeUntil(true));
+                }
+                else {
+                    Bukkit.broadcastMessage(ChatColor.GOLD
+                            + "[LOTTERY] " + ChatColor.WHITE
+                            + player.getDisplayName() + ChatColor.WHITE
+                            + " just bought " + buyTickets + " "
+                            + Etc.pluralWording("ticket", buyTickets));
+                }
             }
 
         } else {
             // Something went wrong.
-            player.sendMessage(ChatColor.GOLD
-                    + "[LOTTERY] "
-                    + ChatColor.WHITE
-                    + "Either you can't afford a ticket, or you got " + lConfig.getMaxTicketsEachUser() + " " + Etc.pluralWording("ticket", lConfig.getMaxTicketsEachUser()) + " already.");
+            player.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "You can't afford a ticket");
         }
     }
 

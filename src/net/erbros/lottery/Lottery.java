@@ -179,7 +179,7 @@ public class Lottery extends JavaPlugin {
             server.getScheduler().scheduleSyncDelayedTask(this, new LotteryDraw(this, true), extendtime);
             lConfig.debugMsg("LotteryDraw() " + extendtime + 100);
         } else {
-            final long newtime = extendtime / 15;
+            final long newtime = extendtime / 10;
             server.getScheduler().scheduleAsyncDelayedTask(this, new LotteryDraw(this, false), newtime);
             lConfig.debugMsg("extendLotteryDraw() " + newtime);
         }

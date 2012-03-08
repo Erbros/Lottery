@@ -22,6 +22,9 @@ config:
   # Use this option to enable fixed ticket mode.  Setting this will cause rollovers.  
     numberOfTicketsAvailable: 0
     
+  # Should the next draw timer be extended if someone buys a ticket close to the draw?
+    buyingExtendsDeadline: true
+    
     nextexec: 0
     extraInPot: 0
     jackpot: 0

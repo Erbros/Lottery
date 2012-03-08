@@ -21,10 +21,6 @@ public class LotteryGame {
 
     public boolean addPlayer(final Player player, final int maxAmountOfTickets, final int numberOfTickets) {
 
-        if (playerInList(player) + numberOfTickets > maxAmountOfTickets) {
-            return false;
-        }
-
         // Do the ticket cost money or item?
         if (lConfig.useiConomy()) {
             // Do the player have money?
@@ -229,9 +225,14 @@ public class LotteryGame {
         return true;
     }
 
-    public String timeUntil(final long time, final boolean mini) {
+    public long timeUntil() {
+        final long nextDraw = lConfig.getNextexec();
+        final long timeLeft = ((nextDraw - System.currentTimeMillis()) / 1000);
+        return timeLeft;
+    }
 
-        double timeLeft = Double.parseDouble(Long.toString(((time - System.currentTimeMillis()) / 1000)));
+    public String timeUntil(final boolean mini) {
+        final long timeLeft = timeUntil();
         // If negative number, just tell them its DRAW TIME!
         if (timeLeft < 0) {
             // Lets make it draw at once.. ;)
@@ -244,55 +245,7 @@ public class LotteryGame {
 
         }
 
-        // How many days left?
-        String stringTimeLeft = "";
-
-        if (timeLeft >= 60 * 60 * 24) {
-            final int days = (int) Math.floor(timeLeft / (60 * 60 * 24));
-            timeLeft -= 60 * 60 * 24 * days;
-            if (mini) {
-                stringTimeLeft += Integer.toString(days) + "d ";
-            } else {
-                stringTimeLeft += Integer.toString(days) + " " + Etc.pluralWording("day", days) + ", ";
-            }
-        }
-        if (timeLeft >= 60 * 60) {
-            final int hours = (int) Math.floor(timeLeft / (60 * 60));
-            timeLeft -= 60 * 60 * hours;
-            if (mini) {
-                stringTimeLeft += Integer.toString(hours) + "h ";
-            } else {
-                stringTimeLeft += Integer.toString(hours) + " " + Etc.pluralWording("hour", hours) + ", ";
-            }
-        }
-        if (timeLeft >= 60) {
-            final int minutes = (int) Math.floor(timeLeft / (60));
-            timeLeft -= 60 * minutes;
-            if (mini) {
-                stringTimeLeft += Integer.toString(minutes) + "m ";
-
-            } else {
-                stringTimeLeft += Integer.toString(minutes) + " " + Etc.pluralWording("minute", minutes) + ", ";
-            }
-        } else {
-            // Lets remove the last comma, since it will look bad with 2 days, 3
-            // hours, and 14 seconds.
-            if (stringTimeLeft.equalsIgnoreCase("") == false && !mini) {
-                stringTimeLeft = stringTimeLeft.substring(0,
-                        stringTimeLeft.length() - 1);
-            }
-        }
-        final int secs = (int) timeLeft;
-        if (mini) {
-            stringTimeLeft += secs + "s";
-        } else {
-            if (!stringTimeLeft.equalsIgnoreCase("")) {
-                stringTimeLeft += "and ";
-            }
-            stringTimeLeft += Integer.toString(secs) + " " + Etc.pluralWording("second", secs);
-        }
-
-        return stringTimeLeft;
+        return Etc.timeUntil(timeLeft, mini);
     }
 
     public boolean getWinner() {
@@ -408,9 +361,9 @@ public class LotteryGame {
 
     public String formatCustomMessageLive(final String message, final Player player) {
         //Lets give timeLeft back if user provie %draw%
-        String outMessage = message.replaceAll("%draw%", timeUntil(lConfig.getNextexec(), true));
+        String outMessage = message.replaceAll("%draw%", timeUntil(true));
         //Lets give timeLeft with full words back if user provie %drawLong%
-        outMessage = outMessage.replaceAll("%drawLong%", timeUntil(lConfig.getNextexec(), false));
+        outMessage = outMessage.replaceAll("%drawLong%", timeUntil(false));
         // If %player% = Player name
         outMessage = outMessage.replaceAll("%player%", player.getDisplayName());
         // %cost% = cost

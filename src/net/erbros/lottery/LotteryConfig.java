@@ -26,6 +26,7 @@ public class LotteryConfig {
     private String lastwinner;
     private double lastwinneramount;
     private List<String> msgWelcome;
+    private boolean buyingExtendsDeadline;
 
     public LotteryConfig(final Lottery plugin) {
         this.plugin = plugin;
@@ -35,11 +36,11 @@ public class LotteryConfig {
     public void loadConfig() {
         plugin.reloadConfig();
         config = plugin.getConfig();
-    
+
         debugMsg("Loading Lottery configuration");
 
         hours = config.getDouble("config.hours", 24);
-        
+
         useiConomy = config.getBoolean("config.useiConomy", true);
         material = config.getInt("config.material", 266);
         broadcastBuying = config.getBoolean("config.broadcastBuying", true);
@@ -54,18 +55,18 @@ public class LotteryConfig {
         cost = Etc.formatAmount(config.getDouble("config.cost", 5), useiConomy);
         lastwinner = config.getString("config.lastwinner", "");
         lastwinneramount = config.getDouble("config.lastwinneramount", 0);
+        buyingExtendsDeadline = config.getBoolean("config.buyingExtendsDeadline", true);
 
         // Load messages?
         loadCustomMessages();
         // Then lets save this stuff :)
         plugin.saveConfig();
     }
-    
+
     public void set(final String path, final Object value) {
         config.set(path, value);
         plugin.saveConfig();
     }
-      
 
     public void loadCustomMessages() {
         msgWelcome = formatCustomMessage("message.welcome", "&6[LOTTERY] &fDraw in: &c%drawLong%");
@@ -201,5 +202,9 @@ public class LotteryConfig {
     public void setLastwinneramount(final double lastwinneramount) {
         this.lastwinneramount = lastwinneramount;
         set("config.lastwinneramount", lastwinneramount);
+    }
+
+    public boolean isBuyingExtendsDeadline() {
+        return buyingExtendsDeadline;
     }
 }
