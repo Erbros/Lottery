@@ -17,6 +17,7 @@ public class LotteryConfig {
     private int material;
     private double extraInPot;
     private boolean broadcastBuying;
+    private int broadcastBuyingTime;
     private boolean welcomeMessage;
     private double netPayout;
     private boolean clearExtraInPot;
@@ -26,7 +27,10 @@ public class LotteryConfig {
     private String lastwinner;
     private double lastwinneramount;
     private List<String> msgWelcome;
-    private boolean buyingExtendsDeadline;
+    private boolean buyingExtendDeadline;
+    private int buyingExtendRemaining;
+    private double buyingExtendBase;
+    private double buyingExtendMultiplier;
 
     public LotteryConfig(final Lottery plugin) {
         this.plugin = plugin;
@@ -44,6 +48,7 @@ public class LotteryConfig {
         useiConomy = config.getBoolean("config.useiConomy", true);
         material = config.getInt("config.material", 266);
         broadcastBuying = config.getBoolean("config.broadcastBuying", true);
+        broadcastBuyingTime = config.getInt("config.broadcastBuyingTime", 120);
         welcomeMessage = config.getBoolean("config.welcomeMessage", true);
         extraInPot = config.getDouble("config.extraInPot", 0);
         clearExtraInPot = config.getBoolean("config.clearExtraInPot", true);
@@ -55,7 +60,10 @@ public class LotteryConfig {
         cost = Etc.formatAmount(config.getDouble("config.cost", 5), useiConomy);
         lastwinner = config.getString("config.lastwinner", "");
         lastwinneramount = config.getDouble("config.lastwinneramount", 0);
-        buyingExtendsDeadline = config.getBoolean("config.buyingExtendsDeadline", true);
+        buyingExtendDeadline = config.getBoolean("config.buyingExtend.enabled", true);
+        buyingExtendRemaining = config.getInt("config.buyingExtend.secondsRemaining", 30);
+        buyingExtendBase = config.getDouble("config.buyingExtend.extendBase", 15);
+        buyingExtendMultiplier = config.getDouble("config.buyingExtend.extendMultiplier", 1.5);
 
         // Load messages?
         loadCustomMessages();
@@ -143,6 +151,10 @@ public class LotteryConfig {
         return broadcastBuying;
     }
 
+    public int getBroadcastBuyingTime() {
+        return broadcastBuyingTime;
+    }
+
     public boolean useWelcomeMessage() {
         return welcomeMessage;
     }
@@ -204,7 +216,19 @@ public class LotteryConfig {
         set("config.lastwinneramount", lastwinneramount);
     }
 
-    public boolean isBuyingExtendsDeadline() {
-        return buyingExtendsDeadline;
+    public boolean isBuyingExtendDeadline() {
+        return buyingExtendDeadline;
+    }
+
+    public int getBuyingExtendRemaining() {
+        return buyingExtendRemaining;
+    }
+
+    public double getBuyingExtendBase() {
+        return buyingExtendBase;
+    }
+
+    public double getBuyingExtendMultiplier() {
+        return buyingExtendMultiplier;
     }
 }

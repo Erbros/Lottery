@@ -10,6 +10,8 @@ config:
     hours: 2   
   # Should we publically broadcast when someone buys a ticket?
     broadcastBuying: true  
+  # At how many seconds remaining should we append time till draw.
+    broadcastBuyingTime: 120
   # Should we show lottery status on player join?  
     welcomeMessage: true
     
@@ -21,9 +23,17 @@ config:
     maxTicketsEachUser: 1
   # Use this option to enable fixed ticket mode.  Setting this will cause rollovers.  
     numberOfTicketsAvailable: 0
-    
-  # Should the next draw timer be extended if someone buys a ticket close to the draw?
-    buyingExtendsDeadline: true
+      
+    buyingExtend:
+      # Should the next draw timer be extended if someone buys a ticket close to the draw?
+        enabled: true
+      # How many seconds remaining count as close to the draw
+        secondsRemaining: 30
+      # The minimum amount to extend by
+        extendBase: 15
+      # What multiplier should be used when extending by tickets.
+      # Set to 0 to just use base. Extend by: base + (multiplier * sqrt(ticketNumber))
+        extendMultiplier: 1.5
     
     nextexec: 0
     extraInPot: 0

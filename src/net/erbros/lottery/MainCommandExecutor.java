@@ -262,12 +262,12 @@ public class MainCommandExecutor implements CommandExecutor {
                         + " " + ChatColor.WHITE + Etc.pluralWording("ticket",
                         lGame.playerInList(player)));
             }
-            if (lConfig.isBuyingExtendsDeadline() && lGame.timeUntil() < 30) {
-                long timeBonus = (long) (15 + (1.5 * Math.sqrt(buyTickets)));
+            if (lConfig.isBuyingExtendDeadline() && lGame.timeUntil() < lConfig.getBuyingExtendRemaining()) {
+                final long timeBonus = (long) (lConfig.getBuyingExtendBase() + (lConfig.getBuyingExtendMultiplier() * Math.sqrt(buyTickets)));
                 lConfig.setNextexec(lConfig.getNextexec() + (timeBonus * 1000));
             }
             if (lConfig.useBroadcastBuying()) {
-                if (lGame.timeUntil() < 120) {
+                if (lGame.timeUntil() < lConfig.getBroadcastBuyingTime()) {
                     Bukkit.broadcastMessage(ChatColor.GOLD
                             + "[LOTTERY] " + ChatColor.WHITE
                             + player.getDisplayName() + ChatColor.WHITE
