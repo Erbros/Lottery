@@ -10,15 +10,12 @@ import org.bukkit.Material;
 public class Etc {
 
     public static double formatAmount(double amount, final boolean usingiConomy) {
-        // Okay, if this is a material it's really simple. Just floor it.
-        DecimalFormat formatter = null;
+
         if (usingiConomy) {
-            formatter = new DecimalFormat("0.00");
+            return Math.floor(amount * 100) / 100;
         } else {
-            formatter = new DecimalFormat("0");
+            return Math.floor(amount);
         }
-        amount = Double.parseDouble(formatter.format(amount));
-        return amount;
     }
 
     public static String formatMaterialName(final int materialId) {
