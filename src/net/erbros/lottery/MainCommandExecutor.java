@@ -31,7 +31,7 @@ public class MainCommandExecutor implements CommandExecutor {
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
 
         // Lets check if we have found a plugin for money.
-        if (!Methods.hasMethod() && lConfig.useiConomy()) {
+        if (lConfig.useiConomy() && !Methods.hasMethod()) {
             lConfig.debugMsg("No money plugin found yet.");
             sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Sorry, we haven't found a money plugin yet..");
             return true;
@@ -39,7 +39,8 @@ public class MainCommandExecutor implements CommandExecutor {
 
         // Can the player access the plugin?
         if (!sender.hasPermission("lottery.buy")) {
-            return true;
+            sender.sendMessage(ChatColor.GOLD + "[LOTTERY] "
+                    + ChatColor.WHITE + "You don't have access to that command.");
         }
 
         // If its just /lottery, and no args.
@@ -274,8 +275,7 @@ public class MainCommandExecutor implements CommandExecutor {
                             + " just bought " + buyTickets + " "
                             + Etc.pluralWording("ticket", buyTickets)
                             + "! Draw in " + lGame.timeUntil(true));
-                }
-                else {
+                } else {
                     Bukkit.broadcastMessage(ChatColor.GOLD
                             + "[LOTTERY] " + ChatColor.WHITE
                             + player.getDisplayName() + ChatColor.WHITE

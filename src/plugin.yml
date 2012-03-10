@@ -9,7 +9,7 @@ commands:
   lottery:
     description: Provides access to Permissions commands and information.
     permission: lottery.buy
-    usage: /<command>
+    usage: /<command> [winners|claim|help|buy [amount]]
     aliases: [lot]
 permissions:
   lottery.*:
