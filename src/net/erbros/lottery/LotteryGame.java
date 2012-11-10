@@ -400,7 +400,8 @@ public class LotteryGame
 				addToClaimList(players.get(rand), matAmount, lConfig.getMaterial());
 			}
 			Bukkit.broadcastMessage(
-					ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "There was in total " + Etc.realPlayersFromList(
+					ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "There was a total of " + Etc
+							.realPlayersFromList(
 							players).size() + " " + Etc.pluralWording(
 							"player", Etc.realPlayersFromList(
 							players).size()) + " buying " + players.size() + " " + Etc.pluralWording(
