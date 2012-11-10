@@ -5,11 +5,23 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 
 
 public class Etc
 {
+	public static String formatCost(double cost, LotteryConfig lConfig)
+	{
+		if (lConfig.useiConomy())
+		{
+			return String.valueOf(formatAmount(cost, lConfig.useiConomy()));
+		}
+		else
+		{
+			return String.valueOf(
+					(int)formatAmount(cost, lConfig.useiConomy())).concat(
+					" " + formatMaterialName(lConfig.getMaterial()));
+		}
+	}
 
 	public static double formatAmount(double amount, final boolean usingiConomy)
 	{
@@ -114,7 +126,6 @@ public class Etc
 
 	public static String timeUntil(final long time, final boolean mini)
 	{
-
 		long timeLeft = time;
 		// How many days left?
 		String stringTimeLeft = "";
