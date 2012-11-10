@@ -154,7 +154,8 @@ public class MainCommandExecutor implements CommandExecutor
 		if (lConfig.getMaxTicketsEachUser() > 1)
 		{
 			player.sendMessage(
-					ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "You got " + ChatColor.RED + lGame.playerInList(
+					ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "You have " + ChatColor.RED + lGame
+							.playerInList(
 							(Player)sender) + " " + ChatColor.WHITE + Etc.pluralWording(
 							"ticket", lGame.playerInList(
 							(Player)sender)));
