@@ -89,57 +89,57 @@ public class LotteryConfig
 	public void loadCustomMessages()
 	{
 		messages = new HashMap<String, List<String>>();
-		messages.put("msgprefix", formatCustomMessage("message.prefix", "&6[LOTTERY]&r"));
+		messages.put("prefix", formatCustomMessage("message.prefix", "&6[LOTTERY]&r"));
 
-		messages.put("msgWelcome", formatCustomMessage("message.Welcome", "%prefix% &fDraw in: &c%drawLong%"));
-		messages.put("msgErrorPlugin", formatCustomMessage("message.ErrorPlugin", "%prefix% Sorry, we haven\'t found a money plugin yet.."));
-		messages.put("msgErrorAccess", formatCustomMessage("message.ErrorAccess", "%prefix% You don\'t have access to that command."));
-		messages.put("msgErrorCommand", formatCustomMessage("message.ErrorCommand", "%prefix% Hey, I don\'t recognize that command!"));
-		messages.put("msgErrorConsole", formatCustomMessage("message.ErrorConsole", "%prefix% You\'re the console, I can\'t sell you tickets."));
-		messages.put("msgErrorConsole2", formatCustomMessage("message.ErrorConsole2", "%prefix% You\'re the console, you don\'t have an inventory."));
-		messages.put("msgErrorNoAvailable", formatCustomMessage("message.ErrorNoAvailable", "%prefix% There are no more tickets available"));
-		messages.put("msgErrorAtMax", formatCustomMessage("message.ErrorAtMax", "%prefix% You already have the maximum of %0% %1% already."));
-		messages.put("msgErrorNotAfford", formatCustomMessage("message.ErrorNotAfford", "%prefix% You can\'t afford a ticket"));
-		messages.put("msgErrorNumber", formatCustomMessage("message.ErrorNumber", "%prefix% Provide a number greater than zero (decimals accepted)"));
-		messages.put("msgErrorClaim", formatCustomMessage("message.ErrorClaim", "%prefix% You did not have anything unclaimed."));
+		messages.put("Welcome", formatCustomMessage("message.Welcome", "%prefix% &fDraw in: &c%drawLong%"));
+		messages.put("ErrorPlugin", formatCustomMessage("message.ErrorPlugin", "%prefix% Sorry, we haven\'t found a money plugin yet.."));
+		messages.put("ErrorAccess", formatCustomMessage("message.ErrorAccess", "%prefix% You don\'t have access to that command."));
+		messages.put("ErrorCommand", formatCustomMessage("message.ErrorCommand", "%prefix% Hey, I don\'t recognize that command!"));
+		messages.put("ErrorConsole", formatCustomMessage("message.ErrorConsole", "%prefix% You\'re the console, I can\'t sell you tickets."));
+		messages.put("ErrorConsole2", formatCustomMessage("message.ErrorConsole2", "%prefix% You\'re the console, you don\'t have an inventory."));
+		messages.put("ErrorNoAvailable", formatCustomMessage("message.ErrorNoAvailable", "%prefix% There are no more tickets available"));
+		messages.put("ErrorAtMax", formatCustomMessage("message.ErrorAtMax", "%prefix% You already have the maximum of %0% %1% already."));
+		messages.put("ErrorNotAfford", formatCustomMessage("message.ErrorNotAfford", "%prefix% You can\'t afford a ticket"));
+		messages.put("ErrorNumber", formatCustomMessage("message.ErrorNumber", "%prefix% Provide a number greater than zero (decimals accepted)"));
+		messages.put("ErrorClaim", formatCustomMessage("message.ErrorClaim", "%prefix% You did not have anything unclaimed."));
 
-		messages.put("msgTicketCommand", formatCustomMessage("message.TicketCommand", "%prefix% Buy a ticket for &c%cost% &rwith &c/lottery buy"));
-		messages.put("msgPotAmount", formatCustomMessage("message.PotAmount", "%prefix% There is currently &a%pot% &rin the pot."));
-		messages.put("msgYourTickets", formatCustomMessage("message.YourTickets", "%prefix% You have &c%0% &r%1%"));
-		messages.put("msgTimeRemaining", formatCustomMessage("message.TimeRemaining", "%prefix% There is &c%0% &r%1% left."));
-		messages.put("msgCommandHelp", formatCustomMessage("message.CommandHelp", "%prefix% &c/lottery help&r for other commands"));
-		messages.put("msgLastWinner", formatCustomMessage("message.LastWinner", "%prefix% Last winner: %0% %1%"));
-		messages.put("msgCheckClaim", formatCustomMessage("message.CheckClaim", "%prefix% Check if you have won with &c/lottery claim"));
-		messages.put("msgBoughtTicket", formatCustomMessage("message.BoughtTicket", "%prefix% You got &c%0% &r%1% for %c%2%"));
-		messages.put("msgBoughtTickets", formatCustomMessage("message.BoughtTickets", "%prefix% You now have &c%0% &r%1%"));
-		messages.put("msgBoughtAnnounceDraw", formatCustomMessage("message.BoughtAnnounceDraw", "%prefix% &r%0% &rjust bought %1% %2%! Draw in %3%"));
-		messages.put("msgBoughtAnnounce", formatCustomMessage("message.BoughtAnnounce", "%prefix% &r%0% &rjust bought %1% %2%!"));
-		messages.put("msgDrawIn", formatCustomMessage("message.DrawIn", "%prefix% Draw in: &c%0%"));
-		messages.put("msgDrawNow", formatCustomMessage("message.DrawNow", "%prefix% Lottery will be drawn at once."));
-		messages.put("msgDrawSoon", formatCustomMessage("message.DrawSoon", "Soon"));
-		messages.put("msgDrawSoonLong", formatCustomMessage("message.DrawSoonLong", "Draw will occur soon!"));
-		messages.put("msgPlayerClaim", formatCustomMessage("message.PlayerClaim", "%prefix You just claimed %0%"));
+		messages.put("TicketCommand", formatCustomMessage("message.TicketCommand", "%prefix% Buy a ticket for &c%cost% &rwith &c/lottery buy"));
+		messages.put("PotAmount", formatCustomMessage("message.PotAmount", "%prefix% There is currently &a%pot% &rin the pot."));
+		messages.put("YourTickets", formatCustomMessage("message.YourTickets", "%prefix% You have &c%0% &r%1%"));
+		messages.put("TimeRemaining", formatCustomMessage("message.TimeRemaining", "%prefix% There is &c%0% &r%1% left."));
+		messages.put("CommandHelp", formatCustomMessage("message.CommandHelp", "%prefix% &c/lottery help&r for other commands"));
+		messages.put("LastWinner", formatCustomMessage("message.LastWinner", "%prefix% Last winner: %0% %1%"));
+		messages.put("CheckClaim", formatCustomMessage("message.CheckClaim", "%prefix% Check if you have won with &c/lottery claim"));
+		messages.put("BoughtTicket", formatCustomMessage("message.BoughtTicket", "%prefix% You got &c%0% &r%1% for %c%2%"));
+		messages.put("BoughtTickets", formatCustomMessage("message.BoughtTickets", "%prefix% You now have &c%0% &r%1%"));
+		messages.put("BoughtAnnounceDraw", formatCustomMessage("message.BoughtAnnounceDraw", "%prefix% &r%0% &rjust bought %1% %2%! Draw in %3%"));
+		messages.put("BoughtAnnounce", formatCustomMessage("message.BoughtAnnounce", "%prefix% &r%0% &rjust bought %1% %2%!"));
+		messages.put("DrawIn", formatCustomMessage("message.DrawIn", "%prefix% Draw in: &c%0%"));
+		messages.put("DrawNow", formatCustomMessage("message.DrawNow", "%prefix% Lottery will be drawn at once."));
+		messages.put("DrawSoon", formatCustomMessage("message.DrawSoon", "Soon"));
+		messages.put("DrawSoonLong", formatCustomMessage("message.DrawSoonLong", "Draw will occur soon!"));
+		messages.put("PlayerClaim", formatCustomMessage("message.PlayerClaim", "%prefix You just claimed %0%"));
 
-		messages.put("msgNoWinnerTickets", formatCustomMessage("message.NoWinnerTickets", "%prefix% No tickets sold this round. Thats a shame."));
+		messages.put("NoWinnerTickets", formatCustomMessage("message.NoWinnerTickets", "%prefix% No tickets sold this round. Thats a shame."));
 		messages.put(
-				"msgNoWinnerRollover", formatCustomMessage("message.NoWinnerRollover", "%prefix% No winner, we have a rollover! &a%0% &rwent to jackpot!"));
-		messages.put("msgWinnerCongrat", formatCustomMessage("message.WinnerCongrat", "%prefix% Congratulations go to %0% &rfor winning &c%1%."));
-		messages.put("msgWinnerCongratClaim", formatCustomMessage("message.WinnerCongratClaim", "%prefix% Use &c/lottery claim &rto claim the winnings."));
-		messages.put("msgWinnerSummary", formatCustomMessage("message.WinnerSummary", "%prefix% There was a total of %0% %1% buying %2% %3%"));
+				"NoWinnerRollover", formatCustomMessage("message.NoWinnerRollover", "%prefix% No winner, we have a rollover! &a%0% &rwent to jackpot!"));
+		messages.put("WinnerCongrat", formatCustomMessage("message.WinnerCongrat", "%prefix% Congratulations go to %0% &rfor winning &c%1%."));
+		messages.put("WinnerCongratClaim", formatCustomMessage("message.WinnerCongratClaim", "%prefix% Use &c/lottery claim &rto claim the winnings."));
+		messages.put("WinnerSummary", formatCustomMessage("message.WinnerSummary", "%prefix% There was a total of %0% %1% buying %2% %3%"));
 
-		messages.put("msgAddToPot", formatCustomMessage("message.AddToPot", "%prefix% Added &a%0% &rto pot. Extra total is &a %1%"));
-		messages.put("msgConfigCost", formatCustomMessage("message.ConfigCost", "%prefix% Cost changed to &c%0%"));
-		messages.put("msgConfigHours", formatCustomMessage("message.ConfigHours", "%prefix% Hours changed to &c%0%"));
-		messages.put("msgConfigMax", formatCustomMessage("message.ConfigMax", "%prefix% Max amount of tickets changed to &c%0%"));
-		messages.put("msgConfigReload", formatCustomMessage("message.ConfigReload", "%prefix% Config reloaded"));
+		messages.put("AddToPot", formatCustomMessage("message.AddToPot", "%prefix% Added &a%0% &rto pot. Extra total is &a %1%"));
+		messages.put("ConfigCost", formatCustomMessage("message.ConfigCost", "%prefix% Cost changed to &c%0%"));
+		messages.put("ConfigHours", formatCustomMessage("message.ConfigHours", "%prefix% Hours changed to &c%0%"));
+		messages.put("ConfigMax", formatCustomMessage("message.ConfigMax", "%prefix% Max amount of tickets changed to &c%0%"));
+		messages.put("ConfigReload", formatCustomMessage("message.ConfigReload", "%prefix% Config reloaded"));
 
 		messages.put(
-				"msgHelp", formatCustomMessage(
+				"Help", formatCustomMessage(
 				"message.Help",
 				"%prefix% Help commands%newline%%prefix% &c/lottery&r : Basic lottery info.%newline%%prefix% &c/lottery buy <n>&r : Buy ticket(s).%newline%%prefix% &c/lottery claim&r : Claim outstandig wins.%newline%%prefix% &c/lottery winners&r : Check last winners.%newline%%prefix% &1/lottery draw&r : Draw lottery.%newline%%prefix% &1/lottery addtopot&r : Add number to pot.%newline%%prefix% &1/lottery config&r : Edit the config."));
-		messages.put("msgHelpPot", formatCustomMessage("message.HelpPot", "%prefix% /lottery addtopot <number>"));
+		messages.put("HelpPot", formatCustomMessage("message.HelpPot", "%prefix% /lottery addtopot <number>"));
 		messages.put(
-				"msgHelpConfig", formatCustomMessage(
+				"HelpConfig", formatCustomMessage(
 				"message.HelpConfig",
 				"%prefix% Edit config commands%newline%%prefix% &c/lottery config cost <i>%newline%%prefix% &c/lottery config hours <i>%newline%%prefix% &c/lottery config maxTicketsEachUser <i>%newline%%prefix% &c/lottery config reload"));
 	}

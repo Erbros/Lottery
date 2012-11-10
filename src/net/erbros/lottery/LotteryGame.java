@@ -345,7 +345,7 @@ public class LotteryGame
 
 		if (players.isEmpty())
 		{
-			Bukkit.broadcastMessage(formatCustomMessageLive("NoWinnerTickets"));
+			broadcastMessage(formatCustomMessageLive("NoWinnerTickets"));
 			return false;
 		}
 		else
@@ -368,7 +368,7 @@ public class LotteryGame
 					addToWinnerList("Jackpot", jackpot, lConfig.useiConomy() ? 0 : lConfig.getMaterial());
 					lConfig.setLastwinner("Jackpot");
 					lConfig.setLastwinneramount(jackpot);
-					Bukkit.broadcastMessage(formatCustomMessageLive("NoWinnerRollover", Etc.formatCost(jackpot, lConfig)));
+					broadcastMessage(formatCustomMessageLive("NoWinnerRollover", Etc.formatCost(jackpot, lConfig)));
 					clearAfterGettingWinner();
 					return true;
 				}
@@ -392,7 +392,7 @@ public class LotteryGame
 				// Add money to account.
 				account.add(amount);
 				// Announce the winner:
-				Bukkit.broadcastMessage(
+				broadcastMessage(
 						formatCustomMessageLive(
 								"WinnerCongrat", players.get(rand), Etc.formatCost(amount, lConfig)));
 				addToWinnerList(players.get(rand), amount, 0);
@@ -412,7 +412,7 @@ public class LotteryGame
 				// let's throw it to an int.
 				final int matAmount = (int)Etc.formatAmount(amount, lConfig.useiConomy());
 				amount = (double)matAmount;
-				Bukkit.broadcastMessage(
+				broadcastMessage(
 						formatCustomMessageLive(
 								"WinnerCongrat", players.get(rand), Etc.formatCost(amount, lConfig)));
 				Bukkit.broadcastMessage(formatCustomMessageLive("WinnerCongratClaim"));
@@ -420,7 +420,7 @@ public class LotteryGame
 
 				addToClaimList(players.get(rand), matAmount, lConfig.getMaterial());
 			}
-			Bukkit.broadcastMessage(
+			broadcastMessage(
 					formatCustomMessageLive(
 							"WinnerSummary", Etc.realPlayersFromList(players).size(), Etc.pluralWording(
 							"player", Etc.realPlayersFromList(players).size()), players.size(), Etc.pluralWording("ticket", players.size())));
@@ -464,14 +464,15 @@ public class LotteryGame
 	{
 		try
 		{
-			String message = lConfig.getMessage(topic).get(0);
-			String outMessage = formatCustomMessageLive(message, args);
-
-			for (Player player : plugin.getServer().getOnlinePlayers())
+			for (String message : lConfig.getMessage(topic))
 			{
+				String outMessage = formatCustomMessageLive(message, args);
+				for (Player player : plugin.getServer().getOnlinePlayers())
+				{
 
-				outMessage = outMessage.replaceAll("%player%", player.getDisplayName());
-				player.sendMessage(outMessage);
+					outMessage = outMessage.replaceAll("%player%", player.getDisplayName());
+					player.sendMessage(outMessage);
+				}
 			}
 		}
 		catch (Exception e)
@@ -484,10 +485,12 @@ public class LotteryGame
 	{
 		try
 		{
-			String message = lConfig.getMessage(topic).get(0);
-			String outMessage = formatCustomMessageLive(message, args);
-			outMessage = outMessage.replaceAll("%player%", player.getDisplayName());
-			player.sendMessage(outMessage);
+			for (String message : lConfig.getMessage(topic))
+			{
+				String outMessage = formatCustomMessageLive(message, args);
+				outMessage = outMessage.replaceAll("%player%", player.getDisplayName());
+				player.sendMessage(outMessage);
+			}
 		}
 		catch (Exception e)
 		{
