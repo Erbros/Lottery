@@ -121,7 +121,8 @@ public class LotteryConfig
 		messages.put("msgPlayerClaim", formatCustomMessage("message.PlayerClaim", "%prefix You just claimed %0%"));
 
 		messages.put("msgNoWinnerTickets", formatCustomMessage("message.NoWinnerTickets", "%prefix% No tickets sold this round. Thats a shame."));
-		messages.put("msgNoWinnerRollover", formatCustomMessage("message.NoWinnerRollover", "%prefix% No winner, we have a rollover! &a%0% &rwent to jackpot!"));
+		messages.put(
+				"msgNoWinnerRollover", formatCustomMessage("message.NoWinnerRollover", "%prefix% No winner, we have a rollover! &a%0% &rwent to jackpot!"));
 		messages.put("msgWinnerCongrat", formatCustomMessage("message.WinnerCongrat", "%prefix% Congratulations go to %0% &rfor winning &c%1%."));
 		messages.put("msgWinnerCongratClaim", formatCustomMessage("message.WinnerCongratClaim", "%prefix% Use &c/lottery claim &rto claim the winnings."));
 		messages.put("msgWinnerSummary", formatCustomMessage("message.WinnerSummary", "%prefix% There was a total of %0% %1% buying %2% %3%"));
@@ -132,14 +133,21 @@ public class LotteryConfig
 		messages.put("msgConfigMax", formatCustomMessage("message.ConfigMax", "%prefix% Max amount of tickets changed to &c%0%"));
 		messages.put("msgConfigReload", formatCustomMessage("message.ConfigReload", "%prefix% Config reloaded"));
 
-		messages.put("msgHelp", formatCustomMessage("message.Help", "%prefix% Help commands%newline%%prefix% &c/lottery&r : Basic lottery info.%newline%%prefix% &c/lottery buy <n>&r : Buy ticket(s).%newline%%prefix% &c/lottery claim&r : Claim outstandig wins.%newline%%prefix% &c/lottery winners&r : Check last winners.%newline%%prefix% &1/lottery draw&r : Draw lottery.%newline%%prefix% &1/lottery addtopot&r : Add number to pot.%newline%%prefix% &1/lottery config&r : Edit the config."));
+		messages.put(
+				"msgHelp", formatCustomMessage(
+				"message.Help",
+				"%prefix% Help commands%newline%%prefix% &c/lottery&r : Basic lottery info.%newline%%prefix% &c/lottery buy <n>&r : Buy ticket(s).%newline%%prefix% &c/lottery claim&r : Claim outstandig wins.%newline%%prefix% &c/lottery winners&r : Check last winners.%newline%%prefix% &1/lottery draw&r : Draw lottery.%newline%%prefix% &1/lottery addtopot&r : Add number to pot.%newline%%prefix% &1/lottery config&r : Edit the config."));
 		messages.put("msgHelpPot", formatCustomMessage("message.HelpPot", "%prefix% /lottery addtopot <number>"));
-		messages.put("msgHelpConfig", formatCustomMessage("message.HelpConfig", "%prefix% Edit config commands%newline%%prefix% &c/lottery config cost <i>%newline%%prefix% &c/lottery config hours <i>%newline%%prefix% &c/lottery config maxTicketsEachUser <i>%newline%%prefix% &c/lottery config reload"));
+		messages.put(
+				"msgHelpConfig", formatCustomMessage(
+				"message.HelpConfig",
+				"%prefix% Edit config commands%newline%%prefix% &c/lottery config cost <i>%newline%%prefix% &c/lottery config hours <i>%newline%%prefix% &c/lottery config maxTicketsEachUser <i>%newline%%prefix% &c/lottery config reload"));
 	}
 
 	public List<String> getMessage(final String topic) throws Exception
 	{
-		if (!messages.containsKey(topic)) {
+		if (!messages.containsKey(topic))
+		{
 			throw new Exception("Invalid Translation key");
 		}
 		return Collections.unmodifiableList(messages.get(topic));

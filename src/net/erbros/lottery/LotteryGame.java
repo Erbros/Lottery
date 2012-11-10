@@ -368,7 +368,7 @@ public class LotteryGame
 					addToWinnerList("Jackpot", jackpot, lConfig.useiConomy() ? 0 : lConfig.getMaterial());
 					lConfig.setLastwinner("Jackpot");
 					lConfig.setLastwinneramount(jackpot);
-					Bukkit.broadcastMessage(formatCustomMessageLive("NoWinnerRollover",Etc.formatCost(jackpot,lConfig)));
+					Bukkit.broadcastMessage(formatCustomMessageLive("NoWinnerRollover", Etc.formatCost(jackpot, lConfig)));
 					clearAfterGettingWinner();
 					return true;
 				}
@@ -392,8 +392,9 @@ public class LotteryGame
 				// Add money to account.
 				account.add(amount);
 				// Announce the winner:
-				Bukkit.broadcastMessage(formatCustomMessageLive("WinnerCongrat", players.get(rand),
-																Etc.formatCost(amount, lConfig)));
+				Bukkit.broadcastMessage(
+						formatCustomMessageLive(
+								"WinnerCongrat", players.get(rand), Etc.formatCost(amount, lConfig)));
 				addToWinnerList(players.get(rand), amount, 0);
 
 				double taxAmount = taxAmount();
@@ -411,21 +412,18 @@ public class LotteryGame
 				// let's throw it to an int.
 				final int matAmount = (int)Etc.formatAmount(amount, lConfig.useiConomy());
 				amount = (double)matAmount;
-				Bukkit.broadcastMessage(formatCustomMessageLive("WinnerCongrat", players.get(rand),
-																Etc.formatCost(amount,lConfig)));
+				Bukkit.broadcastMessage(
+						formatCustomMessageLive(
+								"WinnerCongrat", players.get(rand), Etc.formatCost(amount, lConfig)));
 				Bukkit.broadcastMessage(formatCustomMessageLive("WinnerCongratClaim"));
 				addToWinnerList(players.get(rand), amount, lConfig.getMaterial());
 
 				addToClaimList(players.get(rand), matAmount, lConfig.getMaterial());
 			}
-			Bukkit.broadcastMessage(formatCustomMessageLive("WinnerSummary",
-															Etc.realPlayersFromList(players).size() ,
-															Etc.pluralWording(
-																	"player", Etc.realPlayersFromList(players).size()),
-															players.size(),
-															Etc.pluralWording("ticket", players.size())
-														   )
-								   );
+			Bukkit.broadcastMessage(
+					formatCustomMessageLive(
+							"WinnerSummary", Etc.realPlayersFromList(players).size(), Etc.pluralWording(
+							"player", Etc.realPlayersFromList(players).size()), players.size(), Etc.pluralWording("ticket", players.size())));
 
 			// Add last winner to config.
 			lConfig.setLastwinner(players.get(rand));
@@ -462,13 +460,15 @@ public class LotteryGame
 		}
 	}
 
-	public void broadcastMessage(final String topic, final Object... args) {
+	public void broadcastMessage(final String topic, final Object... args)
+	{
 		try
 		{
 			String message = lConfig.getMessage(topic).get(0);
 			String outMessage = formatCustomMessageLive(message, args);
 
-			for(Player player : plugin.getServer().getOnlinePlayers()) {
+			for (Player player : plugin.getServer().getOnlinePlayers())
+			{
 
 				outMessage = outMessage.replaceAll("%player%", player.getDisplayName());
 				player.sendMessage(outMessage);
@@ -476,11 +476,12 @@ public class LotteryGame
 		}
 		catch (Exception e)
 		{
-			plugin.getLogger().log(Level.WARNING,"Invalid Translation Key", e);
+			plugin.getLogger().log(Level.WARNING, "Invalid Translation Key", e);
 		}
 	}
 
-	public void sendMessage (final Player player, final String topic, final Object... args) {
+	public void sendMessage(final Player player, final String topic, final Object... args)
+	{
 		try
 		{
 			String message = lConfig.getMessage(topic).get(0);
@@ -490,11 +491,11 @@ public class LotteryGame
 		}
 		catch (Exception e)
 		{
-			plugin.getLogger().log(Level.WARNING,"Invalid Translation Key", e);
+			plugin.getLogger().log(Level.WARNING, "Invalid Translation Key", e);
 		}
 	}
 
-	public String formatCustomMessageLive(final String message,final Object... args)
+	public String formatCustomMessageLive(final String message, final Object... args)
 	{
 		//Lets give timeLeft back if user provie %draw%
 		String outMessage = message.replaceAll("%draw%", timeUntil(true));
@@ -508,8 +509,9 @@ public class LotteryGame
 		// %pot%
 		outMessage = outMessage.replaceAll("%pot%", Etc.formatCost(winningAmount(), lConfig));
 
-		for (int i = 1; i <= args.length; i++) {
-			outMessage = outMessage.replaceAll("%"+i+"%", args[i].toString());
+		for (int i = 1; i <= args.length; i++)
+		{
+			outMessage = outMessage.replaceAll("%" + i + "%", args[i].toString());
 		}
 
 		// Lets get some colors on this, shall we?

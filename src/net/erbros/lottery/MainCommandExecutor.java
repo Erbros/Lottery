@@ -154,8 +154,7 @@ public class MainCommandExecutor implements CommandExecutor
 		if (lConfig.getMaxTicketsEachUser() > 1)
 		{
 			player.sendMessage(
-					ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "You have " + ChatColor.RED + lGame
-							.playerInList(
+					ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "You have " + ChatColor.RED + lGame.playerInList(
 							(Player)sender) + " " + ChatColor.WHITE + Etc.pluralWording(
 							"ticket", lGame.playerInList(
 							(Player)sender)));
@@ -290,8 +289,7 @@ public class MainCommandExecutor implements CommandExecutor
 			{
 				player.sendMessage(
 						ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "You got " + buyTickets + " " + Etc.pluralWording(
-								"ticket",
-								buyTickets) + " for " + ChatColor.RED + lConfig.getCost() * buyTickets + " " + Etc.formatMaterialName(
+								"ticket", buyTickets) + " for " + ChatColor.RED + lConfig.getCost() * buyTickets + " " + Etc.formatMaterialName(
 								lConfig.getMaterial()));
 			}
 			// Can a user buy more than one ticket? How many
