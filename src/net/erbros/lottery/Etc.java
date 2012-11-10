@@ -229,16 +229,16 @@ public class Etc
 		return newInt > 0 ? newInt : 0;
 	}
 
-	public static int parseDouble(final String arg)
+	public static double parseDouble(final String arg)
 	{
-		int newInt = 0;
+		double newDouble = 0;
 		try
 		{
-			newInt = Integer.parseInt(arg);
+			newDouble = Double.parseDouble(arg);
 		}
 		catch (NumberFormatException e)
 		{
 		}
-		return newInt > 0 ? newInt : 0;
+		return newDouble > 0 ? newDouble : 0;
 	}
 }
