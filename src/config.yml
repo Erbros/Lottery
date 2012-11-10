@@ -85,20 +85,7 @@ message:
     ConfigMax: '%prefix% Max amount of tickets changed to &c%0%'
     ConfigReload: '%prefix% Config reloaded'
 
-    Help1: '%prefix% Help commands'
-    Help2: '%prefix% &c/lottery&r : Basic lottery info.'
-    Help3: '%prefix% &c/lottery buy <n>&r : Buy ticket(s).'
-    Help4: '%prefix% &c/lottery claim&r : Claim outstandig wins.'
-    Help5: '%prefix% &c/lottery winners&r : Check last winners.'
-    Help6: '%prefix% &1/lottery draw&r : Draw lottery.'
-    Help7: '%prefix% &1/lottery addtopot&r : Add number to pot.'
-    Help8: '%prefix% &1/lottery config&r : Edit the config.'
-
+    Help: '%prefix% Help commands%newline%%prefix% &c/lottery&r : Basic lottery info.%newline%%prefix% &c/lottery buy <n>&r : Buy ticket(s).%newline%%prefix% &c/lottery claim&r : Claim outstandig wins.%newline%%prefix% &c/lottery winners&r : Check last winners.%newline%%prefix% &1/lottery draw&r : Draw lottery.%newline%%prefix% &1/lottery addtopot&r : Add number to pot.%newline%%prefix% &1/lottery config&r : Edit the config.'
     HelpPot: '%prefix% /lottery addtopot <number>'
-
-    HelpConfig1: '%prefix% Edit config commands'
-    HelpConfig2: '%prefix% &c/lottery config cost <i>'
-    HelpConfig3: '%prefix% &c/lottery config hours <i>'
-    HelpConfig4: '%prefix% &c/lottery config maxTicketsEachUser <i>'
-    HelpConfig5: '%prefix% &c/lottery config reload'
+    HelpConfig: '%prefix% Edit config commands%newline%%prefix% &c/lottery config cost <i>%newline%%prefix%&c/lottery config hours <i>%newline%%prefix% &c/lottery config maxTicketsEachUser <i>%newline%%prefix% &c/lottery config reload'
 

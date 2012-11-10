@@ -3,6 +3,7 @@ package net.erbros.lottery;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -344,8 +345,7 @@ public class LotteryGame
 
 		if (players.isEmpty())
 		{
-			Bukkit.broadcastMessage(
-					ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "No tickets sold this round. That's a shame.");
+			Bukkit.broadcastMessage(formatCustomMessageLive("NoWinnerTickets"));
 			return false;
 		}
 		else
@@ -368,10 +368,7 @@ public class LotteryGame
 					addToWinnerList("Jackpot", jackpot, lConfig.useiConomy() ? 0 : lConfig.getMaterial());
 					lConfig.setLastwinner("Jackpot");
 					lConfig.setLastwinneramount(jackpot);
-					Bukkit.broadcastMessage(
-							ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "No winner, we have a rollover! " + ChatColor.GREEN + ((lConfig.useiConomy()) ? plugin.Method.format(
-									jackpot) : +jackpot + " " + Etc.formatMaterialName(
-									lConfig.getMaterial())) + ChatColor.WHITE + " went to jackpot!");
+					Bukkit.broadcastMessage(formatCustomMessageLive("NoWinnerRollover",Etc.formatCost(jackpot,lConfig)));
 					clearAfterGettingWinner();
 					return true;
 				}
@@ -395,9 +392,8 @@ public class LotteryGame
 				// Add money to account.
 				account.add(amount);
 				// Announce the winner:
-				Bukkit.broadcastMessage(
-						ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Congratulations to " + players.get(
-								rand) + " for winning " + ChatColor.RED + plugin.Method.format(amount) + ".");
+				Bukkit.broadcastMessage(formatCustomMessageLive("WinnerCongrat", players.get(rand),
+																Etc.formatCost(amount, lConfig)));
 				addToWinnerList(players.get(rand), amount, 0);
 
 				double taxAmount = taxAmount();
@@ -415,22 +411,21 @@ public class LotteryGame
 				// let's throw it to an int.
 				final int matAmount = (int)Etc.formatAmount(amount, lConfig.useiConomy());
 				amount = (double)matAmount;
-				Bukkit.broadcastMessage(
-						ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Congratulations to " + players.get(
-								rand) + " for winning " + ChatColor.RED + matAmount + " " + Etc.formatMaterialName(
-								lConfig.getMaterial()) + ".");
-				Bukkit.broadcastMessage(
-						ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Use " + ChatColor.RED + "/lottery claim" + ChatColor.WHITE + " to claim the winnings.");
+				Bukkit.broadcastMessage(formatCustomMessageLive("WinnerCongrat", players.get(rand),
+																Etc.formatCost(amount,lConfig)));
+				Bukkit.broadcastMessage(formatCustomMessageLive("WinnerCongratClaim"));
 				addToWinnerList(players.get(rand), amount, lConfig.getMaterial());
 
 				addToClaimList(players.get(rand), matAmount, lConfig.getMaterial());
 			}
-			Bukkit.broadcastMessage(
-					ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "There was a total of " + Etc.realPlayersFromList(
-							players).size() + " " + Etc.pluralWording(
-							"player", Etc.realPlayersFromList(
-							players).size()) + " buying " + players.size() + " " + Etc.pluralWording(
-							"ticket", players.size()));
+			Bukkit.broadcastMessage(formatCustomMessageLive("WinnerSummary",
+															Etc.realPlayersFromList(players).size() ,
+															Etc.pluralWording(
+																	"player", Etc.realPlayersFromList(players).size()),
+															players.size(),
+															Etc.pluralWording("ticket", players.size())
+														   )
+								   );
 
 			// Add last winner to config.
 			lConfig.setLastwinner(players.get(rand));
@@ -467,16 +462,45 @@ public class LotteryGame
 		}
 	}
 
-	public String formatCustomMessageLive(final String message, final Player player, final Object... args)
+	public void broadcastMessage(final String topic, final Object... args) {
+		try
+		{
+			String message = lConfig.getMessage(topic).get(0);
+			String outMessage = formatCustomMessageLive(message, args);
+
+			for(Player player : plugin.getServer().getOnlinePlayers()) {
+
+				outMessage = outMessage.replaceAll("%player%", player.getDisplayName());
+				player.sendMessage(outMessage);
+			}
+		}
+		catch (Exception e)
+		{
+			plugin.getLogger().log(Level.WARNING,"Invalid Translation Key", e);
+		}
+	}
+
+	public void sendMessage (final Player player, final String topic, final Object... args) {
+		try
+		{
+			String message = lConfig.getMessage(topic).get(0);
+			String outMessage = formatCustomMessageLive(message, args);
+			outMessage = outMessage.replaceAll("%player%", player.getDisplayName());
+			player.sendMessage(outMessage);
+		}
+		catch (Exception e)
+		{
+			plugin.getLogger().log(Level.WARNING,"Invalid Translation Key", e);
+		}
+	}
+
+	public String formatCustomMessageLive(final String message,final Object... args)
 	{
 		//Lets give timeLeft back if user provie %draw%
 		String outMessage = message.replaceAll("%draw%", timeUntil(true));
 
 		//Lets give timeLeft with full words back if user provie %drawLong%
 		outMessage = outMessage.replaceAll("%drawLong%", timeUntil(false));
-
-		// If %player% = Player name
-		outMessage = outMessage.replaceAll("%player%", player.getDisplayName());
 
 		// %cost% = cost
 		outMessage = outMessage.replaceAll("%cost%", String.valueOf(Etc.formatCost(lConfig.getCost(), lConfig)));
@@ -491,8 +515,6 @@ public class LotteryGame
 		// Lets get some colors on this, shall we?
 		outMessage = outMessage.replaceAll("(&([a-f0-9]))", "\u00A7$2");
 		return outMessage;
-
-
 	}
 
 
