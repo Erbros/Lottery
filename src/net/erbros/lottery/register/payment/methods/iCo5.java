@@ -1,14 +1,13 @@
 package net.erbros.lottery.register.payment.methods;
 
-import net.erbros.lottery.register.payment.Method;
+import org.bukkit.plugin.Plugin;
 import com.iConomy.iConomy;
 import com.iConomy.system.Account;
 import com.iConomy.system.BankAccount;
 import com.iConomy.system.Holdings;
 import com.iConomy.util.Constants;
+import net.erbros.lottery.register.payment.Method;
 
-
-import org.bukkit.plugin.Plugin;
 
 /**
  * iConomy 5 Implementation of Method
@@ -17,208 +16,288 @@ import org.bukkit.plugin.Plugin;
  * @copyright (c) 2011
  * @license AOL license <http://aol.nexua.org>
  */
-public class iCo5 implements Method {
-    private iConomy iConomy;
+public class iCo5 implements Method
+{
+	private iConomy iConomy;
 
-    public iConomy getPlugin() {
-        return this.iConomy;
-    }
+	public iConomy getPlugin()
+	{
+		return this.iConomy;
+	}
 
-    public String getName() {
-        return "iConomy";
-    }
+	public String getName()
+	{
+		return "iConomy";
+	}
 
-    public String getVersion() {
-        return "5";
-    }
-    
-    public int fractionalDigits() {
-    	return 2;
-    }
+	public String getVersion()
+	{
+		return "5";
+	}
 
-    public String format(double amount) {
-        return com.iConomy.iConomy.format(amount);
-    }
+	public int fractionalDigits()
+	{
+		return 2;
+	}
 
-    public boolean hasBanks() {
-        return Constants.Banking;
-    }
+	public String format(double amount)
+	{
+		return com.iConomy.iConomy.format(amount);
+	}
 
-    public boolean hasBank(String bank) {
-        return (hasBanks()) && com.iConomy.iConomy.Banks.exists(bank);
-    }
+	public boolean hasBanks()
+	{
+		return Constants.Banking;
+	}
 
-    public boolean hasAccount(String name) {
-        return com.iConomy.iConomy.hasAccount(name);
-    }
+	public boolean hasBank(String bank)
+	{
+		return (hasBanks()) && com.iConomy.iConomy.Banks.exists(bank);
+	}
 
-    public boolean hasBankAccount(String bank, String name) {
-        return (hasBank(bank)) && com.iConomy.iConomy.getBank(bank).hasAccount(name);
-    }
+	public boolean hasAccount(String name)
+	{
+		return com.iConomy.iConomy.hasAccount(name);
+	}
 
-    public MethodAccount getAccount(String name) {
-        return new iCoAccount(com.iConomy.iConomy.getAccount(name));
-    }
+	public boolean hasBankAccount(String bank, String name)
+	{
+		return (hasBank(bank)) && com.iConomy.iConomy.getBank(bank).hasAccount(name);
+	}
 
-    public MethodBankAccount getBankAccount(String bank, String name) {
-        return new iCoBankAccount(com.iConomy.iConomy.getBank(bank).getAccount(name));
-    }
+	public MethodAccount getAccount(String name)
+	{
+		return new iCoAccount(com.iConomy.iConomy.getAccount(name));
+	}
 
-    public boolean isCompatible(Plugin plugin) {
-        return plugin.getDescription().getName().equalsIgnoreCase("iconomy") 
-            && plugin.getClass().getName().equals("com.iConomy.iConomy")
-            && plugin instanceof iConomy;
-    }
+	public MethodBankAccount getBankAccount(String bank, String name)
+	{
+		return new iCoBankAccount(com.iConomy.iConomy.getBank(bank).getAccount(name));
+	}
 
-    public void setPlugin(Plugin plugin) {
-        iConomy = (iConomy)plugin;
-    }
+	public boolean isCompatible(Plugin plugin)
+	{
+		return plugin.getDescription().getName().equalsIgnoreCase("iconomy") && plugin.getClass().getName().equals(
+				"com.iConomy.iConomy") && plugin instanceof iConomy;
+	}
 
-    public class iCoAccount implements MethodAccount {
-        private Account account;
-        private Holdings holdings;
+	public void setPlugin(Plugin plugin)
+	{
+		iConomy = (iConomy)plugin;
+	}
 
-        public iCoAccount(Account account) {
-            this.account = account;
-            this.holdings = account.getHoldings();
-        }
+	public class iCoAccount implements MethodAccount
+	{
+		private Account account;
+		private Holdings holdings;
 
-        public Account getiCoAccount() {
-            return account;
-        }
+		public iCoAccount(Account account)
+		{
+			this.account = account;
+			this.holdings = account.getHoldings();
+		}
 
-        public double balance() {
-            return this.holdings.balance();
-        }
+		public Account getiCoAccount()
+		{
+			return account;
+		}
 
-        public boolean set(double amount) {
-            if(this.holdings == null) return false;
-            this.holdings.set(amount);
-            return true;
-        }
+		public double balance()
+		{
+			return this.holdings.balance();
+		}
 
-        public boolean add(double amount) {
-            if(this.holdings == null) return false;
-            this.holdings.add(amount);
-            return true;
-        }
+		public boolean set(double amount)
+		{
+			if (this.holdings == null)
+			{
+				return false;
+			}
+			this.holdings.set(amount);
+			return true;
+		}
 
-        public boolean subtract(double amount) {
-            if(this.holdings == null) return false;
-            this.holdings.subtract(amount);
-            return true;
-        }
+		public boolean add(double amount)
+		{
+			if (this.holdings == null)
+			{
+				return false;
+			}
+			this.holdings.add(amount);
+			return true;
+		}
 
-        public boolean multiply(double amount) {
-            if(this.holdings == null) return false;
-            this.holdings.multiply(amount);
-            return true;
-        }
+		public boolean subtract(double amount)
+		{
+			if (this.holdings == null)
+			{
+				return false;
+			}
+			this.holdings.subtract(amount);
+			return true;
+		}
 
-        public boolean divide(double amount) {
-            if(this.holdings == null) return false;
-            this.holdings.divide(amount);
-            return true;
-        }
+		public boolean multiply(double amount)
+		{
+			if (this.holdings == null)
+			{
+				return false;
+			}
+			this.holdings.multiply(amount);
+			return true;
+		}
 
-        public boolean hasEnough(double amount) {
-            return this.holdings.hasEnough(amount);
-        }
+		public boolean divide(double amount)
+		{
+			if (this.holdings == null)
+			{
+				return false;
+			}
+			this.holdings.divide(amount);
+			return true;
+		}
 
-        public boolean hasOver(double amount) {
-            return this.holdings.hasOver(amount);
-        }
+		public boolean hasEnough(double amount)
+		{
+			return this.holdings.hasEnough(amount);
+		}
 
-        public boolean hasUnder(double amount) {
-            return this.holdings.hasUnder(amount);
-        }
+		public boolean hasOver(double amount)
+		{
+			return this.holdings.hasOver(amount);
+		}
 
-        public boolean isNegative() {
-            return this.holdings.isNegative();
-        }
+		public boolean hasUnder(double amount)
+		{
+			return this.holdings.hasUnder(amount);
+		}
 
-        public boolean remove() {
-            if(this.account == null) return false;
-            this.account.remove();
-            return true;
-        }
-    }
+		public boolean isNegative()
+		{
+			return this.holdings.isNegative();
+		}
 
-    public class iCoBankAccount implements MethodBankAccount {
-        private BankAccount account;
-        private Holdings holdings;
+		public boolean remove()
+		{
+			if (this.account == null)
+			{
+				return false;
+			}
+			this.account.remove();
+			return true;
+		}
+	}
 
-        public iCoBankAccount(BankAccount account) {
-            this.account = account;
-            this.holdings = account.getHoldings();
-        }
 
-        public BankAccount getiCoBankAccount() {
-            return account;
-        }
+	public class iCoBankAccount implements MethodBankAccount
+	{
+		private BankAccount account;
+		private Holdings holdings;
 
-        public String getBankName() {
-            return this.account.getBankName();
-        }
+		public iCoBankAccount(BankAccount account)
+		{
+			this.account = account;
+			this.holdings = account.getHoldings();
+		}
 
-        public int getBankId() {
-            return this.account.getBankId();
-        }
+		public BankAccount getiCoBankAccount()
+		{
+			return account;
+		}
 
-        public double balance() {
-            return this.holdings.balance();
-        }
+		public String getBankName()
+		{
+			return this.account.getBankName();
+		}
 
-        public boolean set(double amount) {
-            if(this.holdings == null) return false;
-            this.holdings.set(amount);
-            return true;
-        }
+		public int getBankId()
+		{
+			return this.account.getBankId();
+		}
 
-        public boolean add(double amount) {
-            if(this.holdings == null) return false;
-            this.holdings.add(amount);
-            return true;
-        }
+		public double balance()
+		{
+			return this.holdings.balance();
+		}
 
-        public boolean subtract(double amount) {
-            if(this.holdings == null) return false;
-            this.holdings.subtract(amount);
-            return true;
-        }
+		public boolean set(double amount)
+		{
+			if (this.holdings == null)
+			{
+				return false;
+			}
+			this.holdings.set(amount);
+			return true;
+		}
 
-        public boolean multiply(double amount) {
-            if(this.holdings == null) return false;
-            this.holdings.multiply(amount);
-            return true;
-        }
+		public boolean add(double amount)
+		{
+			if (this.holdings == null)
+			{
+				return false;
+			}
+			this.holdings.add(amount);
+			return true;
+		}
 
-        public boolean divide(double amount) {
-            if(this.holdings == null) return false;
-            this.holdings.divide(amount);
-            return true;
-        }
+		public boolean subtract(double amount)
+		{
+			if (this.holdings == null)
+			{
+				return false;
+			}
+			this.holdings.subtract(amount);
+			return true;
+		}
 
-        public boolean hasEnough(double amount) {
-            return this.holdings.hasEnough(amount);
-        }
+		public boolean multiply(double amount)
+		{
+			if (this.holdings == null)
+			{
+				return false;
+			}
+			this.holdings.multiply(amount);
+			return true;
+		}
 
-        public boolean hasOver(double amount) {
-            return this.holdings.hasOver(amount);
-        }
+		public boolean divide(double amount)
+		{
+			if (this.holdings == null)
+			{
+				return false;
+			}
+			this.holdings.divide(amount);
+			return true;
+		}
 
-        public boolean hasUnder(double amount) {
-            return this.holdings.hasUnder(amount);
-        }
+		public boolean hasEnough(double amount)
+		{
+			return this.holdings.hasEnough(amount);
+		}
 
-        public boolean isNegative() {
-            return this.holdings.isNegative();
-        }
+		public boolean hasOver(double amount)
+		{
+			return this.holdings.hasOver(amount);
+		}
 
-        public boolean remove() {
-            if(this.account == null) return false;
-            this.account.remove();
-            return true;
-        }
-    }
+		public boolean hasUnder(double amount)
+		{
+			return this.holdings.hasUnder(amount);
+		}
+
+		public boolean isNegative()
+		{
+			return this.holdings.isNegative();
+		}
+
+		public boolean remove()
+		{
+			if (this.account == null)
+			{
+				return false;
+			}
+			this.account.remove();
+			return true;
+		}
+	}
 }

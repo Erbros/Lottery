@@ -5,25 +5,30 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-public class PlayerJoinListener implements Listener {
 
-    final private Lottery plugin;
-    final private LotteryConfig lConfig;
-    final private LotteryGame lGame;
+public class PlayerJoinListener implements Listener
+{
 
-    public PlayerJoinListener(final Lottery plugin) {
-        this.plugin = plugin;
-        lGame = plugin.getLotteryGame();
-        lConfig = plugin.getLotteryConfig();
-    }
+	final private Lottery plugin;
+	final private LotteryConfig lConfig;
+	final private LotteryGame lGame;
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onPlayerJoin(final PlayerJoinEvent event) {
-        // Send the player some info about time until lottery draw?
+	public PlayerJoinListener(final Lottery plugin)
+	{
+		this.plugin = plugin;
+		lGame = plugin.getLotteryGame();
+		lConfig = plugin.getLotteryConfig();
+	}
 
-        for (String msg : lConfig.getMsgWelcome()) {
-            event.getPlayer().sendMessage(lGame.formatCustomMessageLive(msg, event.getPlayer()));
-            lConfig.debugMsg("Welcome msg sent: " + msg);
-        }
-    }
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onPlayerJoin(final PlayerJoinEvent event)
+	{
+		// Send the player some info about time until lottery draw?
+
+		for (String msg : lConfig.getMsgWelcome())
+		{
+			event.getPlayer().sendMessage(lGame.formatCustomMessageLive(msg, event.getPlayer()));
+			lConfig.debugMsg("Welcome msg sent: " + msg);
+		}
+	}
 }

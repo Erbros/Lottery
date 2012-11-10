@@ -6,229 +6,269 @@ import java.util.List;
 import java.util.logging.Level;
 import org.bukkit.configuration.file.FileConfiguration;
 
-public class LotteryConfig {
 
-    final private Lottery plugin;
-    private FileConfiguration config;
-    private double cost;
-    private double hours;
-    private long nextexec;
-    private boolean useiConomy;
-    private int material;
-    private double extraInPot;
-    private boolean broadcastBuying;
-    private int broadcastBuyingTime;
-    private boolean welcomeMessage;
-    private double netPayout;
-    private boolean clearExtraInPot;
-    private int maxTicketsEachUser;
-    private int ticketsAvailable;
-    private double jackpot;
-    private String lastwinner;
-    private double lastwinneramount;
-    private List<String> msgWelcome;
-    private boolean buyingExtendDeadline;
-    private int buyingExtendRemaining;
-    private double buyingExtendBase;
-    private double buyingExtendMultiplier;
+public class LotteryConfig
+{
 
-    public LotteryConfig(final Lottery plugin) {
-        this.plugin = plugin;
-        this.config = plugin.getConfig();
-    }
+	final private Lottery plugin;
+	private FileConfiguration config;
+	private double cost;
+	private double hours;
+	private long nextexec;
+	private boolean useiConomy;
+	private int material;
+	private double extraInPot;
+	private boolean broadcastBuying;
+	private int broadcastBuyingTime;
+	private boolean welcomeMessage;
+	private double netPayout;
+	private boolean clearExtraInPot;
+	private int maxTicketsEachUser;
+	private int ticketsAvailable;
+	private double jackpot;
+	private String lastwinner;
+	private double lastwinneramount;
+	private List<String> msgWelcome;
+	private boolean buyingExtendDeadline;
+	private int buyingExtendRemaining;
+	private double buyingExtendBase;
+	private double buyingExtendMultiplier;
 
-    public void loadConfig() {
-        plugin.reloadConfig();
-        config = plugin.getConfig();
+	public LotteryConfig(final Lottery plugin)
+	{
+		this.plugin = plugin;
+		this.config = plugin.getConfig();
+	}
 
-        debugMsg("Loading Lottery configuration");
+	public void loadConfig()
+	{
+		plugin.reloadConfig();
+		config = plugin.getConfig();
 
-        hours = config.getDouble("config.hours", 24);
+		debugMsg("Loading Lottery configuration");
 
-        useiConomy = config.getBoolean("config.useiConomy", true);
-        material = config.getInt("config.material", 266);
-        broadcastBuying = config.getBoolean("config.broadcastBuying", true);
-        broadcastBuyingTime = config.getInt("config.broadcastBuyingTime", 120);
-        welcomeMessage = config.getBoolean("config.welcomeMessage", true);
-        extraInPot = config.getDouble("config.extraInPot", 0);
-        clearExtraInPot = config.getBoolean("config.clearExtraInPot", true);
-        netPayout = config.getDouble("config.netPayout", 100);
-        maxTicketsEachUser = config.getInt("config.maxTicketsEachUser", 1);
-        ticketsAvailable = config.getInt("config.numberOfTicketsAvailable", 0);
-        jackpot = config.getDouble("config.jackpot", 0);
-        nextexec = config.getLong("config.nextexec");
-        cost = Etc.formatAmount(config.getDouble("config.cost", 5), useiConomy);
-        lastwinner = config.getString("config.lastwinner", "");
-        lastwinneramount = config.getDouble("config.lastwinneramount", 0);
-        buyingExtendDeadline = config.getBoolean("config.buyingExtend.enabled", true);
-        buyingExtendRemaining = config.getInt("config.buyingExtend.secondsRemaining", 30);
-        buyingExtendBase = config.getDouble("config.buyingExtend.extendBase", 15);
-        buyingExtendMultiplier = config.getDouble("config.buyingExtend.extendMultiplier", 1.5);
+		hours = config.getDouble("config.hours", 24);
 
-        // Load messages?
-        loadCustomMessages();
-        // Then lets save this stuff :)
-        plugin.saveConfig();
-    }
+		useiConomy = config.getBoolean("config.useiConomy", true);
+		material = config.getInt("config.material", 266);
+		broadcastBuying = config.getBoolean("config.broadcastBuying", true);
+		broadcastBuyingTime = config.getInt("config.broadcastBuyingTime", 120);
+		welcomeMessage = config.getBoolean("config.welcomeMessage", true);
+		extraInPot = config.getDouble("config.extraInPot", 0);
+		clearExtraInPot = config.getBoolean("config.clearExtraInPot", true);
+		netPayout = config.getDouble("config.netPayout", 100);
+		maxTicketsEachUser = config.getInt("config.maxTicketsEachUser", 1);
+		ticketsAvailable = config.getInt("config.numberOfTicketsAvailable", 0);
+		jackpot = config.getDouble("config.jackpot", 0);
+		nextexec = config.getLong("config.nextexec");
+		cost = Etc.formatAmount(config.getDouble("config.cost", 5), useiConomy);
+		lastwinner = config.getString("config.lastwinner", "");
+		lastwinneramount = config.getDouble("config.lastwinneramount", 0);
+		buyingExtendDeadline = config.getBoolean("config.buyingExtend.enabled", true);
+		buyingExtendRemaining = config.getInt("config.buyingExtend.secondsRemaining", 30);
+		buyingExtendBase = config.getDouble("config.buyingExtend.extendBase", 15);
+		buyingExtendMultiplier = config.getDouble("config.buyingExtend.extendMultiplier", 1.5);
 
-    public void set(final String path, final Object value) {
-        config.set(path, value);
-        plugin.saveConfig();
-    }
+		// Load messages?
+		loadCustomMessages();
+		// Then lets save this stuff :)
+		plugin.saveConfig();
+	}
 
-    public void loadCustomMessages() {
-        msgWelcome = formatCustomMessage("message.welcome", "&6[LOTTERY] &fDraw in: &c%drawLong%");
-    }
+	public void set(final String path, final Object value)
+	{
+		config.set(path, value);
+		plugin.saveConfig();
+	}
 
-    public List<String> formatCustomMessage(final String node, final String def) {
-        final List<String> fList = new ArrayList<String>();
-        // Lets find a msg.
-        final String msg = config.getString(node, def);
-        config.set(node, msg);
+	public void loadCustomMessages()
+	{
+		msgWelcome = formatCustomMessage("message.welcome", "&6[LOTTERY] &fDraw in: &c%drawLong%");
+	}
 
-        // Lets put this in a arrayList in case we want more than one line.
-        Collections.addAll(fList, msg.split("%newline%"));
-        return fList;
-    }
+	public List<String> formatCustomMessage(final String node, final String def)
+	{
+		final List<String> fList = new ArrayList<String>();
+		// Lets find a msg.
+		final String msg = config.getString(node, def);
+		config.set(node, msg);
 
-    // Enable some debugging?
-    public void debugMsg(final String msg) {
-        if (config.getBoolean("config.debug") && msg != null) {
-            plugin.getLogger().log(Level.INFO, msg);
-        }
-    }
+		// Lets put this in a arrayList in case we want more than one line.
+		Collections.addAll(fList, msg.split("%newline%"));
+		return fList;
+	}
 
-    public double getCost() {
-        return cost;
-    }
+	// Enable some debugging?
+	public void debugMsg(final String msg)
+	{
+		if (config.getBoolean("config.debug") && msg != null)
+		{
+			plugin.getLogger().log(Level.INFO, msg);
+		}
+	}
 
-    public void setCost(final double cost) {
-        this.cost = cost;
-        set("config.cost", cost);
-    }
+	public double getCost()
+	{
+		return cost;
+	}
 
-    public double getHours() {
-        return hours;
-    }
+	public void setCost(final double cost)
+	{
+		this.cost = cost;
+		set("config.cost", cost);
+	}
 
-    public void setHours(final double hours) {
-        this.hours = hours;
-        set("config.hours", hours);
-    }
+	public double getHours()
+	{
+		return hours;
+	}
 
-    public long getNextexec() {
-        return nextexec;
-    }
+	public void setHours(final double hours)
+	{
+		this.hours = hours;
+		set("config.hours", hours);
+	}
 
-    public void setNextexec(final long nextexec) {
-        this.nextexec = nextexec;
-        set("config.nextexec", nextexec);
-    }
+	public long getNextexec()
+	{
+		return nextexec;
+	}
 
-    public boolean useiConomy() {
-        return useiConomy;
-    }
+	public void setNextexec(final long nextexec)
+	{
+		this.nextexec = nextexec;
+		set("config.nextexec", nextexec);
+	}
 
-    public int getMaterial() {
-        return material;
-    }
+	public boolean useiConomy()
+	{
+		return useiConomy;
+	}
 
-    public double getExtraInPot() {
-        return extraInPot;
-    }
+	public int getMaterial()
+	{
+		return material;
+	}
 
-    public void setExtraInPot(final double extraInPot) {
-        this.extraInPot = extraInPot;
-        set("config.extraInPot", extraInPot);
-    }
+	public double getExtraInPot()
+	{
+		return extraInPot;
+	}
 
-    public void addExtraInPot(final double extra) {
-        extraInPot += extra;
-        setExtraInPot(extraInPot);
-    }
+	public void setExtraInPot(final double extraInPot)
+	{
+		this.extraInPot = extraInPot;
+		set("config.extraInPot", extraInPot);
+	}
 
-    public boolean useBroadcastBuying() {
-        return broadcastBuying;
-    }
+	public void addExtraInPot(final double extra)
+	{
+		extraInPot += extra;
+		setExtraInPot(extraInPot);
+	}
 
-    public int getBroadcastBuyingTime() {
-        return broadcastBuyingTime;
-    }
+	public boolean useBroadcastBuying()
+	{
+		return broadcastBuying;
+	}
 
-    public boolean useWelcomeMessage() {
-        return welcomeMessage;
-    }
+	public int getBroadcastBuyingTime()
+	{
+		return broadcastBuyingTime;
+	}
 
-    public double getNetPayout() {
-        return netPayout;
-    }
+	public boolean useWelcomeMessage()
+	{
+		return welcomeMessage;
+	}
 
-    public void setNetPayout(final double netPayout) {
-        this.netPayout = netPayout;
-        set("config.netPayout", netPayout);
-    }
+	public double getNetPayout()
+	{
+		return netPayout;
+	}
 
-    public boolean clearExtraInPot() {
-        return clearExtraInPot;
-    }
+	public void setNetPayout(final double netPayout)
+	{
+		this.netPayout = netPayout;
+		set("config.netPayout", netPayout);
+	}
 
-    public int getMaxTicketsEachUser() {
-        return maxTicketsEachUser;
-    }
+	public boolean clearExtraInPot()
+	{
+		return clearExtraInPot;
+	}
 
-    public void setMaxTicketsEachUser(final int maxTicketsEachUser) {
-        this.maxTicketsEachUser = maxTicketsEachUser;
-        set("config.maxTicketsEachUser", maxTicketsEachUser);
-    }
+	public int getMaxTicketsEachUser()
+	{
+		return maxTicketsEachUser;
+	}
 
-    public int getTicketsAvailable() {
-        return ticketsAvailable;
-    }
+	public void setMaxTicketsEachUser(final int maxTicketsEachUser)
+	{
+		this.maxTicketsEachUser = maxTicketsEachUser;
+		set("config.maxTicketsEachUser", maxTicketsEachUser);
+	}
 
-    public double getJackpot() {
-        return jackpot;
-    }
+	public int getTicketsAvailable()
+	{
+		return ticketsAvailable;
+	}
 
-    public void setJackpot(final double jackpot) {
-        this.jackpot = jackpot;
-        set("config.jackpot", jackpot);
-    }
+	public double getJackpot()
+	{
+		return jackpot;
+	}
 
-    public List<String> getMsgWelcome() {
-        return Collections.unmodifiableList(msgWelcome);
-    }
+	public void setJackpot(final double jackpot)
+	{
+		this.jackpot = jackpot;
+		set("config.jackpot", jackpot);
+	}
 
-    public String getLastwinner() {
-        return lastwinner;
-    }
+	public List<String> getMsgWelcome()
+	{
+		return Collections.unmodifiableList(msgWelcome);
+	}
 
-    public void setLastwinner(final String lastwinner) {
-        this.lastwinner = lastwinner;
-        set("config.lastwinner", lastwinner);
-    }
+	public String getLastwinner()
+	{
+		return lastwinner;
+	}
 
-    public double getLastwinneramount() {
-        return lastwinneramount;
-    }
+	public void setLastwinner(final String lastwinner)
+	{
+		this.lastwinner = lastwinner;
+		set("config.lastwinner", lastwinner);
+	}
 
-    public void setLastwinneramount(final double lastwinneramount) {
-        this.lastwinneramount = lastwinneramount;
-        set("config.lastwinneramount", lastwinneramount);
-    }
+	public double getLastwinneramount()
+	{
+		return lastwinneramount;
+	}
 
-    public boolean isBuyingExtendDeadline() {
-        return buyingExtendDeadline;
-    }
+	public void setLastwinneramount(final double lastwinneramount)
+	{
+		this.lastwinneramount = lastwinneramount;
+		set("config.lastwinneramount", lastwinneramount);
+	}
 
-    public int getBuyingExtendRemaining() {
-        return buyingExtendRemaining;
-    }
+	public boolean isBuyingExtendDeadline()
+	{
+		return buyingExtendDeadline;
+	}
 
-    public double getBuyingExtendBase() {
-        return buyingExtendBase;
-    }
+	public int getBuyingExtendRemaining()
+	{
+		return buyingExtendRemaining;
+	}
 
-    public double getBuyingExtendMultiplier() {
-        return buyingExtendMultiplier;
-    }
+	public double getBuyingExtendBase()
+	{
+		return buyingExtendBase;
+	}
+
+	public double getBuyingExtendMultiplier()
+	{
+		return buyingExtendMultiplier;
+	}
 }

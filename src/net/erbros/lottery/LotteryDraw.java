@@ -2,22 +2,29 @@ package net.erbros.lottery;
 
 import java.util.TimerTask;
 
-class LotteryDraw extends TimerTask {
 
-    final private Lottery plugin;
-    final private boolean draw;
+class LotteryDraw extends TimerTask
+{
 
-    public LotteryDraw(final Lottery plugin, final boolean draw) {
-        this.plugin = plugin;
-        this.draw = draw;
-    }
+	final private Lottery plugin;
+	final private boolean draw;
 
-    public void run() {
+	public LotteryDraw(final Lottery plugin, final boolean draw)
+	{
+		this.plugin = plugin;
+		this.draw = draw;
+	}
 
-        if (draw && plugin.isLotteryDue()) {
-            plugin.lotteryDraw();
-        } else {
-            plugin.extendLotteryDraw();
-        }
-    }
+	public void run()
+	{
+
+		if (draw && plugin.isLotteryDue())
+		{
+			plugin.lotteryDraw();
+		}
+		else
+		{
+			plugin.extendLotteryDraw();
+		}
+	}
 }
