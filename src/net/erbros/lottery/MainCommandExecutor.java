@@ -201,7 +201,7 @@ public class MainCommandExecutor implements CommandExecutor
 		sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Help commands");
 		sender.sendMessage(ChatColor.RED + "/lottery" + ChatColor.WHITE + " : Basic lottery info.");
 		sender.sendMessage(ChatColor.RED + "/lottery buy <n>" + ChatColor.WHITE + " : Buy ticket(s).");
-		sender.sendMessage(ChatColor.RED + "/lottery claim" + ChatColor.WHITE + " : Claim outstandig wins.");
+		sender.sendMessage(ChatColor.RED + "/lottery claim" + ChatColor.WHITE + " : Claim outstanding wins.");
 		sender.sendMessage(ChatColor.RED + "/lottery winners" + ChatColor.WHITE + " : Check last winners.");
 		// Are we dealing with admins?
 		if (sender.hasPermission("lottery.admin.draw"))
@@ -383,7 +383,7 @@ public class MainCommandExecutor implements CommandExecutor
 			else
 			{
 				winListPrice = split[1] + " " + Etc.formatMaterialName(
-						Integer.parseInt(split[2])).toString();
+						Integer.parseInt(split[2]));
 			}
 			sender.sendMessage((i + 1) + ". " + split[0] + " " + winListPrice);
 		}

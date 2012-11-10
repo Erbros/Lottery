@@ -132,7 +132,7 @@ public class LotteryGame
 
 	public double winningAmount()
 	{
-		double amount = 0;
+		double amount;
 		final ArrayList<String> players = playersInFile("lotteryPlayers.txt");
 		amount = players.size() * Etc.formatAmount(lConfig.getCost(), lConfig.useiConomy());
 		lConfig.debugMsg("playerno: " + players.size() + " amount: " + amount);
@@ -148,6 +148,27 @@ public class LotteryGame
 		lConfig.debugMsg("using config store: " + lConfig.getJackpot());
 		amount += lConfig.getJackpot();
 
+		// format it once again.
+		amount = Etc.formatAmount(amount, lConfig.useiConomy());
+
+		return amount;
+	}
+
+	public double taxAmount()
+	{
+		double amount = 0;
+
+		// we only have tax is the net payout is between 0 and 100.
+		if (lConfig.getNetPayout() >= 100 || lConfig.getNetPayout() <= 0 || !lConfig.useiConomy())
+		{
+			return amount;
+		}
+
+		final ArrayList<String> players = playersInFile("lotteryPlayers.txt");
+		amount = players.size() * Etc.formatAmount(lConfig.getCost(), lConfig.useiConomy());
+
+		// calculate the tax.
+		amount = amount * (1 - (lConfig.getNetPayout() / 100));
 
 		// format it once again.
 		amount = Etc.formatAmount(amount, lConfig.useiConomy());
@@ -163,7 +184,7 @@ public class LotteryGame
 		return sold;
 	}
 
-	public boolean removeFromClaimList(final Player player)
+	public void removeFromClaimList(final Player player)
 	{
 		// Do the player have something to claim?
 		final ArrayList<String> otherPlayersClaims = new ArrayList<String>();
@@ -197,12 +218,11 @@ public class LotteryGame
 		{
 			player.sendMessage(
 					ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "You did not have anything unclaimed.");
-			return false;
 		}
 		// Do a bit payout.
-		for (int i = 0; i < claimArray.size(); i++)
+		for (String aClaimArray : claimArray)
 		{
-			final String[] split = claimArray.get(i).split(":");
+			final String[] split = aClaimArray.split(":");
 			final int claimAmount = Integer.parseInt(split[1]);
 			final int claimMaterial = Integer.parseInt(split[2]);
 			player.getInventory().addItem(new ItemStack(claimMaterial, claimAmount));
@@ -214,9 +234,9 @@ public class LotteryGame
 		{
 			final BufferedWriter out = new BufferedWriter(
 					new FileWriter(plugin.getDataFolder() + File.separator + "lotteryClaim.txt"));
-			for (int i = 0; i < otherPlayersClaims.size(); i++)
+			for (String otherPlayersClaim : otherPlayersClaims)
 			{
-				out.write(otherPlayersClaims.get(i));
+				out.write(otherPlayersClaim);
 				out.newLine();
 			}
 
@@ -226,10 +246,9 @@ public class LotteryGame
 		catch (IOException e)
 		{
 		}
-		return true;
 	}
 
-	public boolean addToClaimList(final String playerName, final int winningAmount, final int winningMaterial)
+	public void addToClaimList(final String playerName, final int winningAmount, final int winningMaterial)
 	{
 		// Then first add new winner, and after that the old winners.
 		try
@@ -243,10 +262,9 @@ public class LotteryGame
 		catch (IOException e)
 		{
 		}
-		return true;
 	}
 
-	public boolean addToWinnerList(final String playerName, final Double winningAmount, final int winningMaterial)
+	public void addToWinnerList(final String playerName, final Double winningAmount, final int winningMaterial)
 	{
 		// This list should be 10 players long.
 		final ArrayList<String> winnerArray = new ArrayList<String>();
@@ -280,9 +298,9 @@ public class LotteryGame
 					winnerArray.remove(9);
 				}
 				// Go trough list and output lines.
-				for (int i = 0; i < winnerArray.size(); i++)
+				for (String aWinnerArray : winnerArray)
 				{
-					out.write(winnerArray.get(i));
+					out.write(aWinnerArray);
 					out.newLine();
 				}
 			}
@@ -292,14 +310,12 @@ public class LotteryGame
 		catch (IOException e)
 		{
 		}
-		return true;
 	}
 
 	public long timeUntil()
 	{
 		final long nextDraw = lConfig.getNextexec();
-		final long timeLeft = ((nextDraw - System.currentTimeMillis()) / 1000);
-		return timeLeft;
+		return ((nextDraw - System.currentTimeMillis()) / 1000);
 	}
 
 	public String timeUntil(final boolean mini)
@@ -329,13 +345,13 @@ public class LotteryGame
 		if (players.isEmpty())
 		{
 			Bukkit.broadcastMessage(
-					ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "No tickets sold this round. Thats a shame.");
+					ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "No tickets sold this round. That's a shame.");
 			return false;
 		}
 		else
 		{
 			// Find rand. Do minus 1 since its a zero based array.
-			int rand = 0;
+			int rand;
 
 			// is max number of tickets 0? If not, include empty tickets not sold.
 			if (lConfig.getTicketsAvailable() > 0 && ticketsSold() < lConfig.getTicketsAvailable())
@@ -383,6 +399,16 @@ public class LotteryGame
 						ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Congratulations to " + players.get(
 								rand) + " for winning " + ChatColor.RED + plugin.Method.format(amount) + ".");
 				addToWinnerList(players.get(rand), amount, 0);
+
+				double taxAmount = taxAmount();
+				if (taxAmount() > 0 && lConfig.getTaxTarget().length() > 0)
+				{
+					String target = lConfig.getTaxTarget();
+					plugin.Method.hasAccount(target);
+					final Method.MethodAccount targetaccount = plugin.Method.getAccount(target);
+					targetaccount.add(taxAmount);
+				}
+
 			}
 			else
 			{
@@ -400,8 +426,7 @@ public class LotteryGame
 				addToClaimList(players.get(rand), matAmount, lConfig.getMaterial());
 			}
 			Bukkit.broadcastMessage(
-					ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "There was a total of " + Etc
-							.realPlayersFromList(
+					ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "There was a total of " + Etc.realPlayersFromList(
 							players).size() + " " + Etc.pluralWording(
 							"player", Etc.realPlayersFromList(
 							players).size()) + " buying " + players.size() + " " + Etc.pluralWording(
@@ -456,18 +481,27 @@ public class LotteryGame
 			outMessage = outMessage.replaceAll(
 					"%cost%", String.valueOf(
 					Etc.formatAmount(lConfig.getCost(), lConfig.useiConomy())));
+
+			outMessage = outMessage.replaceAll("%pot%", Double.toString(winningAmount()));
+
 		}
 		else
 		{
 			outMessage = outMessage.replaceAll(
 					"%cost%", String.valueOf(
-					(int)Etc.formatAmount(lConfig.getCost(), lConfig.useiConomy())));
+					(int)Etc.formatAmount(lConfig.getCost(), lConfig.useiConomy())).concat(
+					" " + Etc.formatMaterialName(lConfig.getMaterial())));
+
+			outMessage = outMessage.replaceAll(
+					"%pot%",
+					Double.toString(winningAmount()).concat(" " + Etc.formatMaterialName(lConfig.getMaterial())));
 		}
 
 		// %pot%
-		outMessage = outMessage.replaceAll("%pot%", Double.toString(winningAmount()));
+
 		// Lets get some colors on this, shall we?
 		outMessage = outMessage.replaceAll("(&([a-f0-9]))", "\u00A7$2");
 		return outMessage;
 	}
+
 }

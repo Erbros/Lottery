@@ -28,11 +28,13 @@ public class LotteryConfig
 	private double jackpot;
 	private String lastwinner;
 	private double lastwinneramount;
-	private List<String> msgWelcome;
 	private boolean buyingExtendDeadline;
 	private int buyingExtendRemaining;
 	private double buyingExtendBase;
 	private double buyingExtendMultiplier;
+	private String taxTarget;
+
+	private List<String> msgWelcome;
 
 	public LotteryConfig(final Lottery plugin)
 	{
@@ -68,6 +70,7 @@ public class LotteryConfig
 		buyingExtendRemaining = config.getInt("config.buyingExtend.secondsRemaining", 30);
 		buyingExtendBase = config.getDouble("config.buyingExtend.extendBase", 15);
 		buyingExtendMultiplier = config.getDouble("config.buyingExtend.extendMultiplier", 1.5);
+		taxTarget = config.getString("config.taxTarget", "");
 
 		// Load messages?
 		loadCustomMessages();
@@ -270,5 +273,10 @@ public class LotteryConfig
 	public double getBuyingExtendMultiplier()
 	{
 		return buyingExtendMultiplier;
+	}
+
+	public String getTaxTarget()
+	{
+		return taxTarget;
 	}
 }

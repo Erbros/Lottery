@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 
 
 public class Etc
@@ -25,15 +26,12 @@ public class Etc
 
 	public static String formatMaterialName(final int materialId)
 	{
-		String returnMaterialName = "";
 		String rawMaterialName = Material.getMaterial(materialId).toString();
 		rawMaterialName = rawMaterialName.toLowerCase(Locale.ENGLISH);
 		// Large first letter.
 		final String firstLetterCapital = rawMaterialName.substring(0, 1).toUpperCase();
 		rawMaterialName = firstLetterCapital + rawMaterialName.substring(1, rawMaterialName.length());
-		returnMaterialName = rawMaterialName.replace("_", " ");
-
-		return returnMaterialName;
+		return rawMaterialName.replace("_", " ");
 	}
 
 	public static String pluralWording(final String word, final Integer number)
@@ -165,7 +163,7 @@ public class Etc
 		{
 			// Lets remove the last comma, since it will look bad with 2 days, 3
 			// hours, and 14 seconds.
-			if (stringTimeLeft.equalsIgnoreCase("") == false && !mini)
+			if (!stringTimeLeft.equalsIgnoreCase("") && !mini)
 			{
 				stringTimeLeft = stringTimeLeft.substring(
 						0, stringTimeLeft.length() - 1);

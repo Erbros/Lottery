@@ -94,16 +94,12 @@ public class Lottery extends JavaPlugin
 
 	public boolean isLotteryDue()
 	{
-		if (getNextexec() > 0 && System.currentTimeMillis() + 1000 >= getNextexec())
-		{
-			return true;
-		}
-		return false;
+		return getNextexec() > 0 && System.currentTimeMillis() + 1000 >= getNextexec();
 	}
 
 	public void startTimerSchedule(final boolean drawAtOnce)
 	{
-		long extendtime = 0;
+		long extendtime;
 		// Cancel any existing timers.
 		if (timerStarted)
 		{
@@ -207,7 +203,7 @@ public class Lottery extends JavaPlugin
 		// Is this very long until? On servers with lag and long between
 		// restarts there might be a very long time between when server
 		// should have drawn winner and when it will draw. Perhaps help the
-		// server a bit by only scheduling for half the lengt at a time?
+		// server a bit by only scheduling for half the length at a time?
 		// But only if its more than 5 seconds left.
 		if (extendtime < 5 * 20)
 		{
