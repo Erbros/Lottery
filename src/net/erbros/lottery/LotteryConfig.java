@@ -111,7 +111,7 @@ public class LotteryConfig
 		messages.put("CommandHelp", formatCustomMessage("message.CommandHelp", "%prefix% &c/lottery help&r for other commands"));
 		messages.put("LastWinner", formatCustomMessage("message.LastWinner", "%prefix% Last winner: %0% %1%"));
 		messages.put("CheckClaim", formatCustomMessage("message.CheckClaim", "%prefix% Check if you have won with &c/lottery claim"));
-		messages.put("BoughtTicket", formatCustomMessage("message.BoughtTicket", "%prefix% You got &c%0% &r%1% for %c%2%"));
+		messages.put("BoughtTicket", formatCustomMessage("message.BoughtTicket", "%prefix% You got &c%0% &r%1% for &c%2%"));
 		messages.put("BoughtTickets", formatCustomMessage("message.BoughtTickets", "%prefix% You now have &c%0% &r%1%"));
 		messages.put("BoughtAnnounceDraw", formatCustomMessage("message.BoughtAnnounceDraw", "%prefix% &r%0% &rjust bought %1% %2%! Draw in %3%"));
 		messages.put("BoughtAnnounce", formatCustomMessage("message.BoughtAnnounce", "%prefix% &r%0% &rjust bought %1% %2%!"));
