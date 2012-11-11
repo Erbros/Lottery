@@ -339,15 +339,10 @@ public class MainCommandExecutor implements CommandExecutor
 
 	public void commandAddToPot(final CommandSender sender, final String[] args)
 	{
-		if (args[1] == null)
+		if (args.length < 2)
 		{
 			lGame.sendMessage(sender,"HelpPot");
 			return;
-		}
-
-		if (args.length < 2)
-		{
-			lGame.sendMessage(sender,"ErrorNumber");
 		}
 
 		final double addToPot = Etc.parseDouble(args[1]);
