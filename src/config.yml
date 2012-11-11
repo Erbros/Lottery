@@ -73,8 +73,8 @@ message:
     DrawSoon: 'Soon'
     DrawSoonLong: 'Draw will occur soon!'
     PlayerClaim: '%prefix You just claimed %0%'
-    MessagesEnabled: '%prefix You will now receive Lottery broadcast messages.'
-    MessagesDisabled: '%prefix You will no longer receive Lottery broadcast messages.'
+    MessagesEnabled: '%prefix% You will now receive Lottery broadcast messages.'
+    MessagesDisabled: '%prefix% You will no longer receive Lottery broadcast messages.'
 
     NoWinnerTickets: '%prefix% No tickets sold this round. Thats a shame.'
     NoWinnerRollover: '%prefix% No winner, we have a rollover! &a%0% &rwent to jackpot!'

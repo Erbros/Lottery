@@ -120,6 +120,8 @@ public class LotteryConfig
 		messages.put("DrawSoon", formatCustomMessage("message.DrawSoon", "Soon"));
 		messages.put("DrawSoonLong", formatCustomMessage("message.DrawSoonLong", "Draw will occur soon!"));
 		messages.put("PlayerClaim", formatCustomMessage("message.PlayerClaim", "%prefix You just claimed %0%"));
+		messages.put("MessagesEnabled", formatCustomMessage("message.MessagesEnabled", "%prefix% You will now receive Lottery broadcast messages."));
+		messages.put("MessagesDisabled", formatCustomMessage("message.MessagesDisabled", "%prefix% You will no longer receive Lottery broadcast messages."));
 
 		messages.put("NoWinnerTickets", formatCustomMessage("message.NoWinnerTickets", "%prefix% No tickets sold this round. Thats a shame."));
 		messages.put(
