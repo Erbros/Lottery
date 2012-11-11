@@ -106,7 +106,7 @@ public class LotteryConfig
 		messages.put("TicketCommand", formatCustomMessage("message.TicketCommand", "%prefix% Buy a ticket for &c%cost% &rwith &c/lottery buy"));
 		messages.put("PotAmount", formatCustomMessage("message.PotAmount", "%prefix% There is currently &a%pot% &rin the pot."));
 		messages.put("YourTickets", formatCustomMessage("message.YourTickets", "%prefix% You have &c%0% &r%1%"));
-		messages.put("TimeRemaining", formatCustomMessage("message.TimeRemaining", "%prefix% There is &c%0% &r%1% left."));
+		messages.put("TicketRemaining", formatCustomMessage("message.TimeRemaining", "%prefix% There is &c%0% &r%1% left."));
 		messages.put("CommandHelp", formatCustomMessage("message.CommandHelp", "%prefix% &c/lottery help&r for other commands"));
 		messages.put("LastWinner", formatCustomMessage("message.LastWinner", "%prefix% Last winner: %0% %1%"));
 		messages.put("CheckClaim", formatCustomMessage("message.CheckClaim", "%prefix% Check if you have won with &c/lottery claim"));
@@ -127,7 +127,7 @@ public class LotteryConfig
 		messages.put("WinnerCongratClaim", formatCustomMessage("message.WinnerCongratClaim", "%prefix% Use &c/lottery claim &rto claim the winnings."));
 		messages.put("WinnerSummary", formatCustomMessage("message.WinnerSummary", "%prefix% There was a total of %0% %1% buying %2% %3%"));
 
-		messages.put("AddToPot", formatCustomMessage("message.AddToPot", "%prefix% Added &a%0% &rto pot. Extra total is &a %1%"));
+		messages.put("AddToPot", formatCustomMessage("message.AddToPot", "%prefix% Added &a%0% &rto pot. Extra total is &a%1%"));
 		messages.put("ConfigCost", formatCustomMessage("message.ConfigCost", "%prefix% Cost changed to &c%0%"));
 		messages.put("ConfigHours", formatCustomMessage("message.ConfigHours", "%prefix% Hours changed to &c%0%"));
 		messages.put("ConfigMax", formatCustomMessage("message.ConfigMax", "%prefix% Max amount of tickets changed to &c%0%"));
@@ -136,7 +136,11 @@ public class LotteryConfig
 		messages.put(
 				"Help", formatCustomMessage(
 				"message.Help",
-				"%prefix% Help commands%newline%%prefix% &c/lottery&r : Basic lottery info.%newline%%prefix% &c/lottery buy <n>&r : Buy ticket(s).%newline%%prefix% &c/lottery claim&r : Claim outstandig wins.%newline%%prefix% &c/lottery winners&r : Check last winners.%newline%%prefix% &1/lottery draw&r : Draw lottery.%newline%%prefix% &1/lottery addtopot&r : Add number to pot.%newline%%prefix% &1/lottery config&r : Edit the config."));
+				"%prefix% Help commands%newline%%prefix% &c/lottery&r : Basic lottery info.%newline%%prefix% &c/lottery buy <n>&r : Buy ticket(s).%newline%%prefix% &c/lottery claim&r : Claim outstandig wins.%newline%%prefix% &c/lottery winners&r : Check last winners."));
+		messages.put(
+				"HelpAdmin", formatCustomMessage(
+				"message.Help",
+				"%prefix% &1/lottery draw&r : Draw lottery.%newline%%prefix% &1/lottery addtopot&r : Add number to pot.%newline%%prefix% &1/lottery config&r : Edit the config."));
 		messages.put("HelpPot", formatCustomMessage("message.HelpPot", "%prefix% /lottery addtopot <number>"));
 		messages.put(
 				"HelpConfig", formatCustomMessage(

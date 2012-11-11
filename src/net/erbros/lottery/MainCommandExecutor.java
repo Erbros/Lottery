@@ -36,16 +36,14 @@ public class MainCommandExecutor implements CommandExecutor
 		if (lConfig.useiConomy() && !Methods.hasMethod())
 		{
 			lConfig.debugMsg("No money plugin found yet.");
-			sender.sendMessage(
-					ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Sorry, we haven't found a money plugin yet..");
+			lGame.sendMessage(sender, "ErrorPlugin");
 			return true;
 		}
 
 		// Can the player access the plugin?
 		if (!sender.hasPermission("lottery.buy"))
 		{
-			sender.sendMessage(
-					ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "You don't have access to that command.");
+			lGame.sendMessage(sender, "ErrorAccess");
 		}
 
 		// If its just /lottery, and no args.
@@ -77,8 +75,7 @@ public class MainCommandExecutor implements CommandExecutor
 			}
 			else
 			{
-				sender.sendMessage(
-						ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "You don't have access to that command.");
+				lGame.sendMessage(sender, "ErrorAccess");
 			}
 		}
 		else if (args[0].equalsIgnoreCase("addtopot"))
@@ -89,8 +86,7 @@ public class MainCommandExecutor implements CommandExecutor
 			}
 			else
 			{
-				sender.sendMessage(
-						ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "You don't have access to that command.");
+				lGame.sendMessage(sender, "ErrorAccess");
 			}
 		}
 		else if (args[0].equalsIgnoreCase("config"))
@@ -101,14 +97,12 @@ public class MainCommandExecutor implements CommandExecutor
 			}
 			else
 			{
-				sender.sendMessage(
-						ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "You don't have access to that command.");
+				lGame.sendMessage(sender, "ErrorAccess");
 			}
 		}
 		else
 		{
-			sender.sendMessage(
-					ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Hey, I don't recognize that command!");
+			lGame.sendMessage(sender, "ErrorCommand");
 		}
 
 		return true;
@@ -120,9 +114,7 @@ public class MainCommandExecutor implements CommandExecutor
 		if (!(sender instanceof Player))
 		{
 			sender.sendMessage("Hi Console - The Lottery plugin is running");
-			sender.sendMessage(
-					ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Draw in: " + ChatColor.RED + lGame.timeUntil(
-							false));
+			lGame.sendMessage(sender, "DrawIn", lGame.timeUntil(false));
 			return;
 		}
 		final Player player = (Player)sender;
@@ -131,89 +123,45 @@ public class MainCommandExecutor implements CommandExecutor
 		final double amount = lGame.winningAmount();
 		lConfig.debugMsg("pot current total: " + amount);
 		// Send some messages:
-		player.sendMessage(
-				ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Draw in: " + ChatColor.RED + lGame.timeUntil(false));
-		if (lConfig.useiConomy())
-		{
-			player.sendMessage(
-					ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Buy a ticket for " + ChatColor.RED + plugin.Method.format(
-							lConfig.getCost()) + ChatColor.WHITE + " with " + ChatColor.RED + "/lottery buy");
-			player.sendMessage(
-					ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "There is currently " + ChatColor.GREEN + plugin.Method.format(
-							amount) + ChatColor.WHITE + " in the pot.");
-		}
-		else
-		{
-			player.sendMessage(
-					ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Buy a ticket for " + ChatColor.RED + lConfig.getCost() + " " + Etc.formatMaterialName(
-							lConfig.getMaterial()) + ChatColor.WHITE + " with " + ChatColor.RED + "/lottery buy");
-			player.sendMessage(
-					ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "There is currently " + ChatColor.GREEN + amount + " " + Etc.formatMaterialName(
-							lConfig.getMaterial()) + ChatColor.WHITE + " in the pot.");
-		}
+		lGame.sendMessage(sender, "DrawIn", lGame.timeUntil(false));
+		lGame.sendMessage(sender, "TicketCommand");
+		lGame.sendMessage(sender, "PotAmount");
 		if (lConfig.getMaxTicketsEachUser() > 1)
 		{
-			player.sendMessage(
-					ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "You have " + ChatColor.RED + lGame.playerInList(
-							(Player)sender) + " " + ChatColor.WHITE + Etc.pluralWording(
-							"ticket", lGame.playerInList(
-							(Player)sender)));
+			lGame.sendMessage(
+					player, "YourTickets", lGame.timeUntil(false), lGame.playerInList(player), Etc.pluralWording("ticket", lGame.playerInList(player)));
 		}
 		// Number of tickets available?
 		if (lConfig.getTicketsAvailable() > 0)
 		{
-			player.sendMessage(
-					ChatColor.GOLD + "[LOTTERY]" + ChatColor.WHITE + " There is " + ChatColor.RED + (lConfig.getTicketsAvailable() - lGame.ticketsSold()) + ChatColor.WHITE + " " + Etc.pluralWording(
-							"ticket", lConfig.getTicketsAvailable() - lGame.ticketsSold()) + " left.");
+			lGame.sendMessage(
+					sender, "TicketRemaining", (lConfig.getTicketsAvailable() - lGame.ticketsSold()), Etc.pluralWording(
+					"ticket", lConfig.getTicketsAvailable() - lGame.ticketsSold()));
 		}
-		player.sendMessage(
-				ChatColor.GOLD + "[LOTTERY] " + ChatColor.RED + "/lottery help" + ChatColor.WHITE + " for other commands");
+		lGame.sendMessage(sender, "CommandHelp");
+
 		// Does lastwinner exist and != null? Show.
 		// Show different things if we are using iConomy over
 		// material.
 		if (lConfig.getLastwinner() != null)
 		{
-			if (lConfig.useiConomy())
-			{
-				player.sendMessage(
-						ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Last winner: " + lConfig.getLastwinner() + " (" + plugin.Method.format(
-								lConfig.getLastwinneramount()) + ")");
-			}
-			else
-			{
-				player.sendMessage(
-						ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Last winner: " + lConfig.getLastwinner() + " (" + lConfig.getLastwinneramount() + " " + Etc.formatMaterialName(
-								lConfig.getMaterial()) + ")");
-			}
+			lGame.sendMessage(sender, "LastWinner", lConfig.getLastwinner(), Etc.formatCost(lConfig.getLastwinneramount(), lConfig));
 		}
 
 		// if not iConomy, make players check for claims.
 		if (!lConfig.useiConomy())
 		{
-			player.sendMessage(
-					ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Check if you have won with " + ChatColor.RED + "/lottery claim");
+			lGame.sendMessage(sender, "CheckClaim");
 		}
 	}
 
 	public void commandHelp(final CommandSender sender, final String[] args)
 	{
-		sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Help commands");
-		sender.sendMessage(ChatColor.RED + "/lottery" + ChatColor.WHITE + " : Basic lottery info.");
-		sender.sendMessage(ChatColor.RED + "/lottery buy <n>" + ChatColor.WHITE + " : Buy ticket(s).");
-		sender.sendMessage(ChatColor.RED + "/lottery claim" + ChatColor.WHITE + " : Claim outstanding wins.");
-		sender.sendMessage(ChatColor.RED + "/lottery winners" + ChatColor.WHITE + " : Check last winners.");
+		lGame.sendMessage(sender, "Help");
 		// Are we dealing with admins?
-		if (sender.hasPermission("lottery.admin.draw"))
+		if (sender.hasPermission("lottery.admin.draw") || sender.hasPermission("lottery.admin.addtopot") || sender.hasPermission("lottery.admin.editconfig"))
 		{
-			sender.sendMessage(ChatColor.BLUE + "/lottery draw" + ChatColor.WHITE + " : Draw lottery.");
-		}
-		if (sender.hasPermission("lottery.admin.addtopot"))
-		{
-			sender.sendMessage(ChatColor.BLUE + "/lottery addtopot" + ChatColor.WHITE + " : Add number to pot.");
-		}
-		if (sender.hasPermission("lottery.admin.editconfig"))
-		{
-			sender.sendMessage(ChatColor.BLUE + "/lottery config" + ChatColor.WHITE + " : Edit the config.");
+			lGame.sendMessage(sender, "HelpAdmin");
 		}
 	}
 
@@ -222,8 +170,7 @@ public class MainCommandExecutor implements CommandExecutor
 		// Is this a console? If so, just tell that lottery is running and time until next draw.
 		if (!(sender instanceof Player))
 		{
-			sender.sendMessage(
-					ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "You're the console, I can't sell you tickets.");
+			lGame.sendMessage(sender, "ErrorConsole");
 			return;
 		}
 		final Player player = (Player)sender;
@@ -255,8 +202,7 @@ public class MainCommandExecutor implements CommandExecutor
 			{
 				if (lGame.ticketsSold() >= lConfig.getTicketsAvailable())
 				{
-					player.sendMessage(
-							ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "There are no more tickets available");
+					lGame.sendMessage(sender, "ErrorNoAvailable");
 					return;
 				}
 				else
@@ -269,37 +215,22 @@ public class MainCommandExecutor implements CommandExecutor
 		if (lConfig.getMaxTicketsEachUser() > 0 && lGame.playerInList(
 				player) + buyTickets > lConfig.getMaxTicketsEachUser())
 		{
-			player.sendMessage(
-					ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "You already have the maximum of " + lConfig.getMaxTicketsEachUser() + " " + Etc.pluralWording(
-							"ticket", lConfig.getMaxTicketsEachUser()) + " already.");
+			lGame.sendMessage(sender, "ErrorAtMax", lConfig.getMaxTicketsEachUser(), Etc.pluralWording("ticket", lConfig.getMaxTicketsEachUser()));
 			return;
 		}
 
 		if (lGame.addPlayer(player, lConfig.getMaxTicketsEachUser(), buyTickets))
 		{
 			// You got your ticket.
-			if (lConfig.useiConomy())
-			{
-				player.sendMessage(
-						ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "You got " + buyTickets + " " + Etc.pluralWording(
-								"ticket", buyTickets) + " for " + ChatColor.RED + plugin.Method.format(
-								lConfig.getCost() * buyTickets));
-			}
-			else
-			{
-				player.sendMessage(
-						ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "You got " + buyTickets + " " + Etc.pluralWording(
-								"ticket", buyTickets) + " for " + ChatColor.RED + lConfig.getCost() * buyTickets + " " + Etc.formatMaterialName(
-								lConfig.getMaterial()));
-			}
+			lGame.sendMessage(
+					sender, "BoughtTicket", buyTickets, Etc.pluralWording("ticket", buyTickets), Etc.formatCost(lConfig.getCost() * buyTickets, lConfig));
+
 			// Can a user buy more than one ticket? How many
 			// tickets have he bought now?
 			if (lConfig.getMaxTicketsEachUser() > 1)
 			{
-				player.sendMessage(
-						ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "You now have " + ChatColor.RED + lGame.playerInList(
-								player) + " " + ChatColor.WHITE + Etc.pluralWording(
-								"ticket", lGame.playerInList(player)));
+				lGame.sendMessage(
+						sender, "BoughtTickets", lGame.playerInList(player), Etc.pluralWording("ticket", lGame.playerInList(player)));
 			}
 			if (lConfig.isBuyingExtendDeadline() && lGame.timeUntil() < lConfig.getBuyingExtendRemaining())
 			{
@@ -311,15 +242,13 @@ public class MainCommandExecutor implements CommandExecutor
 			{
 				if (lGame.timeUntil() < lConfig.getBroadcastBuyingTime())
 				{
-					Bukkit.broadcastMessage(
-							ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + player.getDisplayName() + ChatColor.WHITE + " just bought " + buyTickets + " " + Etc.pluralWording(
-									"ticket", buyTickets) + "! Draw in " + lGame.timeUntil(true));
+					lGame.broadcastMessage(
+							"BoughtAnnounceDraw", player.getDisplayName(), buyTickets, Etc.pluralWording("ticket", buyTickets), lGame.timeUntil(true));
 				}
 				else
 				{
-					Bukkit.broadcastMessage(
-							ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + player.getDisplayName() + ChatColor.WHITE + " just bought " + buyTickets + " " + Etc.pluralWording(
-									"ticket", buyTickets));
+					lGame.broadcastMessage(
+							"BoughtAnnounce", player.getDisplayName(), buyTickets, Etc.pluralWording("ticket", buyTickets));
 				}
 			}
 
@@ -327,8 +256,9 @@ public class MainCommandExecutor implements CommandExecutor
 		else
 		{
 			// Something went wrong.
-			player.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "You can't afford a ticket");
+			lGame.sendMessage(sender,"ErrorNotAfford");
 		}
+
 	}
 
 	public void commandClaim(final CommandSender sender, final String[] args)
@@ -336,8 +266,7 @@ public class MainCommandExecutor implements CommandExecutor
 		// Is this a console? If so, just tell that lottery is running and time until next draw.
 		if (!(sender instanceof Player))
 		{
-			sender.sendMessage(
-					ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "You're the console, you don't have an inventory.");
+			lGame.sendMessage(sender,"ErrorConsole2");
 			return;
 		}
 
@@ -347,7 +276,7 @@ public class MainCommandExecutor implements CommandExecutor
 	public void commandDraw(final CommandSender sender, final String[] args)
 	{
 		// Start a timer that ends in 3 secs.
-		sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Lottery will be drawn at once.");
+		lGame.sendMessage(sender,"DrawNow");
 		plugin.startTimerSchedule(true);
 	}
 
@@ -391,39 +320,31 @@ public class MainCommandExecutor implements CommandExecutor
 	{
 		if (args[1] == null)
 		{
-			sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "/lottery addtopot <number>");
+			lGame.sendMessage(sender,"HelpPot");
 			return;
 		}
 
 		if (args.length < 2)
 		{
-			sender.sendMessage(
-					ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Provide a number greater than zero (decimals accepted)");
+			lGame.sendMessage(sender,"ErrorNumber");
 		}
 
 		final double addToPot = Etc.parseDouble(args[1]);
 
 		if (addToPot == 0)
 		{
-			sender.sendMessage(
-					ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Provide a number greater than zero (decimals accepted)");
+			lGame.sendMessage(sender,"ErrorNumber");
 			return;
 		}
 		lConfig.addExtraInPot(addToPot);
-
-		sender.sendMessage(
-				ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Added " + ChatColor.GREEN + addToPot + ChatColor.WHITE + " to pot. Extra total is " + ChatColor.GREEN + lConfig.getExtraInPot());
+		lGame.sendMessage(sender,"AddToPot", addToPot, lConfig.getExtraInPot());
 	}
 
 	public void commandConfig(final CommandSender sender, final String[] args)
 	{
 		if (args.length == 1)
 		{
-			sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Edit config commands");
-			sender.sendMessage(ChatColor.RED + "/lottery config cost <i>");
-			sender.sendMessage(ChatColor.RED + "/lottery config hours <i>");
-			sender.sendMessage(ChatColor.RED + "/lottery config maxTicketsEachUser <i>");
-			sender.sendMessage(ChatColor.RED + "/lottery config reload");
+			lGame.sendMessage(sender,"HelpConfig");
 			return;
 		}
 		else if (args.length > 2)
@@ -433,13 +354,11 @@ public class MainCommandExecutor implements CommandExecutor
 				final double newCoin = Etc.parseDouble(args[2]);
 				if (newCoin <= 0)
 				{
-					sender.sendMessage(
-							ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Provide a number greater than zero (decimals accepted)");
+					lGame.sendMessage(sender,"ErrorNumber");
 				}
 				else
 				{
-					sender.sendMessage(
-							ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Cost changed to " + ChatColor.RED + newCoin);
+					lGame.sendMessage(sender,"ConfigCost", newCoin);
 					lConfig.setCost(newCoin);
 				}
 			}
@@ -448,13 +367,11 @@ public class MainCommandExecutor implements CommandExecutor
 				final double newHours = Etc.parseDouble(args[2]);
 				if (newHours <= 0)
 				{
-					sender.sendMessage(
-							ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Provide a number greater than zero (decimals accepted)");
+					lGame.sendMessage(sender,"ErrorNumber");
 				}
 				else
 				{
-					sender.sendMessage(
-							ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Hours changed to " + ChatColor.RED + newHours);
+					lGame.sendMessage(sender,"ErrorHours", newHours);
 					lConfig.setHours(newHours);
 				}
 
@@ -462,13 +379,12 @@ public class MainCommandExecutor implements CommandExecutor
 			else if (args[1].equalsIgnoreCase("maxTicketsEachUser") || args[1].equalsIgnoreCase("max"))
 			{
 				final int newMaxTicketsEachUser = Etc.parseInt(args[2]);
-				sender.sendMessage(
-						ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Max amount of tickets changed to " + ChatColor.RED + newMaxTicketsEachUser);
+				lGame.sendMessage(sender,"ConfigMax", newMaxTicketsEachUser);
 				lConfig.setMaxTicketsEachUser(newMaxTicketsEachUser);
 			}
 		}
 		// Lets just reload the config.
 		lConfig.loadConfig();
-		sender.sendMessage(ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "Config reloaded");
+		lGame.sendMessage(sender,"ConfigReload");
 	}
 }

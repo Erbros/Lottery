@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import net.erbros.lottery.register.payment.Method;
@@ -476,14 +477,16 @@ public class LotteryGame
 		}
 	}
 
-	public void sendMessage(final Player player, final String topic, final Object... args)
+	public void sendMessage(final CommandSender player, final String topic, final Object... args)
 	{
 		try
 		{
 			for (String message : lConfig.getMessage(topic))
 			{
 				String outMessage = formatCustomMessageLive(message, args);
-				outMessage = outMessage.replaceAll("%player%", player.getDisplayName());
+				if (player instanceof Player) {
+					outMessage = outMessage.replaceAll("%player%", ((Player)player).getDisplayName());
+				}
 				player.sendMessage(outMessage);
 			}
 		}
