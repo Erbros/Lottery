@@ -137,8 +137,8 @@ public class LotteryConfig
 		messages.put(
 				"Help", formatCustomMessage(
 				"message.Help",
-				"%prefix% Help commands%newline%%prefix% &c/lottery&r : Basic lottery info.%newline%%prefix% &c/lottery buy <n>&r : Buy ticket(s)" +
-				".%newline%%prefix% &c/lottery claim&r : Claim outstanding wins.%newline%%prefix% &c/lottery winners&r : Check last winners."));
+				"%prefix% Help commands%newline%%prefix% &c/lottery&r : Basic lottery info.%newline%%prefix% &c/lottery buy <n>&r : Buy ticket(s)." +
+				"%newline%%prefix% &c/lottery claim&r : Claim outstanding wins.%newline%%prefix% &c/lottery winners&r : Check last winners."));
 		messages.put(
 				"HelpAdmin", formatCustomMessage(
 				"message.Help",
@@ -148,7 +148,7 @@ public class LotteryConfig
 		messages.put(
 				"HelpConfig", formatCustomMessage(
 				"message.HelpConfig",
-				"%prefix% Edit config commands%newline%%prefix% &c/lottery config cost <i>%newline%%prefix% &c/lottery config hours <i>%newline%%prefix%" +
+				"%prefix% Edit config commands%newline%%prefix% &c/lottery config cost <i>%newline%%prefix% &c/lottery config hours <i>%newline%%prefix% " +
 				"&c/lottery config maxTicketsEachUser <i>%newline%%prefix% &c/lottery config reload"));
 	}
 
