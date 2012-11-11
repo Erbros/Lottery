@@ -137,16 +137,19 @@ public class LotteryConfig
 		messages.put(
 				"Help", formatCustomMessage(
 				"message.Help",
-				"%prefix% Help commands%newline%%prefix% &c/lottery&r : Basic lottery info.%newline%%prefix% &c/lottery buy <n>&r : Buy ticket(s).%newline%%prefix% &c/lottery claim&r : Claim outstandig wins.%newline%%prefix% &c/lottery winners&r : Check last winners."));
+				"%prefix% Help commands%newline%%prefix% &c/lottery&r : Basic lottery info.%newline%%prefix% &c/lottery buy <n>&r : Buy ticket(s)" +
+				".%newline%%prefix% &c/lottery claim&r : Claim outstanding wins.%newline%%prefix% &c/lottery winners&r : Check last winners."));
 		messages.put(
 				"HelpAdmin", formatCustomMessage(
 				"message.Help",
-				"%prefix% &1/lottery draw&r : Draw lottery.%newline%%prefix% &1/lottery addtopot&r : Add number to pot.%newline%%prefix% &1/lottery config&r : Edit the config."));
+				"%prefix% &1/lottery draw&r : Draw lottery.%newline%%prefix% &1/lottery addtopot&r : Add number to pot.%newline%%prefix% &1/lottery " +
+				"config&r : Edit the config."));
 		messages.put("HelpPot", formatCustomMessage("message.HelpPot", "%prefix% /lottery addtopot <number>"));
 		messages.put(
 				"HelpConfig", formatCustomMessage(
 				"message.HelpConfig",
-				"%prefix% Edit config commands%newline%%prefix% &c/lottery config cost <i>%newline%%prefix% &c/lottery config hours <i>%newline%%prefix% &c/lottery config maxTicketsEachUser <i>%newline%%prefix% &c/lottery config reload"));
+				"%prefix% Edit config commands%newline%%prefix% &c/lottery config cost <i>%newline%%prefix% &c/lottery config hours <i>%newline%%prefix%" +
+				"&c/lottery config maxTicketsEachUser <i>%newline%%prefix% &c/lottery config reload"));
 	}
 
 	public List<String> getMessage(final String topic) throws Exception
@@ -344,7 +347,8 @@ public class LotteryConfig
 		return taxTarget;
 	}
 
-	public String formatCurrency(double amount) {
+	public String formatCurrency(double amount)
+	{
 		return plugin.Method.format(amount);
 	}
 }
