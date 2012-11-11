@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -465,7 +463,9 @@ public class LotteryGame
 				String outMessage = formatCustomMessageLive(message, args);
 				for (Player player : plugin.getServer().getOnlinePlayers())
 				{
-
+					if (player.hasMetadata("LotteryOptOut") && player.getMetadata("LotteryOptOut").get(0).asBoolean()) {
+						continue;
+					}
 					outMessage = outMessage.replaceAll("%player%", player.getDisplayName());
 					player.sendMessage(outMessage);
 				}

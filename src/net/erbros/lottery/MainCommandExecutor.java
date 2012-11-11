@@ -5,12 +5,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
 import net.erbros.lottery.register.payment.Methods;
 
 
@@ -62,6 +61,10 @@ public class MainCommandExecutor implements CommandExecutor
 		else if (args[0].equalsIgnoreCase("winners"))
 		{
 			commandWinners(sender, args);
+		}
+		else if (args[0].equalsIgnoreCase("messages"))
+		{
+			commandMessages(sender, args);
 		}
 		else if (args[0].equalsIgnoreCase("help"))
 		{
@@ -152,6 +155,24 @@ public class MainCommandExecutor implements CommandExecutor
 		if (!lConfig.useiConomy())
 		{
 			lGame.sendMessage(sender, "CheckClaim");
+		}
+	}
+
+	public void commandMessages(final CommandSender sender, final String[] args)
+	{
+		if (!(sender instanceof Player)) {
+			lGame.sendMessage(sender, "ErrorConsole3");
+			return;
+		}
+		Player player = (Player)sender;
+
+		if (player.hasMetadata("LotteryOptOut") && player.getMetadata("LotteryOptOut").get(0).asBoolean()) {
+			player.setMetadata("LotteryOptOut", new FixedMetadataValue(plugin, false));
+			lGame.sendMessage(sender, "MessagesEnabled");
+		}
+		else {
+			player.setMetadata("LotteryOptOut", new FixedMetadataValue(plugin, true));
+			lGame.sendMessage(sender, "MessagesDisabled");
 		}
 	}
 

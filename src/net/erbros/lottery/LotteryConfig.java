@@ -97,6 +97,7 @@ public class LotteryConfig
 		messages.put("ErrorCommand", formatCustomMessage("message.ErrorCommand", "%prefix% Hey, I don\'t recognize that command!"));
 		messages.put("ErrorConsole", formatCustomMessage("message.ErrorConsole", "%prefix% You\'re the console, I can\'t sell you tickets."));
 		messages.put("ErrorConsole2", formatCustomMessage("message.ErrorConsole2", "%prefix% You\'re the console, you don\'t have an inventory."));
+		messages.put("ErrorConsole3", formatCustomMessage("message.ErrorConsole3", "%prefix% You\'re the console, you can\'t change that."));
 		messages.put("ErrorNoAvailable", formatCustomMessage("message.ErrorNoAvailable", "%prefix% There are no more tickets available"));
 		messages.put("ErrorAtMax", formatCustomMessage("message.ErrorAtMax", "%prefix% You already have the maximum of %0% %1% already."));
 		messages.put("ErrorNotAfford", formatCustomMessage("message.ErrorNotAfford", "%prefix% You can\'t afford a ticket"));
