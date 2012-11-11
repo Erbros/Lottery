@@ -485,7 +485,7 @@ public class LotteryGame
 			{
 				String outMessage = formatCustomMessageLive(message, args);
 				if (player instanceof Player) {
-					outMessage = outMessage.replaceAll("%player%", ((Player)player).getDisplayName());
+					outMessage = outMessage.replaceAll("%player%", Matcher.quoteReplacement(((Player)player).getDisplayName()));
 				}
 				player.sendMessage(outMessage);
 			}
@@ -499,19 +499,19 @@ public class LotteryGame
 	public String formatCustomMessageLive(final String message, final Object... args) throws Exception
 	{
 		//Lets give timeLeft back if user provie %draw%
-		String outMessage = message.replaceAll("%draw%", timeUntil(true));
+		String outMessage = message.replaceAll("%draw%", Matcher.quoteReplacement(timeUntil(true)));
 
 		//Lets give timeLeft with full words back if user provie %drawLong%
-		outMessage = outMessage.replaceAll("%drawLong%", timeUntil(false));
+		outMessage = outMessage.replaceAll("%drawLong%", Matcher.quoteReplacement(timeUntil(false)));
 
 		// %cost% = cost
-		outMessage = outMessage.replaceAll("%cost%", Etc.formatCost(lConfig.getCost(), lConfig));
+		outMessage = outMessage.replaceAll("%cost%", Matcher.quoteReplacement(Etc.formatCost(lConfig.getCost(), lConfig)));
 
 		// %pot%
-		outMessage = outMessage.replaceAll("%pot%", Etc.formatCost(winningAmount(), lConfig));
+		outMessage = outMessage.replaceAll("%pot%", Matcher.quoteReplacement(Etc.formatCost(winningAmount(), lConfig)));
 
 		// %prefix%
-		outMessage = outMessage.replaceAll("%prefix%", lConfig.getMessage("prefix").get(0));
+		outMessage = outMessage.replaceAll("%prefix%", Matcher.quoteReplacement(lConfig.getMessage("prefix").get(0)));
 
 		for (int i = 0; i < args.length; i++)
 		{

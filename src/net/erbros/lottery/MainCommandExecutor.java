@@ -132,7 +132,7 @@ public class MainCommandExecutor implements CommandExecutor
 		if (lConfig.getMaxTicketsEachUser() > 1)
 		{
 			lGame.sendMessage(
-					player, "YourTickets", lGame.timeUntil(false), lGame.playerInList(player), Etc.pluralWording("ticket", lGame.playerInList(player)));
+					player, "YourTickets", lGame.playerInList(player), Etc.pluralWording("ticket", lGame.playerInList(player)));
 		}
 		// Number of tickets available?
 		if (lConfig.getTicketsAvailable() > 0)
