@@ -141,7 +141,7 @@ public class LotteryConfig
 				"%newline%%prefix% &c/lottery claim&r : Claim outstanding wins.%newline%%prefix% &c/lottery winners&r : Check last winners."));
 		messages.put(
 				"HelpAdmin", formatCustomMessage(
-				"message.Help",
+				"message.HelpAdmin",
 				"%prefix% &1/lottery draw&r : Draw lottery.%newline%%prefix% &1/lottery addtopot&r : Add number to pot.%newline%%prefix% &1/lottery " +
 				"config&r : Edit the config."));
 		messages.put("HelpPot", formatCustomMessage("message.HelpPot", "%prefix% /lottery addtopot <number>"));
