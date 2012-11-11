@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -217,8 +218,7 @@ public class LotteryGame
 		// Did the user have any claims?
 		if (claimArray.isEmpty())
 		{
-			player.sendMessage(
-					ChatColor.GOLD + "[LOTTERY] " + ChatColor.WHITE + "You did not have anything unclaimed.");
+			sendMessage(player, "ErrorClaim");
 		}
 		// Do a bit payout.
 		for (String aClaimArray : claimArray)
@@ -227,7 +227,7 @@ public class LotteryGame
 			final int claimAmount = Integer.parseInt(split[1]);
 			final int claimMaterial = Integer.parseInt(split[2]);
 			player.getInventory().addItem(new ItemStack(claimMaterial, claimAmount));
-			player.sendMessage("You just claimed " + claimAmount + " " + Etc.formatMaterialName(claimMaterial) + ".");
+			sendMessage(player, "PlayerClaim", Etc.formatMaterialName(claimMaterial));
 		}
 
 		// Add the other players claims to the file again.
@@ -345,7 +345,7 @@ public class LotteryGame
 
 		if (players.isEmpty())
 		{
-			broadcastMessage(formatCustomMessageLive("NoWinnerTickets"));
+			broadcastMessage("NoWinnerTickets");
 			return false;
 		}
 		else
@@ -368,7 +368,7 @@ public class LotteryGame
 					addToWinnerList("Jackpot", jackpot, lConfig.useiConomy() ? 0 : lConfig.getMaterial());
 					lConfig.setLastwinner("Jackpot");
 					lConfig.setLastwinneramount(jackpot);
-					broadcastMessage(formatCustomMessageLive("NoWinnerRollover", Etc.formatCost(jackpot, lConfig)));
+					broadcastMessage("NoWinnerRollover", Etc.formatCost(jackpot, lConfig));
 					clearAfterGettingWinner();
 					return true;
 				}
@@ -392,9 +392,7 @@ public class LotteryGame
 				// Add money to account.
 				account.add(amount);
 				// Announce the winner:
-				broadcastMessage(
-						formatCustomMessageLive(
-								"WinnerCongrat", players.get(rand), Etc.formatCost(amount, lConfig)));
+				broadcastMessage("WinnerCongrat", players.get(rand), Etc.formatCost(amount, lConfig));
 				addToWinnerList(players.get(rand), amount, 0);
 
 				double taxAmount = taxAmount();
@@ -412,18 +410,15 @@ public class LotteryGame
 				// let's throw it to an int.
 				final int matAmount = (int)Etc.formatAmount(amount, lConfig.useiConomy());
 				amount = (double)matAmount;
-				broadcastMessage(
-						formatCustomMessageLive(
-								"WinnerCongrat", players.get(rand), Etc.formatCost(amount, lConfig)));
-				Bukkit.broadcastMessage(formatCustomMessageLive("WinnerCongratClaim"));
+				broadcastMessage("WinnerCongrat", players.get(rand), Etc.formatCost(amount, lConfig));
+				broadcastMessage("WinnerCongratClaim");
 				addToWinnerList(players.get(rand), amount, lConfig.getMaterial());
 
 				addToClaimList(players.get(rand), matAmount, lConfig.getMaterial());
 			}
 			broadcastMessage(
-					formatCustomMessageLive(
-							"WinnerSummary", Etc.realPlayersFromList(players).size(), Etc.pluralWording(
-							"player", Etc.realPlayersFromList(players).size()), players.size(), Etc.pluralWording("ticket", players.size())));
+					"WinnerSummary", Etc.realPlayersFromList(players).size(), Etc.pluralWording(
+					"player", Etc.realPlayersFromList(players).size()), players.size(), Etc.pluralWording("ticket", players.size()));
 
 			// Add last winner to config.
 			lConfig.setLastwinner(players.get(rand));
@@ -477,7 +472,7 @@ public class LotteryGame
 		}
 		catch (Exception e)
 		{
-			plugin.getLogger().log(Level.WARNING, "Invalid Translation Key", e);
+			plugin.getLogger().log(Level.WARNING, "Invalid Translation Key: " + topic, e);
 		}
 	}
 
@@ -494,11 +489,11 @@ public class LotteryGame
 		}
 		catch (Exception e)
 		{
-			plugin.getLogger().log(Level.WARNING, "Invalid Translation Key", e);
+			plugin.getLogger().log(Level.WARNING, "Invalid Translation Key: " + topic, e);
 		}
 	}
 
-	public String formatCustomMessageLive(final String message, final Object... args)
+	public String formatCustomMessageLive(final String message, final Object... args) throws Exception
 	{
 		//Lets give timeLeft back if user provie %draw%
 		String outMessage = message.replaceAll("%draw%", timeUntil(true));
@@ -507,18 +502,21 @@ public class LotteryGame
 		outMessage = outMessage.replaceAll("%drawLong%", timeUntil(false));
 
 		// %cost% = cost
-		outMessage = outMessage.replaceAll("%cost%", String.valueOf(Etc.formatCost(lConfig.getCost(), lConfig)));
+		outMessage = outMessage.replaceAll("%cost%", Etc.formatCost(lConfig.getCost(), lConfig));
 
 		// %pot%
 		outMessage = outMessage.replaceAll("%pot%", Etc.formatCost(winningAmount(), lConfig));
 
-		for (int i = 1; i <= args.length; i++)
+		// %prefix%
+		outMessage = outMessage.replaceAll("%prefix%", lConfig.getMessage("prefix").get(0));
+
+		for (int i = 0; i < args.length; i++)
 		{
-			outMessage = outMessage.replaceAll("%" + i + "%", args[i].toString());
+			outMessage = outMessage.replaceAll("%" + i + "%", Matcher.quoteReplacement(args[i].toString()));
 		}
 
 		// Lets get some colors on this, shall we?
-		outMessage = outMessage.replaceAll("(&([a-f0-9]))", "\u00A7$2");
+		outMessage = outMessage.replaceAll("(&([a-fk-or0-9]))", "\u00A7$2");
 		return outMessage;
 	}
 

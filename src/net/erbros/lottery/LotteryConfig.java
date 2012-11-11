@@ -338,4 +338,8 @@ public class LotteryConfig
 	{
 		return taxTarget;
 	}
+
+	public String formatCurrency(double amount) {
+		return plugin.Method.format(amount);
+	}
 }

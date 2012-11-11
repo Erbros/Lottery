@@ -13,7 +13,7 @@ public class Etc
 	{
 		if (lConfig.useiConomy())
 		{
-			return String.valueOf(formatAmount(cost, lConfig.useiConomy()));
+			return lConfig.formatCurrency((formatAmount(cost, lConfig.useiConomy())));
 		}
 		else
 		{
