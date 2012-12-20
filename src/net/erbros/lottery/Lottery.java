@@ -207,13 +207,13 @@ public class Lottery extends JavaPlugin
 		// But only if its more than 5 seconds left.
 		if (extendtime < 5 * 20)
 		{
-			server.getScheduler().scheduleSyncDelayedTask(this, new LotteryDraw(this, true), extendtime);
+			server.getScheduler().runTaskLaterAsynchronously(this, new LotteryDraw(this, true), extendtime);
 			lConfig.debugMsg("LotteryDraw() " + extendtime + 100);
 		}
 		else
 		{
 			final long newtime = extendtime / 10;
-			server.getScheduler().scheduleAsyncDelayedTask(this, new LotteryDraw(this, false), newtime);
+			server.getScheduler().runTaskLaterAsynchronously(this, new LotteryDraw(this, false), newtime);
 			lConfig.debugMsg("extendLotteryDraw() " + newtime);
 		}
 	}

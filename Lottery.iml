@@ -83,7 +83,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="bukkit" level="project" />
     <orderEntry type="library" name="Libs" level="project" />
   </component>
 </module>

@@ -20,7 +20,16 @@ class LotteryDraw extends TimerTask
 
 		if (draw && plugin.isLotteryDue())
 		{
-			plugin.lotteryDraw();
+			plugin.getServer().getScheduler().scheduleSyncDelayedTask(
+					plugin, new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					plugin.lotteryDraw();
+				}
+			});
+
 		}
 		else
 		{

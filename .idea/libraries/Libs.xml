@@ -8,10 +8,12 @@
       <root url="jar://$PROJECT_DIR$/lib/iConomy v5.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/Essentials.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/iConomy v4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/bukkit.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
       <root url="jar://$PROJECT_DIR$/lib/MultiCurrency.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/bukkit.jar!/" />
     </SOURCES>
   </library>
 </component>
