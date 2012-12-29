@@ -86,6 +86,11 @@ public class LotteryGame
 
 	public Integer playerInList(final Player player)
 	{
+		return playerInList(player.getName());
+	}
+
+	public Integer playerInList(final String player)
+	{
 		int numberOfTickets = 0;
 		try
 		{
@@ -96,7 +101,7 @@ public class LotteryGame
 			while ((str = in.readLine()) != null)
 			{
 
-				if (str.equalsIgnoreCase(player.getName()))
+				if (str.equalsIgnoreCase(player))
 				{
 					numberOfTickets++;
 				}
@@ -379,8 +384,10 @@ public class LotteryGame
 			}
 
 
+
 			lConfig.debugMsg("Rand: " + Integer.toString(rand));
 			double amount = winningAmount();
+			double ticketsBought = playerInList(players.get(rand));
 			if (lConfig.useiConomy())
 			{
 				plugin.Method.hasAccount(players.get(rand));
@@ -409,7 +416,7 @@ public class LotteryGame
 				// let's throw it to an int.
 				final int matAmount = (int)Etc.formatAmount(amount, lConfig.useiConomy());
 				amount = (double)matAmount;
-				broadcastMessage("WinnerCongrat", players.get(rand), Etc.formatCost(amount, lConfig));
+				broadcastMessage("WinnerCongrat", players.get(rand), Etc.formatCost(amount, lConfig), ticketsBought);
 				broadcastMessage("WinnerCongratClaim");
 				addToWinnerList(players.get(rand), amount, lConfig.getMaterial());
 

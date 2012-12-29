@@ -78,7 +78,7 @@ message:
 
     NoWinnerTickets: '%prefix% No tickets sold this round. Thats a shame.'
     NoWinnerRollover: '%prefix% No winner, we have a rollover! &a%0% &rwent to jackpot!'
-    WinnerCongrat: '%prefix% Congratulations go to %0% &rfor winning &c%1%.'
+    WinnerCongrat: '%prefix% Congratulations go to %0% &rfor winning &c%1%&r with &c%2%&r tickets.'
     WinnerCongratClaim: '%prefix% Use &c/lottery claim &rto claim the winnings.'
     WinnerSummary: '%prefix% There was a total of %0% %1% buying %2% %3%'
 
