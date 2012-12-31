@@ -398,7 +398,7 @@ public class LotteryGame
 				// Add money to account.
 				account.add(amount);
 				// Announce the winner:
-				broadcastMessage("WinnerCongrat", players.get(rand), Etc.formatCost(amount, lConfig));
+				broadcastMessage("WinnerCongrat", players.get(rand), Etc.formatCost(amount, lConfig), ticketsBought);
 				addToWinnerList(players.get(rand), amount, 0);
 
 				double taxAmount = taxAmount();
