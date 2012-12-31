@@ -387,7 +387,7 @@ public class LotteryGame
 
 			lConfig.debugMsg("Rand: " + Integer.toString(rand));
 			double amount = winningAmount();
-			double ticketsBought = playerInList(players.get(rand));
+			int ticketsBought = playerInList(players.get(rand));
 			if (lConfig.useiConomy())
 			{
 				plugin.Method.hasAccount(players.get(rand));
