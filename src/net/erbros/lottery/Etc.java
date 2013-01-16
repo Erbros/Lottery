@@ -121,10 +121,10 @@ public class Etc
 			}
 		}
 		// Next
-		return "i don't know that word";
+		return "unknownword";
 	}
 
-	public static String timeUntil(final long time, final boolean mini)
+	public static String timeUntil(final long time, final boolean mini, LotteryConfig lConfig)
 	{
 		long timeLeft = time;
 		// How many days left?
@@ -140,7 +140,7 @@ public class Etc
 			}
 			else
 			{
-				stringTimeLeft += Integer.toString(days) + " " + Etc.pluralWording("day", days) + ", ";
+				stringTimeLeft += Integer.toString(days) + " " + lConfig.getPlural("day", days) + ", ";
 			}
 		}
 		if (timeLeft >= 60 * 60)
@@ -153,7 +153,7 @@ public class Etc
 			}
 			else
 			{
-				stringTimeLeft += Integer.toString(hours) + " " + Etc.pluralWording("hour", hours) + ", ";
+				stringTimeLeft += Integer.toString(hours) + " " + lConfig.getPlural("hour", hours) + ", ";
 			}
 		}
 		if (timeLeft >= 60)
@@ -167,7 +167,7 @@ public class Etc
 			}
 			else
 			{
-				stringTimeLeft += Integer.toString(minutes) + " " + Etc.pluralWording("minute", minutes) + ", ";
+				stringTimeLeft += Integer.toString(minutes) + " " + lConfig.getPlural("minute", minutes) + ", ";
 			}
 		}
 		else
@@ -191,7 +191,7 @@ public class Etc
 			{
 				stringTimeLeft += "and ";
 			}
-			stringTimeLeft += Integer.toString(secs) + " " + Etc.pluralWording("second", secs);
+			stringTimeLeft += Integer.toString(secs) + " " + lConfig.getPlural("second", secs);
 		}
 
 		return stringTimeLeft;

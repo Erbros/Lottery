@@ -44,7 +44,9 @@ public class LotteryConfig
 		this.config = plugin.getConfig();
 	}
 
-	public void loadConfig()
+
+
+  public void loadConfig()
 	{
 		plugin.reloadConfig();
 		config = plugin.getConfig();
@@ -126,7 +128,7 @@ public class LotteryConfig
 		messages.put("NoWinnerTickets", formatCustomMessage("message.NoWinnerTickets", "%prefix% No tickets sold this round. Thats a shame."));
 		messages.put(
 				"NoWinnerRollover", formatCustomMessage("message.NoWinnerRollover", "%prefix% No winner, we have a rollover! &a%0% &rwent to jackpot!"));
-		messages.put("WinnerCongrat", formatCustomMessage("message.WinnerCongrat", "%prefix% Congratulations go to %0% &rfor winning &c%1%&r with &c%2%&r tickets."));
+		messages.put("WinnerCongrat", formatCustomMessage("message.WinnerCongrat", "%prefix% Congratulations go to %0% &rfor winning &c%1%&r with &c%2%&r %3%."));
 		messages.put("WinnerCongratClaim", formatCustomMessage("message.WinnerCongratClaim", "%prefix% Use &c/lottery claim &rto claim the winnings."));
 		messages.put("WinnerSummary", formatCustomMessage("message.WinnerSummary", "%prefix% There was a total of %0% %1% buying %2% %3%"));
 
@@ -152,7 +154,36 @@ public class LotteryConfig
 				"message.HelpConfig",
 				"%prefix% Edit config commands%newline%%prefix% &c/lottery config cost <i>%newline%%prefix% &c/lottery config hours <i>%newline%%prefix% " +
 				"&c/lottery config maxTicketsEachUser <i>%newline%%prefix% &c/lottery config reload"));
+    messages.put("ticket", formatCustomMessage("message.Ticket", "ticket"));
+    messages.put("tickets", formatCustomMessage("message.Tickets", "tickets"));
+    messages.put("player", formatCustomMessage("message.player", "player"));
+    messages.put("players", formatCustomMessage("message.players", "players"));
+    messages.put("day", formatCustomMessage("message.day", "day"));
+    messages.put("days", formatCustomMessage("message.days", "days"));
+    messages.put("hour", formatCustomMessage("message.hour", "hour"));
+    messages.put("hours", formatCustomMessage("message.hours", "hours"));
+    messages.put("minute", formatCustomMessage("message.minute", "minute"));
+    messages.put("minutes", formatCustomMessage("message.minutes", "minutes"));
+    messages.put("second", formatCustomMessage("message.second", "second"));
+    messages.put("seconds", formatCustomMessage("message.seconds", "seconds"));
 	}
+  public String getPlural(String word, int amount){
+    String plural = Etc.pluralWording(word, amount);
+    if (plural.equals("unknownword")){
+      plugin.getLogger().log(Level.WARNING, "Invalid Plural Word: "+ word);
+      return "";
+    }
+    String pluralTl = "";
+    try {
+      for (String message : getMessage(plural)){
+        pluralTl = message;
+      }
+      return pluralTl;
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return pluralTl;
+  }
 
 	public List<String> getMessage(final String topic) throws Exception
 	{
