@@ -167,15 +167,38 @@ public class LotteryConfig
     messages.put("second", formatCustomMessage("message.second", "second"));
     messages.put("seconds", formatCustomMessage("message.seconds", "seconds"));
 	}
+
   public String getPlural(String word, int amount){
-    String plural = Etc.pluralWording(word, amount);
-    if (plural.equals("unknownword")){
-      plugin.getLogger().log(Level.WARNING, "Invalid Plural Word: "+ word);
-      return "";
+    String tlkey = "";
+
+    if (word.equalsIgnoreCase("ticket"))
+    {
+      tlkey = amount == 1 ? "ticket" : "tickets";
     }
+    if (word.equalsIgnoreCase("player"))
+    {
+      tlkey = amount == 1 ? "player" : "players";
+    }
+    if (word.equalsIgnoreCase("day"))
+    {
+      tlkey = amount == 1 ? "day" : "days";
+    }
+    if (word.equalsIgnoreCase("hour"))
+    {
+      tlkey = amount == 1 ? "hour" : "hours";
+    }
+    if (word.equalsIgnoreCase("minute"))
+    {
+      tlkey = amount == 1 ? "minute" : "minutes";
+    }
+    if (word.equalsIgnoreCase("second"))
+    {
+      tlkey = amount == 1 ? "second" : "seconds";
+    }
+
     String pluralTl = "";
     try {
-      for (String message : getMessage(plural)){
+      for (String message : getMessage(tlkey)){
         pluralTl = message;
       }
       return pluralTl;
