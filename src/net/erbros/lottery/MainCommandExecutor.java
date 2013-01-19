@@ -387,7 +387,7 @@ public class MainCommandExecutor implements CommandExecutor
 				}
 				else
 				{
-					lGame.sendMessage(sender,"ErrorHours", newHours);
+					lGame.sendMessage(sender,"ConfigHours", newHours);
 					lConfig.setHours(newHours);
 				}
 
