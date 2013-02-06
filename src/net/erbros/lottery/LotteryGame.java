@@ -36,7 +36,7 @@ public class LotteryGame
 			final Method.MethodAccount account = plugin.Method.getAccount(player.getName());
 
 			// And lets withdraw some money
-			if (account.hasOver(lConfig.getCost() * numberOfTickets))
+			if (account != null && account.hasOver(lConfig.getCost() * numberOfTickets))
 			{
 				// Removing coins from players account.
 				account.subtract(lConfig.getCost() * numberOfTickets);
