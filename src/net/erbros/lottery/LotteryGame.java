@@ -1,6 +1,7 @@
 package net.erbros.lottery;
 
 import java.io.*;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.logging.Level;
@@ -360,7 +361,7 @@ public class LotteryGame
 			// is max number of tickets 0? If not, include empty tickets not sold.
 			if (lConfig.getTicketsAvailable() > 0 && ticketsSold() < lConfig.getTicketsAvailable())
 			{
-				rand = new Random().nextInt(lConfig.getTicketsAvailable());
+				rand = new SecureRandom().nextInt(lConfig.getTicketsAvailable());
 				// If it wasn't a player winning, then do some stuff. If it was a player, just continue below.
 				if (rand > players.size() - 1)
 				{
@@ -380,7 +381,7 @@ public class LotteryGame
 			else
 			{
 				// Else just continue
-				rand = new Random().nextInt(players.size());
+				rand = new SecureRandom().nextInt(players.size());
 			}
 
 
