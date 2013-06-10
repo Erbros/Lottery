@@ -1,6 +1,6 @@
 name: Lottery
 main: net.erbros.lottery.Lottery
-version: 0.9.3
+version: 0.9.4
 authors:
   - Erbros
   - KHobbits
