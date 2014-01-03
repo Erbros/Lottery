@@ -1,14 +1,16 @@
 name: Lottery
-main: net.erbros.Lottery.Lottery
-version: 0.7.4
-author: Erbros
+main: net.erbros.lottery.Lottery
+version: 0.9.4
+authors:
+  - Erbros
+  - KHobbits
 website: www.erbros.net
 commands:
   lottery:
     description: Provides access to Permissions commands and information.
     permission: lottery.buy
-    usage: /<command>
-    aliases: [lot]
+    usage: /<command> [winners|claim|help|messages|buy [amount]]
+    aliases: [lot,lotto]
 permissions:
   lottery.*:
       description: Full access to Lottery plugin.
